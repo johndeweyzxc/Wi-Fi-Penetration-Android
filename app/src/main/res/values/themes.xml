@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.HIMAWHS" parent="Theme.Material3.DayNight.NoActionBar">
+        <!--   Color for the app bar and other primary UI elements. -->
+        <item name="colorPrimary">@color/primaryDark</item>
+        <!--   A darker variant of the primary color, used for
+           the status bar (on Android 5.0+) and contextual app bars. -->
+        <item name="colorPrimaryVariant">@color/primary</item>
+        <!--   a secondary color for controls like checkboxes and text fields. -->
+        <item name="colorOnPrimary">@color/onPrimary</item>
+    </style>
+
+    <style name="Theme.HIMAWHS" parent="Base.Theme.HIMAWHS" />
+</resources>

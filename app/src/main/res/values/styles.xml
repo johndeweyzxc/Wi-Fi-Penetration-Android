@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ToolBarTheme">
+        <item name="android:background">@color/primary</item>
+    </style>
+    <style name="FabTheme">
+        <item name="android:backgroundTint">@color/primary</item>
+    </style>
+</resources>

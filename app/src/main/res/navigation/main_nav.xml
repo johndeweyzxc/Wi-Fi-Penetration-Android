@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/terminalFragment">
+
+    <fragment
+        android:id="@+id/terminalFragment"
+        android:name="com.johndeweydev.himawhs.fragments.terminalFragment.TerminalFragment"
+        android:label="fragment_terminal"
+        tools:layout="@layout/fragment_terminal" >
+        <action
+            android:id="@+id/action_terminalFragment_to_devicesFragment"
+            app:destination="@id/devicesFragment" />
+        <argument
+            android:name="terminalArgs"
+            app:argType="com.johndeweydev.himawhs.models.TerminalArgsModel" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/devicesFragment"
+        android:name="com.johndeweydev.himawhs.fragments.devicesFragment.DevicesFragment"
+        android:label="fragment_devices"
+        tools:layout="@layout/fragment_devices" >
+        <action
+            android:id="@+id/action_devicesFragment_to_terminalFragment"
+            app:destination="@id/terminalFragment" />
+    </fragment>
+</navigation>
