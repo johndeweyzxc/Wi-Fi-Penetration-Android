@@ -1,17 +1,17 @@
-package com.johndeweydev.himawhs.models;
+package com.johndeweydev.himawhs.views.terminalFragment;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-public class TerminalArgsModel implements Parcelable {
+public class TerminalArgs implements Parcelable {
 
   private final int deviceId;
   private final int portNum;
   private final int baudRate;
 
-  public TerminalArgsModel(int aDeviceId, int aPortNum, int aBaudRate) {
+  public TerminalArgs(int aDeviceId, int aPortNum, int aBaudRate) {
     deviceId = aDeviceId;
     portNum = aPortNum;
     baudRate = aBaudRate;
@@ -29,21 +29,21 @@ public class TerminalArgsModel implements Parcelable {
     return baudRate;
   }
 
-  protected TerminalArgsModel(Parcel in) {
+  protected TerminalArgs(Parcel in) {
     deviceId = in.readInt();
     portNum = in.readInt();
     baudRate = in.readInt();
   }
 
-  public static final Creator<TerminalArgsModel> CREATOR = new Creator<TerminalArgsModel>() {
+  public static final Creator<TerminalArgs> CREATOR = new Creator<TerminalArgs>() {
     @Override
-    public TerminalArgsModel createFromParcel(Parcel in) {
-      return new TerminalArgsModel(in);
+    public TerminalArgs createFromParcel(Parcel in) {
+      return new TerminalArgs(in);
     }
 
     @Override
-    public TerminalArgsModel[] newArray(int size) {
-      return new TerminalArgsModel[size];
+    public TerminalArgs[] newArray(int size) {
+      return new TerminalArgs[size];
     }
   };
 

@@ -1,9 +1,9 @@
-package com.johndeweydev.himawhs.serial;
+package com.johndeweydev.himawhs.usbserial;
 
 import android.util.Log;
 
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-import com.johndeweydev.himawhs.models.SerialOutputModel;
+import com.johndeweydev.himawhs.controllers.UsbSerialController;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -23,16 +23,14 @@ public class UsbIoManagerListener implements SerialInputOutputManager.Listener {
 
     if (data.length > 0) {
       String strData = new String(data, StandardCharsets.US_ASCII);
-      SerialOutputModel serialOutputModel = new SerialOutputModel(stringDate, strData);
-      SerialDataSingleton.getInstance().appendData(serialOutputModel);
+      UsbSerialOutputItem usbSerialOutputItem = new UsbSerialOutputItem(stringDate, strData);
+      UsbSerialDataSingleton.getInstance().appendData(usbSerialOutputItem);
     }
   }
 
   @Override
   public void onRunError(Exception e) {
     Log.e("dev-log", "An error has occurred " + e.getMessage());
-    UsbSerialCommunication.disconnect();
+    UsbSerialController.disconnect();
   }
-
-
 }

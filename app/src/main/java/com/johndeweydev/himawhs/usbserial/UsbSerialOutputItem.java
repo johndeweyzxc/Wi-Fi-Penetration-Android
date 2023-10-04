@@ -1,11 +1,11 @@
-package com.johndeweydev.himawhs.models;
+package com.johndeweydev.himawhs.usbserial;
 
-public class SerialOutputModel {
+public class UsbSerialOutputItem {
   private final String timeInString;
   private final String serialOutputString;
 
 
-  public SerialOutputModel(String aTimeInString, String aSerialOutputString) {
+  public UsbSerialOutputItem(String aTimeInString, String aSerialOutputString) {
     timeInString = aTimeInString;
     serialOutputString = aSerialOutputString;
   }

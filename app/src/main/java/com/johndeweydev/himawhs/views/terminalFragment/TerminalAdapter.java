@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.fragments.terminalFragment;
+package com.johndeweydev.himawhs.views.terminalFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.himawhs.R;
-import com.johndeweydev.himawhs.models.SerialOutputModel;
+import com.johndeweydev.himawhs.usbserial.UsbSerialOutputItem;
 
 import java.util.ArrayList;
 
 public class TerminalAdapter extends RecyclerView
         .Adapter<TerminalAdapter.TerminalAdapterViewHolder> {
 
-  private final ArrayList<SerialOutputModel> serialOutputModelList = new ArrayList<>();
+  private final ArrayList<UsbSerialOutputItem> usbSerialOutputItemList = new ArrayList<>();
 
   public static class TerminalAdapterViewHolder extends RecyclerView.ViewHolder {
     public TextView timeSerialOutput;
@@ -39,17 +39,17 @@ public class TerminalAdapter extends RecyclerView
 
   @Override
   public void onBindViewHolder(@NonNull TerminalAdapterViewHolder holder, int position) {
-    SerialOutputModel currentItem = serialOutputModelList.get(position);
+    UsbSerialOutputItem currentItem = usbSerialOutputItemList.get(position);
     holder.timeSerialOutput.setText(currentItem.getTimeInString());
     holder.textSerialOutput.setText(currentItem.getSerialOutputInString());
   }
 
   @Override
   public int getItemCount() {
-    return serialOutputModelList.size();
+    return usbSerialOutputItemList.size();
   }
 
-  public void appendData(SerialOutputModel serialOutputModel) {
-    serialOutputModelList.add(serialOutputModel);
+  public void appendData(UsbSerialOutputItem usbSerialOutputItem) {
+    usbSerialOutputItemList.add(usbSerialOutputItem);
   }
 }

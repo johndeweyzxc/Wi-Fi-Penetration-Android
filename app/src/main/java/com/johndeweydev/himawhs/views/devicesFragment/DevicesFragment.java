@@ -1,6 +1,8 @@
-package com.johndeweydev.himawhs.fragments.devicesFragment;
+package com.johndeweydev.himawhs.views.devicesFragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +17,15 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.johndeweydev.himawhs.databinding.FragmentDevicesBinding;
-import com.johndeweydev.himawhs.models.DeviceModel;
-import com.johndeweydev.himawhs.viewmodels.DefaultMainViewModel;
+import com.johndeweydev.himawhs.usbserial.UsbDeviceItem;
+import com.johndeweydev.himawhs.viewmodels.UsbSerialViewModel;
 
 import java.util.ArrayList;
 
 public class DevicesFragment extends Fragment {
 
   private FragmentDevicesBinding binding;
-  private DefaultMainViewModel defaultMainViewModel;
+  private UsbSerialViewModel usbSerialViewModel;
   private DevicesAdapter devicesAdapter;
 
   public DevicesFragment() {
@@ -38,7 +40,7 @@ public class DevicesFragment extends Fragment {
           @Nullable Bundle savedInstanceState
   ) {
     binding = FragmentDevicesBinding.inflate(inflater, container, false);
-    defaultMainViewModel = new ViewModelProvider(requireActivity()).get(DefaultMainViewModel.class);
+    usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
     return binding.getRoot();
   }
 
@@ -50,24 +52,23 @@ public class DevicesFragment extends Fragment {
     binding.recyclerViewDevices.setAdapter(devicesAdapter);
     binding.recyclerViewDevices.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-    final Observer<ArrayList<DeviceModel>> deviceListObserver = this::handleUpdateFromLivedata;
-    defaultMainViewModel.liveDeviceList.observe(getViewLifecycleOwner(), deviceListObserver);
+    final Observer<ArrayList<UsbDeviceItem>> deviceListObserver = this::handleUpdateFromLivedata;
+    usbSerialViewModel.devicesList.observe(getViewLifecycleOwner(), deviceListObserver);
 
-    binding.scanDevices.setOnClickListener(view1 -> {
-      int size = defaultMainViewModel.getAvailableDevicesFromSerial(requireActivity());
-      if (size == 0) {
-        Toast.makeText(requireActivity(), "No devices connected", Toast.LENGTH_SHORT).show();
-      }
-    });
+    int size = usbSerialViewModel.checkAvailableUsbDevices(requireActivity(), Context.USB_SERVICE);
+    if (size == 0) {
+      Toast.makeText(requireActivity(), "No devices connected", Toast.LENGTH_SHORT).show();
+      Log.d("dev-log", "DevicesFragment.onViewCreate: No devices connected");
+    }
 
     binding.backButtonDevices.setNavigationOnClickListener(v ->
             Navigation.findNavController(binding.getRoot()).popBackStack()
     );
   }
 
-  private void handleUpdateFromLivedata(ArrayList<DeviceModel> deviceModelList) {
-    for (int i = 0; i < deviceModelList.size(); i++) {
-      devicesAdapter.appendData(deviceModelList.get(i));
+  private void handleUpdateFromLivedata(ArrayList<UsbDeviceItem> usbDeviceItemList) {
+    for (int i = 0; i < usbDeviceItemList.size(); i++) {
+      devicesAdapter.appendData(usbDeviceItemList.get(i));
       devicesAdapter.notifyItemInserted(i);
     }
   }

@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.terminalFragment.TerminalFragment"
+    tools:context=".views.terminalFragment.TerminalFragment"
     android:id="@+id/drawerLayoutTerminal">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.terminalFragment.TerminalFragment">
+        tools:context=".views.terminalFragment.TerminalFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayoutTerminal"

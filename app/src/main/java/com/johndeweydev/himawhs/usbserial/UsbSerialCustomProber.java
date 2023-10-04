@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs;
+package com.johndeweydev.himawhs.usbserial;
 
 import com.hoho.android.usbserial.driver.FtdiSerialDriver;
 import com.hoho.android.usbserial.driver.ProbeTable;
@@ -10,7 +10,7 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
  * if the App should auto start for these devices, also
  * add IDs to app/src/main/res/xml/device_filter.xml
  */
-public class CustomProber {
+public class UsbSerialCustomProber {
 
   public static UsbSerialProber getCustomProber() {
     ProbeTable customTable = new ProbeTable();
