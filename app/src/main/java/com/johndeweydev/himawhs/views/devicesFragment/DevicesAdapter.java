@@ -7,12 +7,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.himawhs.R;
-import com.johndeweydev.himawhs.views.terminalFragment.TerminalArgs;
 import com.johndeweydev.himawhs.usbserial.UsbDeviceItem;
+import com.johndeweydev.himawhs.views.terminalFragment.TerminalArgs;
 
 import java.util.ArrayList;
 
@@ -57,9 +56,8 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesA
               19200
       );
 
-      DevicesFragmentDirections.ActionDevicesFragmentToTerminalFragment action;
-      action = DevicesFragmentDirections.actionDevicesFragmentToTerminalFragment(terminalArgs);
-      Navigation.findNavController(holder.itemView).navigate(action);
+      DevicesFragment.setTerminalArgs(terminalArgs);
+      DevicesFragment.requestUsbPermission();
     });
   }
 

@@ -31,33 +31,33 @@ public class UsbSerialViewModel extends ViewModel {
     return devices.size();
   }
 
-  public void requestUsbDeviceAccessPermission(
+  public static void requestUsbDeviceAccessPermission(
           FragmentActivity fragmentActivity, String intentAction
   ) {
     UsbSerialController.requestUsbDevicePermission(fragmentActivity, intentAction);
   }
 
-  public boolean hasUsbDevicePermission() {
+  public static boolean hasUsbDevicePermission() {
     return UsbSerialController.usbDevicePermissionGranted();
   }
 
-  public void connectToDevice(int portNum, int baudRate) {
+  public static void connectToDevice(int portNum, int baudRate) {
     UsbSerialController.connect(portNum, baudRate);
   }
 
-  public void disconnectFromDevice() {
+  public static void disconnectFromDevice() {
     UsbSerialController.disconnect();
   }
 
-  public void setTheDriverOfDevice(int deviceId, int portNum) {
+  public static void setTheDriverOfDevice(int deviceId, int portNum) {
     UsbSerialController.setDriverOfDevice(deviceId, portNum);
   }
 
-  public void startEventDrivenReadFromDevice() {
+  public static void startEventDrivenReadFromDevice() {
     UsbSerialController.startEventRead();
   }
 
-  public void stopEventDrivenReadFromDevice() { UsbSerialController.stopEventRead(); }
+  public static void stopEventDrivenReadFromDevice() { UsbSerialController.stopEventRead(); }
 
   public void writeDataToDevice(String data) {
     usbSerialRepository.sendData(data);

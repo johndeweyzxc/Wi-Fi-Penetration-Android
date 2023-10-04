@@ -26,7 +26,8 @@ public class UsbSerialController {
     usbPermissionIntent = PendingIntent.getBroadcast(
             fragmentActivity, 0, new Intent(intentAction), flags
     );
-    usbManager.requestPermission(UsbSerialMain.getUsbSerialDriver().getDevice(), usbPermissionIntent);
+    usbManager.requestPermission(
+            UsbSerialMain.getUsbSerialDriver().getDevice(), usbPermissionIntent);
   }
 
   public static boolean usbDevicePermissionGranted() {

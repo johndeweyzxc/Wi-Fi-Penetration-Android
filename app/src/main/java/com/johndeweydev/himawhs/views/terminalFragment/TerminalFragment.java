@@ -29,32 +29,12 @@ import com.johndeweydev.himawhs.viewmodels.UsbSerialViewModel;
 
 public class TerminalFragment extends Fragment {
 
-  private static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
   private FragmentTerminalBinding binding;
   private UsbSerialViewModel usbSerialViewModel;
   private TerminalArgs args = null;
-  private final BroadcastReceiver broadcastReceiver;
-  private boolean usbPermissionDeniedByUser = false;
-  private boolean usbBroadcastReceiverUnregistered = false;
-
-  public class UsbBroadcastReceiver extends BroadcastReceiver {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-      if(INTENT_ACTION_GRANT_USB.equals(intent.getAction())) {
-        if (usbSerialViewModel.hasUsbDevicePermission()) {
-          Log.d("dev-log", "TerminalFragment.UsbBroadcastReceiver.checkPermission: " +
-                  "Usb device permission granted");
-        } else {
-          Log.d("dev-log", "TerminalFragment.UsbBroadcastReceiver.checkPermission: " +
-                  "Usb device permission denied by user");
-          usbPermissionDeniedByUser = true;
-        }
-      }
-    }
-  }
 
   public TerminalFragment() {
-    broadcastReceiver = new UsbBroadcastReceiver();
+
   }
 
   @Nullable
@@ -161,28 +141,17 @@ public class TerminalFragment extends Fragment {
     super.onResume();
     Log.d("dev-log", "TerminalFragment.onResume: Fragment resumed");
 
-    if (usbPermissionDeniedByUser) {
-      Navigation.findNavController(binding.getRoot()).popBackStack();
-      return;
-    }
-
     if (args != null) {
       int deviceId = args.getDeviceId();
       int portNum = args.getPortNum();
-      usbSerialViewModel.setTheDriverOfDevice(deviceId, portNum);
+      UsbSerialViewModel.setTheDriverOfDevice(deviceId, portNum);
 
-      if (usbSerialViewModel.hasUsbDevicePermission()) {
+      if (UsbSerialViewModel.hasUsbDevicePermission()) {
         int baudRate = args.getBaudRate();
-        usbSerialViewModel.connectToDevice(portNum, baudRate);
+        UsbSerialViewModel.connectToDevice(portNum, baudRate);
       } else {
-
-        Log.d("dev-log", "TerminalFragment.onResume: Requesting usb device permission");
-        IntentFilter intentFilter = new IntentFilter(INTENT_ACTION_GRANT_USB);
-        requireActivity().registerReceiver(broadcastReceiver, intentFilter);
-        usbBroadcastReceiverUnregistered = false;
-        usbSerialViewModel.requestUsbDeviceAccessPermission(
-                requireActivity(), INTENT_ACTION_GRANT_USB
-        );
+        Log.w("dev-log", "TerminalFragment.onResume: " +
+                "Permission for usb device, not found");
       }
     }
 
@@ -192,22 +161,16 @@ public class TerminalFragment extends Fragment {
   public void onPause() {
 
     if (args != null) {
-      if (usbSerialViewModel.hasUsbDevicePermission()) {
-        usbSerialViewModel.disconnectFromDevice();
-        usbSerialViewModel.stopEventDrivenReadFromDevice();
+      if (UsbSerialViewModel.hasUsbDevicePermission()) {
+        UsbSerialViewModel.disconnectFromDevice();
+        // UsbSerialViewModel.stopEventDrivenReadFromDevice();
       } else {
-        unregisterUsbPermissionReceiver();
+        Log.w("dev-log", "TerminalFragment.onPause: " +
+                "Permission for usb device, not found");
       }
     }
     super.onPause();
     Log.d("dev-log", "TerminalFragment.onPause: Fragment paused");
-  }
-
-  private void unregisterUsbPermissionReceiver() {
-    if (!usbBroadcastReceiverUnregistered) {
-      requireActivity().unregisterReceiver(broadcastReceiver);
-      usbBroadcastReceiverUnregistered = true;
-    }
   }
 
   private void handleNewSerialOutputFromLiveData(UsbSerialOutputItem usbSerialOutputItem) {
