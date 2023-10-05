@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.views.terminalfragment;
+package com.johndeweydev.awps.views.terminalfragment.terminalscreens.formatted;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +13,8 @@ import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
 
 import java.util.ArrayList;
 
-public class TerminalAdapter extends RecyclerView
-        .Adapter<TerminalAdapter.TerminalAdapterViewHolder> {
+public class TerminalRVAdapter extends RecyclerView
+        .Adapter<TerminalRVAdapter.TerminalAdapterViewHolder> {
 
   private final ArrayList<UsbSerialOutputItem> usbSerialOutputItemList = new ArrayList<>();
 

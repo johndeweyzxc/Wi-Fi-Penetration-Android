@@ -15,7 +15,7 @@ import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 import java.util.ArrayList;
 
-public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesAdapterViewHolder> {
+public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.DevicesAdapterViewHolder> {
 
   private final ArrayList<UsbDeviceItem> deviceModelList = new ArrayList<>();
 

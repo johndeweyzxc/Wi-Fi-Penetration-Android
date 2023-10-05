@@ -30,7 +30,8 @@ public class UsbIoManagerListener implements SerialInputOutputManager.Listener {
 
   @Override
   public void onRunError(Exception e) {
-    Log.e("dev-log", "An error has occurred " + e.getMessage());
+    Log.e("dev-log", "UsbIoManagerListener.onRunError: An error has occurred "
+            + e.getMessage());
     UsbSerialController.disconnect();
   }
 }

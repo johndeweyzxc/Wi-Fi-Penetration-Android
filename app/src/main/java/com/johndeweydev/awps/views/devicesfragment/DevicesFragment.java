@@ -7,9 +7,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
 import com.johndeweydev.awps.usbserial.UsbDeviceItem;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 public class DevicesFragment extends Fragment {
   private static FragmentDevicesBinding binding;
   private UsbSerialViewModel usbSerialViewModel;
-  private DevicesAdapter devicesAdapter;
+  private DevicesRVAdapter devicesRVAdapter;
   private final BroadcastReceiver usbBroadcastReceiver;
   private static TerminalArgs terminalArgs = null;
   private static FragmentActivity fragmentActivity;
@@ -80,22 +81,60 @@ public class DevicesFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     fragmentActivity = requireActivity();
-    devicesAdapter = new DevicesAdapter();
-    binding.recyclerViewDevices.setAdapter(devicesAdapter);
+    devicesRVAdapter = new DevicesRVAdapter();
+    binding.recyclerViewDevices.setAdapter(devicesRVAdapter);
     binding.recyclerViewDevices.setLayoutManager(new LinearLayoutManager(requireContext()));
 
     final Observer<ArrayList<UsbDeviceItem>> deviceListObserver = this::handleUpdateFromLivedata;
     usbSerialViewModel.devicesList.observe(getViewLifecycleOwner(), deviceListObserver);
+    findUsbDevices();
 
+    binding.appBarDevices.setNavigationOnClickListener(v -> binding.drawerLayoutDevices.open());
+    binding.appBarDevices.setOnMenuItemClickListener(this::topAppBarNavItemSelected);
+    binding.navMenuViewTerminalViewPager.setNavigationItemSelectedListener(this::navItemSelected);
+  }
+
+  private void handleUpdateFromLivedata(ArrayList<UsbDeviceItem> usbDeviceItemList) {
+    for (int i = 0; i < usbDeviceItemList.size(); i++) {
+      devicesRVAdapter.appendData(usbDeviceItemList.get(i));
+      devicesRVAdapter.notifyItemInserted(i);
+    }
+  }
+
+  private void findUsbDevices() {
     int size = usbSerialViewModel.checkAvailableUsbDevices(requireActivity(), Context.USB_SERVICE);
     if (size == 0) {
-      Toast.makeText(requireActivity(), "No devices connected", Toast.LENGTH_SHORT).show();
-      Log.d("dev-log", "DevicesFragment.onViewCreate: No devices connected");
+      binding.textViewNoDevices.setVisibility(View.VISIBLE);
+      Log.d("dev-log", "DevicesFragment.findUsbDevices: No devices connected");
+    } else {
+      binding.textViewNoDevices.setVisibility(View.GONE);
     }
+  }
 
-    binding.backButtonDevices.setNavigationOnClickListener(v ->
-            Navigation.findNavController(binding.getRoot()).popBackStack()
-    );
+
+  private boolean topAppBarNavItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.refreshMenuTopAppBarDevice) {
+      findUsbDevices();
+      return true;
+    }
+    return false;
+  }
+
+  private boolean navItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.settingsMenuNavItemDevices) {
+      binding.drawerLayoutDevices.close();
+
+      // TODO: Navigate to settings
+
+      return true;
+    } else if (item.getItemId() == R.id.infoMenuNavItemsDevices) {
+      binding.drawerLayoutDevices.close();
+
+      // TODO: Navigate to information
+
+      return true;
+    }
+    return false;
   }
 
   @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -126,12 +165,5 @@ public class DevicesFragment extends Fragment {
 
     super.onPause();
     Log.d("dev-log", "DevicesFragment.onPause: Fragment paused");
-  }
-
-  private void handleUpdateFromLivedata(ArrayList<UsbDeviceItem> usbDeviceItemList) {
-    for (int i = 0; i < usbDeviceItemList.size(); i++) {
-      devicesAdapter.appendData(usbDeviceItemList.get(i));
-      devicesAdapter.notifyItemInserted(i);
-    }
   }
 }

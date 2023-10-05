@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav"
-    app:startDestination="@id/terminalFragment">
+    app:startDestination="@id/devicesFragment">
 
     <fragment
-        android:id="@+id/terminalFragment"
-        android:name="com.johndeweydev.awps.views.terminalfragment.TerminalFragment"
-        android:label="fragment_terminal"
-        tools:layout="@layout/fragment_terminal" >
+        android:id="@+id/terminalViewPagerFragment"
+        android:name="com.johndeweydev.awps.views.terminalfragment.TerminalMainFragment"
+        android:label="fragment_terminal_view_pager"
+        tools:layout="@layout/fragment_terminal_main" >
         <action
             android:id="@+id/action_terminalFragment_to_devicesFragment"
             app:destination="@id/devicesFragment" />
@@ -25,6 +25,6 @@
         tools:layout="@layout/fragment_devices" >
         <action
             android:id="@+id/action_devicesFragment_to_terminalFragment"
-            app:destination="@id/terminalFragment" />
+            app:destination="@id/terminalViewPagerFragment" />
     </fragment>
 </navigation>

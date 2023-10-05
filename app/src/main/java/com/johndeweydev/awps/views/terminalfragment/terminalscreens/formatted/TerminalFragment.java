@@ -1,10 +1,8 @@
-package com.johndeweydev.awps.views.terminalfragment;
+package com.johndeweydev.awps.views.terminalfragment.terminalscreens.formatted;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -14,23 +12,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
 import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 public class TerminalFragment extends Fragment {
 
   private FragmentTerminalBinding binding;
   private UsbSerialViewModel usbSerialViewModel;
-  private TerminalArgs args = null;
-
-  public TerminalFragment() {
-
-  }
+  private TerminalArgs terminalArgs = null;
 
   @Nullable
   @Override
@@ -41,26 +34,29 @@ public class TerminalFragment extends Fragment {
   ) {
     usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
 
-    if (getArguments() == null) {
+    Bundle argsFromBundle = getArguments();
+
+    if (argsFromBundle == null) {
       Log.d("dev-log", "TerminalFragment.onCreateView: No arguments found");
     } else {
-      initializeTerminalFragmentArgs();
+      initializeTerminalFragmentArgsFromBundle(argsFromBundle);
     }
 
     binding = FragmentTerminalBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
 
-  private void initializeTerminalFragmentArgs() {
-    TerminalFragmentArgs terminalFragmentArgs = null;
+  private void initializeTerminalFragmentArgsFromBundle(Bundle argsFromBundle) {
 
     try {
-      terminalFragmentArgs = TerminalFragmentArgs.fromBundle(getArguments());
+      terminalArgs = new TerminalArgs(
+              argsFromBundle.getInt("deviceId"),
+              argsFromBundle.getInt("portNum"),
+              argsFromBundle.getInt("baudRate")
+      );
     } catch (IllegalArgumentException e) {
-      Log.d("dev-log", "onCreateView: " + e.getMessage());
-    }
-    if (terminalFragmentArgs != null) {
-      args = terminalFragmentArgs.getTerminalArgs();
+      Log.d("dev-log", "TerminalFragment.initializeTerminalFragmentArgsFromBundle: " +
+              e.getMessage());
     }
   }
 
@@ -68,22 +64,16 @@ public class TerminalFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    if (args != null) {
+    if (terminalArgs != null) {
       setupRecyclerViewAndObserveData();
     }
-    binding.topAppBarTerminal.setOnClickListener(v -> binding.drawerLayoutTerminal.open());
-    binding.navMenuViewTerminal.setNavigationItemSelectedListener(this::navItemSelected);
     binding.commandExecuteTerminal.setOnClickListener(v -> writeDataToDevice());
     binding.readSerialOutputTerminal.setOnClickListener(v -> readDataFromDevice());
   }
 
   private void setupRecyclerViewAndObserveData() {
-    Toast.makeText(requireActivity(), Integer.toString(args.getBaudRate()),
-            Toast.LENGTH_SHORT
-    ).show();
-
-    TerminalAdapter terminalAdapter = new TerminalAdapter();
-    binding.recyclerViewTerminal.setAdapter(terminalAdapter);
+    TerminalRVAdapter terminalRVAdapter = new TerminalRVAdapter();
+    binding.recyclerViewTerminal.setAdapter(terminalRVAdapter);
     LinearLayoutManager layout = new LinearLayoutManager(requireContext());
     layout.setStackFromEnd(true);
     binding.recyclerViewTerminal.setLayoutManager(layout);
@@ -95,21 +85,8 @@ public class TerminalFragment extends Fragment {
     );
   }
 
-  private boolean navItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.devicesMenuNavItem) {
-      binding.drawerLayoutTerminal.close();
-      Navigation.findNavController(binding.getRoot())
-              .navigate(R.id.action_terminalFragment_to_devicesFragment);
-      return true;
-    } else if (item.getItemId() == R.id.terminalMenuNavItem) {
-      binding.drawerLayoutTerminal.close();
-      return true;
-    }
-    return false;
-  }
-
   private void writeDataToDevice() {
-    if (args == null) {
+    if (terminalArgs == null) {
       Toast.makeText(requireActivity(), "Device not connected", Toast.LENGTH_SHORT).show();
     } else {
       int textLengthOfCommandInput = binding.commandExecuteTerminal.getText().length();
@@ -123,49 +100,11 @@ public class TerminalFragment extends Fragment {
   }
 
   private void readDataFromDevice() {
-    if (args == null) {
+    if (terminalArgs == null) {
       Toast.makeText(requireActivity(), "Device not connected", Toast.LENGTH_SHORT).show();
     } else {
       usbSerialViewModel.readDataFromDevice();
     }
-  }
-
-  @SuppressLint("UnspecifiedRegisterReceiverFlag")
-  @Override
-  public void onResume() {
-    super.onResume();
-    Log.d("dev-log", "TerminalFragment.onResume: Fragment resumed");
-
-    if (args != null) {
-      int deviceId = args.getDeviceId();
-      int portNum = args.getPortNum();
-      UsbSerialViewModel.setTheDriverOfDevice(deviceId, portNum);
-
-      if (UsbSerialViewModel.hasUsbDevicePermission()) {
-        int baudRate = args.getBaudRate();
-        UsbSerialViewModel.connectToDevice(portNum, baudRate);
-      } else {
-        Log.w("dev-log", "TerminalFragment.onResume: " +
-                "Permission for usb device, not found");
-      }
-    }
-
-  }
-
-  @Override
-  public void onPause() {
-
-    if (args != null) {
-      if (UsbSerialViewModel.hasUsbDevicePermission()) {
-        UsbSerialViewModel.disconnectFromDevice();
-        // UsbSerialViewModel.stopEventDrivenReadFromDevice();
-      } else {
-        Log.w("dev-log", "TerminalFragment.onPause: " +
-                "Permission for usb device, not found");
-      }
-    }
-    super.onPause();
-    Log.d("dev-log", "TerminalFragment.onPause: Fragment paused");
   }
 
   private void handleNewSerialOutputFromLiveData(UsbSerialOutputItem usbSerialOutputItem) {
