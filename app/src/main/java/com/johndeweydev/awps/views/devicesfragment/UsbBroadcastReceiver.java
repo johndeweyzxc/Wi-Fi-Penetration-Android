@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.views.devicesFragment;
+package com.johndeweydev.awps.views.devicesfragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/terminalFragment"
-        android:name="com.johndeweydev.awps.views.terminalFragment.TerminalFragment"
+        android:name="com.johndeweydev.awps.views.terminalfragment.TerminalFragment"
         android:label="fragment_terminal"
         tools:layout="@layout/fragment_terminal" >
         <action
@@ -15,12 +15,12 @@
             app:destination="@id/devicesFragment" />
         <argument
             android:name="terminalArgs"
-            app:argType="com.johndeweydev.awps.views.terminalFragment.TerminalArgs" />
+            app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />
     </fragment>
 
     <fragment
         android:id="@+id/devicesFragment"
-        android:name="com.johndeweydev.awps.views.devicesFragment.DevicesFragment"
+        android:name="com.johndeweydev.awps.views.devicesfragment.DevicesFragment"
         android:label="fragment_devices"
         tools:layout="@layout/fragment_devices" >
         <action

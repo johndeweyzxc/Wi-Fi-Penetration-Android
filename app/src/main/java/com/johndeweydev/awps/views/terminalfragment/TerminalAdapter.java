@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.views.terminalFragment;
+package com.johndeweydev.awps.views.terminalfragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
