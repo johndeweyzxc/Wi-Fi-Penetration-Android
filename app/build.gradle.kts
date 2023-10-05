@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.johndeweydev.himawhs"
+    namespace = "com.johndeweydev.awps"
     compileSdk = 34
 
     defaultConfig {
@@ -44,13 +44,13 @@ android {
         debug {
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
-            applicationIdSuffix = ".debug.himawhs"
+            applicationIdSuffix = ".debug.awps"
         }
 
         release {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
-            applicationIdSuffix = ".release.himawhs"
+            applicationIdSuffix = ".release.awps"
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
             )

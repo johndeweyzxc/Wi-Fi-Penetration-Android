@@ -15,6 +15,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HIMAWHS"
+rootProject.name = "Awps"
 include(":app")
  

@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.viewmodels;
+package com.johndeweydev.awps.viewmodels;
 
 import android.util.Log;
 
@@ -6,10 +6,10 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.himawhs.controllers.UsbSerialController;
-import com.johndeweydev.himawhs.usbserial.UsbSerialOutputItem;
-import com.johndeweydev.himawhs.repository.UsbSerialRepository;
-import com.johndeweydev.himawhs.usbserial.UsbDeviceItem;
+import com.johndeweydev.awps.controllers.UsbSerialController;
+import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
+import com.johndeweydev.awps.repository.UsbSerialRepository;
+import com.johndeweydev.awps.usbserial.UsbDeviceItem;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.views.devicesFragment;
+package com.johndeweydev.awps.views.devicesFragment;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -20,10 +20,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.johndeweydev.himawhs.databinding.FragmentDevicesBinding;
-import com.johndeweydev.himawhs.usbserial.UsbDeviceItem;
-import com.johndeweydev.himawhs.viewmodels.UsbSerialViewModel;
-import com.johndeweydev.himawhs.views.terminalFragment.TerminalArgs;
+import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
+import com.johndeweydev.awps.usbserial.UsbDeviceItem;
+import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.views.terminalFragment.TerminalArgs;
 
 import java.util.ArrayList;
 

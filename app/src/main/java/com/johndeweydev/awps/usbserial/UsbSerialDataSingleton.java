@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.usbserial;
+package com.johndeweydev.awps.usbserial;
 
 import java.util.ArrayList;
 

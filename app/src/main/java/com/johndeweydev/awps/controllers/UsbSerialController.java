@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.controllers;
+package com.johndeweydev.awps.controllers;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.util.Log;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.johndeweydev.himawhs.usbserial.UsbSerialMain;
+import com.johndeweydev.awps.usbserial.UsbSerialMain;
 
 public class UsbSerialController {
 

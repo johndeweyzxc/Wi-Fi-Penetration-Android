@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.usbserial;
+package com.johndeweydev.awps.usbserial;
 
 import com.hoho.android.usbserial.driver.FtdiSerialDriver;
 import com.hoho.android.usbserial.driver.ProbeTable;

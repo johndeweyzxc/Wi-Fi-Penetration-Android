@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.views.devicesFragment;
+package com.johndeweydev.awps.views.devicesFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.johndeweydev.himawhs.R;
-import com.johndeweydev.himawhs.usbserial.UsbDeviceItem;
-import com.johndeweydev.himawhs.views.terminalFragment.TerminalArgs;
+import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.usbserial.UsbDeviceItem;
+import com.johndeweydev.awps.views.terminalFragment.TerminalArgs;
 
 import java.util.ArrayList;
 

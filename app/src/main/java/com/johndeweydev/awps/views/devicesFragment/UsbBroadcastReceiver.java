@@ -1,12 +1,12 @@
-package com.johndeweydev.himawhs.views.devicesFragment;
+package com.johndeweydev.awps.views.devicesFragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.johndeweydev.himawhs.BuildConfig;
-import com.johndeweydev.himawhs.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.BuildConfig;
+import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 
 public class UsbBroadcastReceiver extends BroadcastReceiver {
 

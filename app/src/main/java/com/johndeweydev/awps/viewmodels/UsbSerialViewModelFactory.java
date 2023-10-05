@@ -1,10 +1,10 @@
-package com.johndeweydev.himawhs.viewmodels;
+package com.johndeweydev.awps.viewmodels;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.johndeweydev.himawhs.repository.UsbSerialRepository;
+import com.johndeweydev.awps.repository.UsbSerialRepository;
 
 public class UsbSerialViewModelFactory implements ViewModelProvider.Factory {
 

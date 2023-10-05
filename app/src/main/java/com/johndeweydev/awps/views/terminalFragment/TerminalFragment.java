@@ -1,10 +1,6 @@
-package com.johndeweydev.himawhs.views.terminalFragment;
+package com.johndeweydev.awps.views.terminalFragment;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,11 +17,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.johndeweydev.himawhs.BuildConfig;
-import com.johndeweydev.himawhs.R;
-import com.johndeweydev.himawhs.databinding.FragmentTerminalBinding;
-import com.johndeweydev.himawhs.usbserial.UsbSerialOutputItem;
-import com.johndeweydev.himawhs.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
+import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
+import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 
 public class TerminalFragment extends Fragment {
 

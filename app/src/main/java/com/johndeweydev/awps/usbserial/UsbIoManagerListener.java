@@ -1,9 +1,9 @@
-package com.johndeweydev.himawhs.usbserial;
+package com.johndeweydev.awps.usbserial;
 
 import android.util.Log;
 
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-import com.johndeweydev.himawhs.controllers.UsbSerialController;
+import com.johndeweydev.awps.controllers.UsbSerialController;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;

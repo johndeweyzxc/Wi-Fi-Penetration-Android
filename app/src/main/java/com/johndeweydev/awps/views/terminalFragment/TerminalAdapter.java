@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.views.terminalFragment;
+package com.johndeweydev.awps.views.terminalFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.johndeweydev.himawhs.R;
-import com.johndeweydev.himawhs.usbserial.UsbSerialOutputItem;
+import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
 
 import java.util.ArrayList;
 

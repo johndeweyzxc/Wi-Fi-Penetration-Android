@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.HIMAWHS" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.awps" parent="Theme.Material3.DayNight.NoActionBar">
         <!--   Color for the app bar and other primary UI elements. -->
         <item name="colorPrimary">@color/primaryDark</item>
         <!--   A darker variant of the primary color, used for

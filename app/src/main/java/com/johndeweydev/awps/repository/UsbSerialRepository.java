@@ -1,10 +1,10 @@
-package com.johndeweydev.himawhs.repository;
+package com.johndeweydev.awps.repository;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.johndeweydev.himawhs.usbserial.UsbDeviceItem;
-import com.johndeweydev.himawhs.usbserial.UsbSerialOutputItem;
-import com.johndeweydev.himawhs.usbserial.UsbSerialMain;
+import com.johndeweydev.awps.usbserial.UsbDeviceItem;
+import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
+import com.johndeweydev.awps.usbserial.UsbSerialMain;
 
 import java.util.ArrayList;
 

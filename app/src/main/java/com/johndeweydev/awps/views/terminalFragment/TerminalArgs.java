@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs.views.terminalFragment;
+package com.johndeweydev.awps.views.terminalFragment;
 
 import android.os.Parcel;
 import android.os.Parcelable;

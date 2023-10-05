@@ -1,4 +1,4 @@
-package com.johndeweydev.himawhs;
+package com.johndeweydev.awps;
 
 import android.content.Context;
 
