@@ -1,75 +1,74 @@
 package com.johndeweydev.awps.viewmodels;
 
-import android.util.Log;
-
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.controllers.UsbSerialController;
-import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
 import com.johndeweydev.awps.repository.UsbSerialRepository;
 import com.johndeweydev.awps.usbserial.UsbDeviceItem;
+import com.johndeweydev.awps.usbserial.UsbSerialMain;
+import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
 
 import java.util.ArrayList;
 
 public class UsbSerialViewModel extends ViewModel {
+
+  public interface UsbSerialViewModelCallback {
+    void onNewData(UsbSerialOutputItem usbSerialOutputItem);
+    void onErrorNewData();
+    void onErrorWriting();
+  }
 
   public UsbSerialRepository usbSerialRepository;
   public MutableLiveData<ArrayList<UsbDeviceItem>> devicesList = new MutableLiveData<>();
   public MutableLiveData<UsbSerialOutputItem> currentSerialMessage = new MutableLiveData<>();
 
   public UsbSerialViewModel(UsbSerialRepository aUsbSerialRepository) {
+    UsbSerialViewModelCallback usbSerialViewModelCallback = new UsbSerialViewModelCallback() {
+      @Override
+      public void onNewData(UsbSerialOutputItem usbSerialOutputItem) {
+
+        // TODO: Fix exception: Cannot invoke setValue on a background thread
+
+        currentSerialMessage.setValue(usbSerialOutputItem);
+      }
+      @Override
+      public void onErrorNewData() {
+        // TODO: Implement
+      }
+      @Override
+      public void onErrorWriting() {
+        // TODO: Implement
+      }
+    };
+
     usbSerialRepository = aUsbSerialRepository;
+    usbSerialRepository.setUsbSerialViewModelCallback(usbSerialViewModelCallback);
   }
 
-  public int checkAvailableUsbDevices(FragmentActivity fragmentActivity, String serviceName) {
-    ArrayList<UsbDeviceItem> devices = usbSerialRepository.discoverDevices(
-            fragmentActivity, serviceName
-    );
+  public int checkAvailableUsbDevices() {
+    ArrayList<UsbDeviceItem> devices = usbSerialRepository.discoverDevices();
     devicesList.setValue(devices);
     return devices.size();
   }
 
-  public static void requestUsbDeviceAccessPermission(
-          FragmentActivity fragmentActivity, String intentAction
-  ) {
-    UsbSerialController.requestUsbDevicePermission(fragmentActivity, intentAction);
+  public UsbSerialMain.ReturnStatus connectToDevice(
+          int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
+    return usbSerialRepository.connect(baudRate, dataBits, stopBits, parity, deviceId, portNum);
   }
 
-  public static boolean hasUsbDevicePermission() {
-    return UsbSerialController.usbDevicePermissionGranted();
+  public void disconnectFromDevice() {
+    usbSerialRepository.disconnect();
   }
 
-  public static void connectToDevice(int portNum, int baudRate) {
-    UsbSerialController.connect(portNum, baudRate);
+  public void startEventDrivenReadFromDevice() {
+    usbSerialRepository.startReading();
   }
 
-  public static void disconnectFromDevice() {
-    UsbSerialController.disconnect();
+  public void stopEventDrivenReadFromDevice() {
+    usbSerialRepository.stopReading();
   }
-
-  public static void setTheDriverOfDevice(int deviceId, int portNum) {
-    UsbSerialController.setDriverOfDevice(deviceId, portNum);
-  }
-
-  public static void startEventDrivenReadFromDevice() {
-    UsbSerialController.startEventRead();
-  }
-
-  public static void stopEventDrivenReadFromDevice() { UsbSerialController.stopEventRead(); }
 
   public void writeDataToDevice(String data) {
-    usbSerialRepository.sendData(data);
-  }
-
-  public void readDataFromDevice() {
-    ArrayList<UsbSerialOutputItem> list = usbSerialRepository.readData();
-
-    for (int i = 0; i < list.size(); i++) {
-      UsbSerialOutputItem item = list.get(i);
-      Log.d("dev-log", "Time: " + item.getTimeInString() +
-              "Message: " + item.getSerialOutputInString());
-    }
+    usbSerialRepository.writeData(data);
   }
 }

@@ -18,6 +18,11 @@ import java.util.ArrayList;
 public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.DevicesAdapterViewHolder> {
 
   private final ArrayList<UsbDeviceItem> deviceModelList = new ArrayList<>();
+  private final RVAdapterCallback rvAdapterCallback;
+
+  public interface RVAdapterCallback {
+    void onDeviceClick(TerminalArgs terminalArgs);
+  }
 
   public static class DevicesAdapterViewHolder extends RecyclerView.ViewHolder {
     public TextView textViewDeviceName;
@@ -32,6 +37,10 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
       deviceListItemLayout = itemView.findViewById(R.id.deviceListItemLayout);
     }
   }
+
+   public DevicesRVAdapter(RVAdapterCallback rvAdapterCallback) {
+    this.rvAdapterCallback = rvAdapterCallback;
+   }
 
   @NonNull
   @Override
@@ -55,9 +64,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
               currentItem.devicePort,
               19200
       );
-
-      DevicesFragment.setTerminalArgs(terminalArgs);
-      DevicesFragment.requestUsbPermission();
+      rvAdapterCallback.onDeviceClick(terminalArgs);
     });
   }
 

@@ -10,9 +10,6 @@
         android:name="com.johndeweydev.awps.views.terminalfragment.TerminalMainFragment"
         android:label="fragment_terminal_view_pager"
         tools:layout="@layout/fragment_terminal_main" >
-        <action
-            android:id="@+id/action_terminalFragment_to_devicesFragment"
-            app:destination="@id/devicesFragment" />
         <argument
             android:name="terminalArgs"
             app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />

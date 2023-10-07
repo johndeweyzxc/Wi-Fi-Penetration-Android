@@ -1,27 +1,27 @@
 package com.johndeweydev.awps.views.terminalfragment.terminalscreens.raw;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.johndeweydev.awps.databinding.FragmentTerminalRawBinding;
+import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
-import com.johndeweydev.awps.views.terminalfragment.terminalscreens.formatted.TerminalRVAdapter;
 
 public class TerminalRawFragment extends Fragment {
 
   private FragmentTerminalRawBinding binding;
   private UsbSerialViewModel usbSerialViewModel;
+  private TerminalRawRVAdapter terminalRawRVAdapter;
   private TerminalArgs terminalArgs;
 
   @Nullable
@@ -32,68 +32,63 @@ public class TerminalRawFragment extends Fragment {
           @Nullable Bundle savedInstanceState
   ) {
     usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
+    binding = FragmentTerminalRawBinding.inflate(inflater, container, false);
 
     Bundle argsFromBundle = getArguments();
 
     if (argsFromBundle == null) {
-      Log.d("dev-log", "TerminalRawFragment.onCreateView: No arguments found");
+      throw new NullPointerException("getArguments is null");
     } else {
       initializeTerminalFragmentArgsFromBundle(argsFromBundle);
     }
 
-    binding = FragmentTerminalRawBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
 
   private void initializeTerminalFragmentArgsFromBundle(Bundle argsFromBundle) {
-    try {
-      terminalArgs = new TerminalArgs(
-              argsFromBundle.getInt("deviceId"),
-              argsFromBundle.getInt("portNum"),
-              argsFromBundle.getInt("baudRate")
-      );
-    } catch (IllegalArgumentException e) {
-      Log.d("dev-log", "TerminalRawFragment.initializeTerminalFragmentArgsFromBundle: " +
-              e.getMessage());
-    }
+    terminalArgs = new TerminalArgs(
+            argsFromBundle.getInt("deviceId"),
+            argsFromBundle.getInt("portNum"),
+            argsFromBundle.getInt("baudRate")
+    );
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    if (terminalArgs != null) {
-      setupRecyclerViewAndObserveData();
+    if (terminalArgs == null) {
+      throw new NullPointerException("terminalArgs is null");
     }
 
-    binding.commandExecuteTerminalRaw.setOnClickListener(v -> writeDataToDevice());
-    binding.readSerialOutputTerminalRaw.setOnClickListener(v -> readDataFromDevice());
+    setupRecyclerViewAndObserveData();
+
+    binding.commandExecuteTerminalRaw.setOnClickListener(v -> {
+      String data = binding.commandInputTerminalRaw.getText().toString();
+      writeDataToDevice(data);
+    });
   }
 
   private void setupRecyclerViewAndObserveData() {
-    TerminalRVAdapter terminalRVAdapter = new TerminalRVAdapter();
-    binding.recyclerViewTerminalRaw.setAdapter(terminalRVAdapter);
+    terminalRawRVAdapter = new TerminalRawRVAdapter();
+    binding.recyclerViewTerminalRaw.setAdapter(terminalRawRVAdapter);
     LinearLayoutManager layout = new LinearLayoutManager(requireContext());
     layout.setStackFromEnd(true);
     binding.recyclerViewTerminalRaw.setLayoutManager(layout);
 
-    // TODO: Setup observer for raw data
+    final Observer<UsbSerialOutputItem> serialOutputItemObserver;
+    serialOutputItemObserver = this::handleNewSerialOutputFromLiveData;
+    usbSerialViewModel.currentSerialMessage.observe(
+            getViewLifecycleOwner(), serialOutputItemObserver);
   }
 
-  private void writeDataToDevice() {
-    if (terminalArgs == null) {
-      Toast.makeText(requireActivity(), "Device not connected", Toast.LENGTH_SHORT).show();
-    } else {
-      int textLengthOfCommandInput = binding.commandExecuteTerminalRaw.getText().length();
-      if (textLengthOfCommandInput != 0) {
-        usbSerialViewModel.writeDataToDevice(binding.commandInputTerminalRaw.getText().toString());
-      } else {
-        Toast.makeText(requireActivity(), "Empty command", Toast.LENGTH_SHORT).show();
-      }
+  private void handleNewSerialOutputFromLiveData(UsbSerialOutputItem usbSerialOutputItem) {
+    terminalRawRVAdapter.appendData(usbSerialOutputItem);
+  }
+
+  private void writeDataToDevice(String data) {
+    if (data.length() > 1) {
+      usbSerialViewModel.writeDataToDevice(data);
     }
-  }
-
-  private void readDataFromDevice() {
-    // TODO: Read raw data
   }
 }

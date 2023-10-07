@@ -11,10 +11,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentTerminalMainBinding;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
@@ -26,84 +29,69 @@ import java.util.ArrayList;
 public class TerminalMainFragment extends Fragment {
 
   private FragmentTerminalMainBinding binding;
+  private UsbSerialViewModel usbSerialViewModel;
   private TerminalArgs terminalArgs = null;
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    if (getArguments() == null) {
-      Log.d("dev-log", "TerminalViewPagerFragment.onCreateView: No arguments found");
-    } else {
-      initializeTerminalViewPagerFragmentArgs();
-    }
-
+    usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
     binding = FragmentTerminalMainBinding.inflate(inflater, container, false);
+
+    if (getArguments() == null) {
+      throw new NullPointerException("getArguments is null");
+    } else {
+      initializeTerminalMainFragmentArgs();
+    }
     return binding.getRoot();
   }
 
-  private void initializeTerminalViewPagerFragmentArgs() {
-    TerminalMainFragmentArgs terminalViewPagerFragmentArgs = null;
-
-    try {
-      terminalViewPagerFragmentArgs = TerminalMainFragmentArgs.fromBundle(getArguments());
-    } catch (IllegalArgumentException e) {
-      Log.d("dev-log", "TerminalViewPagerFragment" +
-              ".initializeTerminalViewPagerFragmentArgs: " + e.getMessage());
-    }
-    if (terminalViewPagerFragmentArgs != null) {
-      terminalArgs = terminalViewPagerFragmentArgs.getTerminalArgs();
-    }
+  private void initializeTerminalMainFragmentArgs() {
+    TerminalMainFragmentArgs terminalMainFragmentArgs;
+    terminalMainFragmentArgs = TerminalMainFragmentArgs.fromBundle(getArguments());
+    terminalArgs = terminalMainFragmentArgs.getTerminalArgs();
   }
-
-  ViewPager2.OnPageChangeCallback pageChangeCallback = new ViewPager2.OnPageChangeCallback() {
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-      super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-      super.onPageSelected(position);
-      TabLayout tabLayout = binding.tabLayoutTerminalViewPager;
-      tabLayout.selectTab(tabLayout.getTabAt(position));
-    }
-  };
-
-  TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-      binding.viewPagerTerminalViewPager.setCurrentItem(tab.getPosition());
-      TabLayout tabLayout = binding.tabLayoutTerminalViewPager;
-      tabLayout.selectTab(tabLayout.getTabAt(tab.getPosition()));
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {}
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {}
-
-  };
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    if (terminalArgs != null) {
-      ArrayList<Fragment> fragmentList = new ArrayList<>();
-      fragmentList.add(new TerminalFragment());
-      fragmentList.add(new TerminalRawFragment());
-
-      FragmentStateAdapter adapter = new TerminalMainVPAdapter(
-              terminalArgs,
-              fragmentList,
-              requireActivity().getSupportFragmentManager(),
-              getLifecycle()
-      );
-
-      binding.viewPagerTerminalViewPager.setAdapter(adapter);
-      binding.tabLayoutTerminalViewPager.addOnTabSelectedListener(tabSelectedListener);
-      binding.viewPagerTerminalViewPager.registerOnPageChangeCallback(pageChangeCallback);
-
-    } else {
-      Log.d("dev-log", "TerminalViewPagerFragment.onViewCreate: No arguments found");
+    if (terminalArgs == null) {
+      throw new NullPointerException("terminalArgs is null");
     }
+
+    Bundle bundle = new Bundle();
+    bundle.putInt("deviceId", terminalArgs.getDeviceId());
+    bundle.putInt("portNum", terminalArgs.getPortNum());
+    bundle.putInt("baudRate", terminalArgs.getBaudRate());
+
+    ArrayList<Fragment> fragmentList = new ArrayList<>();
+
+    TerminalFragment terminalFragment = new TerminalFragment();
+    terminalFragment.setArguments(bundle);
+    fragmentList.add(terminalFragment);
+
+    TerminalRawFragment terminalRawFragment = new TerminalRawFragment();
+    terminalRawFragment.setArguments(bundle);
+    fragmentList.add(terminalRawFragment);
+
+    FragmentStateAdapter adapter = new TerminalMainVPAdapter(terminalArgs, fragmentList,
+            requireActivity().getSupportFragmentManager(), getLifecycle()
+    );
+
+    binding.viewPagerTerminalViewPager.setAdapter(adapter);
+
+    TabLayout tabLayout = binding.tabLayoutTerminalViewPager;
+    ViewPager2 viewPager2 = binding.viewPagerTerminalViewPager;
+    TabLayoutMediator.TabConfigurationStrategy tabConfigurationStrategy;
+    tabConfigurationStrategy = (tab, position) -> {
+      if (position == 0) {
+        tab.setText("Formatted");
+      } else if (position == 1) {
+        tab.setText("Raw");
+      }
+    };
+    new TabLayoutMediator(tabLayout, viewPager2, tabConfigurationStrategy).attach();
 
     binding.appBarTerminalViewPager.setNavigationOnClickListener(v ->
             binding.drawerLayoutTeminalViewPager.open()
@@ -115,38 +103,32 @@ public class TerminalMainFragment extends Fragment {
   @Override
   public void onResume() {
     super.onResume();
-    Log.d("dev-log", "TerminalViewPagerFragment.onResume: Fragment resumed");
+    Log.d("dev-log", "TerminalMainFragment.onResume: Fragment resumed");
+    connectToDevice();
+  }
 
-    if (terminalArgs != null) {
-      int deviceId = terminalArgs.getDeviceId();
-      int portNum = terminalArgs.getPortNum();
-      UsbSerialViewModel.setTheDriverOfDevice(deviceId, portNum);
-
-      if (UsbSerialViewModel.hasUsbDevicePermission()) {
-        int baudRate = terminalArgs.getBaudRate();
-        UsbSerialViewModel.connectToDevice(portNum, baudRate);
-        UsbSerialViewModel.startEventDrivenReadFromDevice();
-      } else {
-        Log.w("dev-log", "TerminalViewPagerFragment.onResume: " +
-                "Permission for usb device, not found");
-      }
+  private void connectToDevice() {
+    if (terminalArgs == null) {
+      throw new NullPointerException("terminalArgs is null");
     }
+
+    int deviceId = terminalArgs.getDeviceId();
+    int portNum = terminalArgs.getPortNum();
+    usbSerialViewModel.connectToDevice(
+            19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum);
+    usbSerialViewModel.startEventDrivenReadFromDevice();
   }
 
   @Override
   public void onPause() {
-
-    if (terminalArgs != null) {
-      if (UsbSerialViewModel.hasUsbDevicePermission()) {
-        UsbSerialViewModel.disconnectFromDevice();
-        UsbSerialViewModel.stopEventDrivenReadFromDevice();
-      } else {
-        Log.w("dev-log", "TerminalViewPagerFragment.onPause: " +
-                "Permission for usb device, not found");
-      }
-    }
+    disconnectFromDevice();
     super.onPause();
-    Log.d("dev-log", "TerminalViewPagerFragment.onPause: Fragment paused");
+    Log.d("dev-log", "TerminalMainFragment.onPause: Fragment paused");
+  }
+
+  private void disconnectFromDevice() {
+    usbSerialViewModel.stopEventDrivenReadFromDevice();
+    usbSerialViewModel.disconnectFromDevice();
   }
 
   private boolean navItemSelected(MenuItem item) {

@@ -51,5 +51,7 @@ public class TerminalRVAdapter extends RecyclerView
 
   public void appendData(UsbSerialOutputItem usbSerialOutputItem) {
     usbSerialOutputItemList.add(usbSerialOutputItem);
+    int pos = usbSerialOutputItemList.size() - 1;
+    this.notifyItemInserted(pos);
   }
 }
