@@ -22,17 +22,18 @@ public class UsbDeviceItem {
     if (usbSerialDriver == null) {
       return "<No driver>";
     } else {
-      return String.format(Locale.US, "Serial device: %s", usbSerialDriver.getClass()
-              .getSimpleName().replace("SerialDriver", "").toUpperCase()
-              + " - " + devicePort);
+      return usbSerialDriver
+              .getClass()
+              .getSimpleName()
+              .replace("SerialDriver", "");
     }
   }
 
   public String getDeviceProductId() {
-    return String.format(Locale.US, "Product Id: %04X", device.getProductId());
+    return String.format(Locale.US, "%04X", device.getProductId());
   }
 
   public String getDeviceVendorId() {
-    return String.format(Locale.US, "Vendor Id: %04X", device.getVendorId());
+    return String.format(Locale.US, "%04X", device.getVendorId());
   }
 }

@@ -1,34 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp"
-    android:id="@+id/deviceListItemLayout">
+    android:layout_margin="10dp"
+    android:id="@+id/deviceListItemCardLayout">
 
-    <TextView
-        android:id="@+id/textViewDeviceName"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Device name: "/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="10dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_usb_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewDeviceNameHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Device Name"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/textViewDeviceName"
+            app:layout_constraintStart_toStartOf="@+id/textViewDeviceName" />
+
+        <TextView
+            android:id="@+id/textViewDeviceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/roboto"
+            android:text="CP210x"
+            app:layout_constraintBottom_toTopOf="@+id/textViewManufacturerHeader"
+            app:layout_constraintStart_toStartOf="@+id/textViewManufacturerHeader" />
+
+        <TextView
+            android:id="@+id/textViewManufacturerHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Manufacturer"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/textViewManufacturer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/textViewManufacturerHeader"
+            app:layout_constraintTop_toBottomOf="@+id/textViewManufacturerHeader"
+            android:text="Silicon Labs"
+            android:fontFamily="@font/roboto"/>
+
+        <TextView
+            android:id="@+id/textViewVendorIdHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Vendor ID"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewDeviceNameHeader"
+            app:layout_constraintTop_toTopOf="@+id/textViewDeviceNameHeader" />
+
         <TextView
             android:id="@+id/textViewDeviceVendorId"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vendor ID: "/>
+            android:text="10C4"
+            android:fontFamily="@font/roboto"
+            app:layout_constraintStart_toStartOf="@+id/textViewVendorIdHeader"
+            app:layout_constraintTop_toBottomOf="@+id/textViewVendorIdHeader" />
+
+        <TextView
+            android:id="@+id/textViewProductId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Product ID"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewManufacturerHeader"
+            app:layout_constraintTop_toTopOf="@+id/textViewManufacturerHeader" />
+
         <TextView
             android:id="@+id/textViewDeviceProductId"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Product ID: "/>
-    </LinearLayout>
+            android:fontFamily="@font/roboto"
+            android:text="EA60"
+            app:layout_constraintStart_toStartOf="@+id/textViewProductId"
+            app:layout_constraintTop_toBottomOf="@+id/textViewProductId" />
 
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

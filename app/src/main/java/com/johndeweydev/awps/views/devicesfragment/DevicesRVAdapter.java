@@ -3,12 +3,12 @@ package com.johndeweydev.awps.views.devicesfragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.usbserial.UsbDeviceItem;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
@@ -28,13 +28,13 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     public TextView textViewDeviceName;
     public TextView textViewDeviceVendorId;
     public TextView textViewDeviceProductId;
-    public LinearLayout deviceListItemLayout;
+    public MaterialCardView deviceListItemCardLayout;
     public DevicesAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
       textViewDeviceName = itemView.findViewById(R.id.textViewDeviceName);
       textViewDeviceVendorId = itemView.findViewById(R.id.textViewDeviceVendorId);
       textViewDeviceProductId = itemView.findViewById(R.id.textViewDeviceProductId);
-      deviceListItemLayout = itemView.findViewById(R.id.deviceListItemLayout);
+      deviceListItemCardLayout = itemView.findViewById(R.id.deviceListItemCardLayout);
     }
   }
 
@@ -58,7 +58,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     holder.textViewDeviceProductId.setText(currentItem.getDeviceProductId());
     holder.textViewDeviceVendorId.setText(currentItem.getDeviceVendorId());
 
-    holder.deviceListItemLayout.setOnClickListener(v -> {
+    holder.deviceListItemCardLayout.setOnClickListener(v -> {
       TerminalArgs terminalArgs = new TerminalArgs(
               currentItem.device.getDeviceId(),
               currentItem.devicePort,
