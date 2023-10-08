@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -97,6 +99,23 @@ public class TerminalMainFragment extends Fragment {
             binding.drawerLayoutTeminalViewPager.open()
     );
     binding.navMenuViewTerminalViewPager.setNavigationItemSelectedListener(this::navItemSelected);
+    setupErrorWriteListener();
+    setupErrorOnNewDataListener();
+  }
+
+  private void setupErrorWriteListener() {
+    final Observer<String> writeErrorListener = s -> {
+      Toast.makeText(requireActivity(), "Error writing " + s, Toast.LENGTH_SHORT).show();
+    };
+    usbSerialViewModel.currentErrorInput.observe(getViewLifecycleOwner(), writeErrorListener);
+  }
+
+  private void setupErrorOnNewDataListener() {
+    final Observer<String> onNewDataErrorListener = s -> {
+      Toast.makeText(requireActivity(), "Error: " + s, Toast.LENGTH_SHORT).show();
+    };
+    usbSerialViewModel.currentErrorOnNewData.observe(
+            getViewLifecycleOwner(), onNewDataErrorListener);
   }
 
   @SuppressLint("UnspecifiedRegisterReceiverFlag")

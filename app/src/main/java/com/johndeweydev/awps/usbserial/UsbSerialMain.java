@@ -15,10 +15,7 @@ import com.johndeweydev.awps.repository.UsbSerialRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class UsbSerialMain {
 
@@ -102,11 +99,11 @@ public class UsbSerialMain {
         usbSerialPort.setParameters(baudRate, dataBits, stopBits, parity);
         return ReturnStatus.SUCCESSFULLY_CONNECTED;
       } catch (UnsupportedOperationException e) {
-        Log.w("dev-log", "UsbSerialMain2.connectToDevice: Unsupported port parameters");
+        Log.w("dev-log", "UsbSerialMain.connectToDevice: Unsupported port parameters");
         return ReturnStatus.UNSUPPORTED_PORT_PARAMETERS;
       }
     } catch (Exception e) {
-      Log.w("dev-log", "UsbSerialMain2.connectToDevice: Connection failed, "
+      Log.w("dev-log", "UsbSerialMain.connectToDevice: Connection failed, "
               + e.getMessage());
       disconnect();
       return ReturnStatus.FAILED_OPENING_DEVICE;
@@ -130,7 +127,7 @@ public class UsbSerialMain {
     }
 
     if(usbDevice == null) {
-      Log.w("dev-log", "UsbSerialMain2.setDriverOfDevice: Device not found");
+      Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Device not found");
       return ReturnStatus.DEVICE_NOT_FOUND;
     }
 
@@ -140,12 +137,12 @@ public class UsbSerialMain {
     }
 
     if(usbSerialDriver == null) {
-      Log.w("dev-log", "UsbSerialMain2.setDriverOfDevice: Driver not found for device");
+      Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Driver not found for device");
       return ReturnStatus.DRIVER_NOT_FOUND;
     }
 
     if(usbSerialDriver.getPorts().size() < portNum) {
-      Log.w("dev-log", "UsbSerialMain2.setDriverOfDevice: Port not found for driver");
+      Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Port not found for driver");
       return ReturnStatus.PORT_NOT_FOUND;
     }
     return ReturnStatus.DRIVER_SET;
@@ -176,23 +173,15 @@ public class UsbSerialMain {
     public void onNewData(byte[] data) {
       if (data.length > 0) {
         String strData = new String(data, StandardCharsets.US_ASCII);
-        UsbSerialOutputItem usbSerialOutputItem = new UsbSerialOutputItem(
-                createStringDate(), strData);
-        usbSerialRepositoryCallback.onNewData(usbSerialOutputItem);
+        usbSerialRepositoryCallback.onNewData(strData);
       }
-    }
-
-    private String createStringDate() {
-      Calendar calendar = Calendar.getInstance();
-      SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-      return dateFormat.format(calendar.getTime());
     }
 
     @Override
     public void onRunError(Exception e) {
       Log.e("dev-log", "UsbIoManagerListener.onRunError: An error has occurred "
               + e.getMessage());
-      usbSerialRepositoryCallback.onErrorNewData();
+      usbSerialRepositoryCallback.onErrorNewData(e.getMessage());
     }
   };
 
@@ -249,7 +238,7 @@ public class UsbSerialMain {
     } catch (Exception e) {
       Log.e("dev-log", "UsbSerialMain.writeData: An error has occurred "
               + e.getMessage());
-      usbSerialRepositoryCallback.onErrorWriting();
+      usbSerialRepositoryCallback.onErrorWriting(str);
     }
 
   }

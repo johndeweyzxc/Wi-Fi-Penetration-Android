@@ -78,13 +78,14 @@ public class TerminalFragment extends Fragment {
 
     final Observer<UsbSerialOutputItem> serialOutputObserver;
     serialOutputObserver = this::handleNewSerialOutputFromLiveData;
-    usbSerialViewModel.currentSerialMessage.observe(
+    usbSerialViewModel.currentMessageFormatted.observe(
             getViewLifecycleOwner(), serialOutputObserver
     );
   }
 
   private void handleNewSerialOutputFromLiveData(UsbSerialOutputItem usbSerialOutputItem) {
     terminalRVAdapter.appendData(usbSerialOutputItem);
+    binding.recyclerViewTerminal.scrollToPosition(terminalRVAdapter.getItemCount() - 1);
   }
 
   private void writeDataToDevice(String data) {

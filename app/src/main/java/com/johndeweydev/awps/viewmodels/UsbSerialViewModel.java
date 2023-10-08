@@ -13,31 +13,36 @@ import java.util.ArrayList;
 public class UsbSerialViewModel extends ViewModel {
 
   public interface UsbSerialViewModelCallback {
-    void onNewData(UsbSerialOutputItem usbSerialOutputItem);
-    void onErrorNewData();
-    void onErrorWriting();
+    void onNewDataRaw(UsbSerialOutputItem usbSerialOutputItem);
+    void onNewDataFormatted(UsbSerialOutputItem usbSerialOutputItem);
+    void onErrorNewData(String errorMessageOnNewData);
+    void onErrorWriting(String dataToWrite);
   }
 
   public UsbSerialRepository usbSerialRepository;
   public MutableLiveData<ArrayList<UsbDeviceItem>> devicesList = new MutableLiveData<>();
-  public MutableLiveData<UsbSerialOutputItem> currentSerialMessage = new MutableLiveData<>();
+  public MutableLiveData<UsbSerialOutputItem> currentMessageFormatted = new MutableLiveData<>();
+  public MutableLiveData<UsbSerialOutputItem> currentMessageRaw = new MutableLiveData<>();
+  public MutableLiveData<String> currentErrorInput = new MutableLiveData<>();
+  public MutableLiveData<String> currentErrorOnNewData = new MutableLiveData<>();
 
   public UsbSerialViewModel(UsbSerialRepository aUsbSerialRepository) {
     UsbSerialViewModelCallback usbSerialViewModelCallback = new UsbSerialViewModelCallback() {
       @Override
-      public void onNewData(UsbSerialOutputItem usbSerialOutputItem) {
-
-        // TODO: Fix exception: Cannot invoke setValue on a background thread
-
-        currentSerialMessage.setValue(usbSerialOutputItem);
+      public void onNewDataRaw(UsbSerialOutputItem usbSerialOutputItem) {
+        currentMessageRaw.postValue(usbSerialOutputItem);
       }
       @Override
-      public void onErrorNewData() {
-        // TODO: Implement
+      public void onNewDataFormatted(UsbSerialOutputItem usbSerialOutputItem) {
+        currentMessageFormatted.postValue(usbSerialOutputItem);
       }
       @Override
-      public void onErrorWriting() {
-        // TODO: Implement
+      public void onErrorNewData(String errorMessageOnNewData) {
+        currentErrorOnNewData.postValue(errorMessageOnNewData);
+      }
+      @Override
+      public void onErrorWriting(String dataToWrite) {
+        currentErrorInput.postValue(dataToWrite);
       }
     };
 

@@ -1,5 +1,6 @@
 package com.johndeweydev.awps.usbserial;
 
+import android.content.Context;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
@@ -11,7 +12,7 @@ public class UsbSerialMainSingleton {
 
   public UsbSerialMainSingleton() {
     usbSerialMain = new UsbSerialMain();
-    Log.d("dev-log", "UsbSerialMainSingleton: Created new instance of UsbSerialMain2");
+    Log.d("dev-log", "UsbSerialMainSingleton: Created new instance of UsbSerialMain");
   }
 
   public static synchronized UsbSerialMainSingleton getInstance() {
