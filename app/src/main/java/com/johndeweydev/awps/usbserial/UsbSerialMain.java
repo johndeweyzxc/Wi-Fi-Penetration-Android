@@ -1,5 +1,16 @@
 package com.johndeweydev.awps.usbserial;
 
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.ALREADY_CONNECTED;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.DEVICE_NOT_FOUND;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.DRIVER_NOT_FOUND;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.DRIVER_SET;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.FAILED_OPENING_DEVICE;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.HAS_USB_PERMISSION;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.NO_USB_PERMISSION;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.PORT_NOT_FOUND;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.SUCCESSFULLY_CONNECTED;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.UNSUPPORTED_PORT_PARAMETERS;
+
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -11,7 +22,7 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-import com.johndeweydev.awps.repository.UsbSerialRepository;
+import com.johndeweydev.awps.repository.UsbSerialRepositoryCallback;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,20 +35,7 @@ public class UsbSerialMain {
   private UsbSerialDriver usbSerialDriver;
   private UsbSerialPort usbSerialPort;
   private SerialInputOutputManager serialInputOutputManager;
-  private UsbSerialRepository.UsbSerialRepositoryCallback usbSerialRepositoryCallback;
-
-  public enum ReturnStatus {
-    ALREADY_CONNECTED,
-    DEVICE_NOT_FOUND,
-    DRIVER_NOT_FOUND,
-    PORT_NOT_FOUND,
-    DRIVER_SET,
-    HAS_USB_PERMISSION,
-    NO_USB_PERMISSION,
-    SUCCESSFULLY_CONNECTED,
-    FAILED_OPENING_DEVICE,
-    UNSUPPORTED_PORT_PARAMETERS
-  }
+  private UsbSerialRepositoryCallback usbSerialRepositoryCallback;
 
   private static class UsbSerialControlData {
     private static boolean isConnected = false;
@@ -45,7 +43,7 @@ public class UsbSerialMain {
   }
 
   public void setUsbSerialRepositoryCallback(
-          UsbSerialRepository.UsbSerialRepositoryCallback usbSerialRepositoryCallback
+          UsbSerialRepositoryCallback usbSerialRepositoryCallback
   ) {
     this.usbSerialRepositoryCallback = usbSerialRepositoryCallback;
   }
@@ -54,27 +52,27 @@ public class UsbSerialMain {
     return usbSerialDriver;
   }
 
-  public ReturnStatus connect(
+  public UsbSerialStatus connect(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
     if (!UsbSerialControlData.isConnected) {
-      ReturnStatus driverStatus = setDriverAndDevice(deviceId, portNum);
+      UsbSerialStatus driverStatus = setDriverAndDevice(deviceId, portNum);
 
-      if (driverStatus.equals(ReturnStatus.DRIVER_SET)) {
-        ReturnStatus permissionStatus = hasUsbDevicePermissionGranted();
+      if (driverStatus.equals(DRIVER_SET)) {
+        UsbSerialStatus permissionStatus = hasUsbDevicePermissionGranted();
 
-        if (permissionStatus.equals(ReturnStatus.HAS_USB_PERMISSION)) {
-          ReturnStatus connectionStatus;
+        if (permissionStatus.equals(HAS_USB_PERMISSION)) {
+          UsbSerialStatus connectionStatus;
           connectionStatus = connectToDevice(baudRate, dataBits, stopBits, parity, portNum);
 
-          if (connectionStatus.equals(ReturnStatus.SUCCESSFULLY_CONNECTED)) {
+          if (connectionStatus.equals(SUCCESSFULLY_CONNECTED)) {
             UsbSerialControlData.isConnected = true;
             Log.d("dev-log", "UsbSerialMain.connect: Connected to the device");
-            return ReturnStatus.SUCCESSFULLY_CONNECTED;
+            return SUCCESSFULLY_CONNECTED;
           } else {
             return connectionStatus;
           }
-        } else if (permissionStatus.equals(ReturnStatus.NO_USB_PERMISSION)) {
-          return ReturnStatus.NO_USB_PERMISSION;
+        } else if (permissionStatus.equals(NO_USB_PERMISSION)) {
+          return NO_USB_PERMISSION;
         }
       } else {
         return driverStatus;
@@ -82,10 +80,10 @@ public class UsbSerialMain {
     }
 
     Log.d("dev-log", "UsbSerialMain.connect: Connected to the device");
-    return ReturnStatus.ALREADY_CONNECTED;
+    return ALREADY_CONNECTED;
   }
 
-  private ReturnStatus connectToDevice(
+  private UsbSerialStatus connectToDevice(
           int baudRate, int dataBits, int stopBits, int parity, int portNum
   ) {
     UsbManager usbManager = UsbSerialMainSingleton.getUsbManager();
@@ -97,28 +95,28 @@ public class UsbSerialMain {
       usbSerialPort.open(usbDeviceConnection);
       try {
         usbSerialPort.setParameters(baudRate, dataBits, stopBits, parity);
-        return ReturnStatus.SUCCESSFULLY_CONNECTED;
+        return SUCCESSFULLY_CONNECTED;
       } catch (UnsupportedOperationException e) {
         Log.w("dev-log", "UsbSerialMain.connectToDevice: Unsupported port parameters");
-        return ReturnStatus.UNSUPPORTED_PORT_PARAMETERS;
+        return UNSUPPORTED_PORT_PARAMETERS;
       }
     } catch (Exception e) {
       Log.w("dev-log", "UsbSerialMain.connectToDevice: Connection failed, "
               + e.getMessage());
       disconnect();
-      return ReturnStatus.FAILED_OPENING_DEVICE;
+      return FAILED_OPENING_DEVICE;
     }
   }
 
-  private ReturnStatus hasUsbDevicePermissionGranted() {
+  private UsbSerialStatus hasUsbDevicePermissionGranted() {
     UsbManager usbManager = UsbSerialMainSingleton.getUsbManager();
     if (usbManager.hasPermission(usbDevice)) {
-      return ReturnStatus.HAS_USB_PERMISSION;
+      return HAS_USB_PERMISSION;
     }
-    return ReturnStatus.NO_USB_PERMISSION;
+    return NO_USB_PERMISSION;
   }
 
-  private ReturnStatus setDriverAndDevice(int deviceId, int portNum) {
+  private UsbSerialStatus setDriverAndDevice(int deviceId, int portNum) {
     UsbManager usbManager = UsbSerialMainSingleton.getUsbManager();
     for (UsbDevice device: usbManager.getDeviceList().values()) {
       if (device.getDeviceId() == deviceId) {
@@ -128,7 +126,7 @@ public class UsbSerialMain {
 
     if(usbDevice == null) {
       Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Device not found");
-      return ReturnStatus.DEVICE_NOT_FOUND;
+      return DEVICE_NOT_FOUND;
     }
 
     usbSerialDriver = UsbSerialProber.getDefaultProber().probeDevice(usbDevice);
@@ -138,14 +136,14 @@ public class UsbSerialMain {
 
     if(usbSerialDriver == null) {
       Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Driver not found for device");
-      return ReturnStatus.DRIVER_NOT_FOUND;
+      return DRIVER_NOT_FOUND;
     }
 
     if(usbSerialDriver.getPorts().size() < portNum) {
       Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Port not found for driver");
-      return ReturnStatus.PORT_NOT_FOUND;
+      return PORT_NOT_FOUND;
     }
-    return ReturnStatus.DRIVER_SET;
+    return DRIVER_SET;
   }
 
   private UsbSerialProber getCustomProber() {

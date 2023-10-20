@@ -60,7 +60,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
 
     holder.deviceListItemCardLayout.setOnClickListener(v -> {
       TerminalArgs terminalArgs = new TerminalArgs(
-              currentItem.device.getDeviceId(),
+              currentItem.usbDevice.getDeviceId(),
               currentItem.devicePort,
               19200
       );

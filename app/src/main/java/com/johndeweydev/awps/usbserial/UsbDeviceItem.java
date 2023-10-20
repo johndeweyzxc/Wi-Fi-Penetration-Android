@@ -8,12 +8,12 @@ import java.util.Locale;
 
 public class UsbDeviceItem {
 
-  public UsbDevice device;
+  public UsbDevice usbDevice;
   public int devicePort;
   public UsbSerialDriver usbSerialDriver;
 
   public UsbDeviceItem(UsbDevice usbDevice, int devicePort, UsbSerialDriver usbSerialDriver) {
-    this.device = usbDevice;
+    this.usbDevice = usbDevice;
     this.devicePort = devicePort;
     this.usbSerialDriver = usbSerialDriver;
   }
@@ -30,10 +30,10 @@ public class UsbDeviceItem {
   }
 
   public String getDeviceProductId() {
-    return String.format(Locale.US, "%04X", device.getProductId());
+    return String.format(Locale.US, "%04X", usbDevice.getProductId());
   }
 
   public String getDeviceVendorId() {
-    return String.format(Locale.US, "%04X", device.getVendorId());
+    return String.format(Locale.US, "%04X", usbDevice.getVendorId());
   }
 }

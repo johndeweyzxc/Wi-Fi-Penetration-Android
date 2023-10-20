@@ -5,9 +5,9 @@ public class UsbSerialOutputItem {
   private final String serialOutputString;
 
 
-  public UsbSerialOutputItem(String aTimeInString, String aSerialOutputString) {
-    timeInString = aTimeInString;
-    serialOutputString = aSerialOutputString;
+  public UsbSerialOutputItem(String timeInString, String serialOutputString) {
+    this.timeInString = timeInString;
+    this.serialOutputString = serialOutputString;
   }
 
   public String getTimeInString() {
@@ -17,4 +17,5 @@ public class UsbSerialOutputItem {
   public String getSerialOutputInString() {
     return serialOutputString;
   }
+
 }

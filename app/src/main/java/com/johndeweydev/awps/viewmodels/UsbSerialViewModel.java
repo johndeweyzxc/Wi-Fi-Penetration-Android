@@ -5,19 +5,12 @@ import androidx.lifecycle.ViewModel;
 
 import com.johndeweydev.awps.repository.UsbSerialRepository;
 import com.johndeweydev.awps.usbserial.UsbDeviceItem;
-import com.johndeweydev.awps.usbserial.UsbSerialMain;
 import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
+import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 
 import java.util.ArrayList;
 
 public class UsbSerialViewModel extends ViewModel {
-
-  public interface UsbSerialViewModelCallback {
-    void onNewDataRaw(UsbSerialOutputItem usbSerialOutputItem);
-    void onNewDataFormatted(UsbSerialOutputItem usbSerialOutputItem);
-    void onErrorNewData(String errorMessageOnNewData);
-    void onErrorWriting(String dataToWrite);
-  }
 
   public UsbSerialRepository usbSerialRepository;
   public MutableLiveData<ArrayList<UsbDeviceItem>> devicesList = new MutableLiveData<>();
@@ -56,7 +49,7 @@ public class UsbSerialViewModel extends ViewModel {
     return devices.size();
   }
 
-  public UsbSerialMain.ReturnStatus connectToDevice(
+  public UsbSerialStatus connectToDevice(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
     return usbSerialRepository.connect(baudRate, dataBits, stopBits, parity, deviceId, portNum);
   }

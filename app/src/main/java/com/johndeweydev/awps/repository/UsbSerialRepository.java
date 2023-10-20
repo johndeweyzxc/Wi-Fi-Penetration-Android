@@ -1,12 +1,10 @@
 package com.johndeweydev.awps.repository;
 
-import android.util.Log;
-
 import com.johndeweydev.awps.usbserial.UsbDeviceItem;
-import com.johndeweydev.awps.usbserial.UsbSerialMain;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
-import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.usbserial.UsbSerialStatus;
+import com.johndeweydev.awps.viewmodels.UsbSerialViewModelCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,16 +13,10 @@ import java.util.Locale;
 
 public class UsbSerialRepository {
 
-  public interface UsbSerialRepositoryCallback {
-    void onNewData(String data);
-    void onErrorNewData(String errorMessageOnNewData);
-    void onErrorWriting(String dataToWrite);
-  }
-
   private final StringBuilder queueData = new StringBuilder();
 
   public void setUsbSerialViewModelCallback(
-          UsbSerialViewModel.UsbSerialViewModelCallback usbSerialViewModelCallback
+          UsbSerialViewModelCallback usbSerialViewModelCallback
   ) {
     UsbSerialRepositoryCallback usbSerialRepositoryCallback = new UsbSerialRepositoryCallback() {
       @Override
@@ -43,9 +35,6 @@ public class UsbSerialRepository {
       private void notifyViewModelAboutData() {
         String strData = queueData.toString();
         String strTime = createStringTime();
-
-        Log.d("dev-log", "UsbSerialRepository.notifyViewModelAboutData: " +
-                "Data in -> " + strData);
 
         UsbSerialOutputItem usbSerialOutputItem = new UsbSerialOutputItem(strTime, strData);
         usbSerialViewModelCallback.onNewDataRaw(usbSerialOutputItem);
@@ -82,7 +71,7 @@ public class UsbSerialRepository {
     return UsbSerialMainSingleton.getInstance().getUsbSerialMain().discoverDevices();
   }
 
-  public UsbSerialMain.ReturnStatus connect(
+  public UsbSerialStatus connect(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
     return UsbSerialMainSingleton.getInstance().getUsbSerialMain().connect(
             baudRate, dataBits, stopBits, parity, deviceId, portNum

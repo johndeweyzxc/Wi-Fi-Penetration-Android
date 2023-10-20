@@ -1,5 +1,8 @@
 package com.johndeweydev.awps.views.devicesfragment;
 
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.NO_USB_PERMISSION;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.SUCCESSFULLY_CONNECTED;
+
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -27,8 +30,8 @@ import com.johndeweydev.awps.BuildConfig;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
 import com.johndeweydev.awps.usbserial.UsbDeviceItem;
-import com.johndeweydev.awps.usbserial.UsbSerialMain;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
+import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
@@ -106,13 +109,13 @@ public class DevicesFragment extends Fragment {
     int deviceId = terminalArgs.getDeviceId();
     int portNum = terminalArgs.getPortNum();
 
-    UsbSerialMain.ReturnStatus result = usbSerialViewModel.connectToDevice(
+    UsbSerialStatus result = usbSerialViewModel.connectToDevice(
             19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum
     );
 
-    if (result.equals(UsbSerialMain.ReturnStatus.NO_USB_PERMISSION)) {
+    if (result.equals(NO_USB_PERMISSION)) {
       requestUsbDevicePermission();
-    } else if (result.equals(UsbSerialMain.ReturnStatus.SUCCESSFULLY_CONNECTED)) {
+    } else if (result.equals(SUCCESSFULLY_CONNECTED)) {
       navigateToTerminalFragment();
     }
   }

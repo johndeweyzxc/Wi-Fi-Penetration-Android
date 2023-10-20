@@ -13,8 +13,8 @@ import androidx.navigation.Navigation;
 
 import com.johndeweydev.awps.repository.UsbSerialRepository;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
-import com.johndeweydev.awps.viewmodels.UsbSerialViewModelFactory;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.viewmodels.UsbSerialViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -10,8 +10,8 @@ public class UsbSerialViewModelFactory implements ViewModelProvider.Factory {
 
   private final UsbSerialRepository usbSerialRepository;
 
-  public UsbSerialViewModelFactory(UsbSerialRepository aUsbSerialRepository) {
-    usbSerialRepository = aUsbSerialRepository;
+  public UsbSerialViewModelFactory(UsbSerialRepository usbSerialRepository) {
+    this.usbSerialRepository = usbSerialRepository;
   }
 
   @NonNull
