@@ -85,10 +85,10 @@ public class TerminalMainFragment extends Fragment {
             getChildFragmentManager(), getLifecycle()
     );
 
-    binding.viewPagerTerminalViewPager.setAdapter(adapter);
+    binding.viewPagerTerminalMain.setAdapter(adapter);
 
-    TabLayout tabLayout = binding.tabLayoutTerminalViewPager;
-    ViewPager2 viewPager2 = binding.viewPagerTerminalViewPager;
+    TabLayout tabLayout = binding.tabLayoutTerminalMain;
+    ViewPager2 viewPager2 = binding.viewPagerTerminalMain;
     TabLayoutMediator.TabConfigurationStrategy tabConfigurationStrategy;
     tabConfigurationStrategy = (tab, position) -> {
       if (position == 0) {
@@ -99,10 +99,11 @@ public class TerminalMainFragment extends Fragment {
     };
     new TabLayoutMediator(tabLayout, viewPager2, tabConfigurationStrategy).attach();
 
-    binding.appBarTerminalViewPager.setNavigationOnClickListener(v ->
+    binding.materialToolBarTerminalMain.setNavigationOnClickListener(v ->
             binding.drawerLayoutTeminalViewPager.open()
     );
-    binding.navMenuViewTerminalViewPager.setNavigationItemSelectedListener(this::navItemSelected);
+    binding.navigationViewTerminalMain.setNavigationItemSelectedListener(
+            this::navItemSelected);
     setupErrorWriteListener();
     setupErrorOnNewDataListener();
   }

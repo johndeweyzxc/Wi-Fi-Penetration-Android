@@ -29,7 +29,7 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.BuildConfig;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
-import com.johndeweydev.awps.usbserial.UsbDeviceItem;
+import com.johndeweydev.awps.repository.UsbDeviceModel;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
@@ -96,13 +96,15 @@ public class DevicesFragment extends Fragment {
     binding.recyclerViewDevices.setAdapter(devicesRVAdapter);
     binding.recyclerViewDevices.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-    final Observer<ArrayList<UsbDeviceItem>> deviceListObserver = this::handleUpdateFromLivedata;
+    final Observer<ArrayList<UsbDeviceModel>> deviceListObserver = this::handleUpdateFromLivedata;
     usbSerialViewModel.devicesList.observe(getViewLifecycleOwner(), deviceListObserver);
     findUsbDevices();
 
-    binding.appBarDevices.setNavigationOnClickListener(v -> binding.drawerLayoutDevices.open());
-    binding.appBarDevices.setOnMenuItemClickListener(this::topAppBarNavItemSelected);
-    binding.navMenuViewTerminalViewPager.setNavigationItemSelectedListener(this::navItemSelected);
+    binding.materialToolBarDevices.setNavigationOnClickListener(
+            v -> binding.drawerLayoutDevices.open());
+    binding.materialToolBarDevices.setOnMenuItemClickListener(this::topAppBarNavItemSelected);
+    binding.navigationViewTerminalMain.setNavigationItemSelectedListener(
+            this::navItemSelected);
   }
 
   private void isUsbDevicePermissionGranted() {
@@ -141,9 +143,9 @@ public class DevicesFragment extends Fragment {
     Navigation.findNavController(binding.getRoot()).navigate(action);
   }
 
-  private void handleUpdateFromLivedata(ArrayList<UsbDeviceItem> usbDeviceItemList) {
-    for (int i = 0; i < usbDeviceItemList.size(); i++) {
-      devicesRVAdapter.appendData(usbDeviceItemList.get(i));
+  private void handleUpdateFromLivedata(ArrayList<UsbDeviceModel> usbDeviceModelList) {
+    for (int i = 0; i < usbDeviceModelList.size(); i++) {
+      devicesRVAdapter.appendData(usbDeviceModelList.get(i));
       devicesRVAdapter.notifyItemInserted(i);
     }
   }
@@ -151,10 +153,10 @@ public class DevicesFragment extends Fragment {
   private void findUsbDevices() {
     int size = usbSerialViewModel.checkAvailableUsbDevices();
     if (size == 0) {
-      binding.textViewNoDevices.setVisibility(View.VISIBLE);
+      binding.textViewNoConnectedDevices.setVisibility(View.VISIBLE);
       Log.d("dev-log", "DevicesFragment.findUsbDevices: No devices connected");
     } else {
-      binding.textViewNoDevices.setVisibility(View.GONE);
+      binding.textViewNoConnectedDevices.setVisibility(View.GONE);
     }
   }
 

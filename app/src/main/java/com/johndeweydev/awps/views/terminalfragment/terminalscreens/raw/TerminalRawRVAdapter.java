@@ -9,22 +9,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
 
 import java.util.ArrayList;
 
 public class TerminalRawRVAdapter
         extends RecyclerView.Adapter<TerminalRawRVAdapter.TerminalAdapterViewHolder> {
 
-  private final ArrayList<UsbSerialOutputItem> usbSerialOutputItemList = new ArrayList<>();
+  private final ArrayList<UsbSerialOutputModel> usbSerialOutputModelList = new ArrayList<>();
 
   public static class TerminalAdapterViewHolder extends RecyclerView.ViewHolder {
-    public TextView timeSerialOutput;
-    public TextView textSerialOutput;
+    public TextView textViewTimeSerialOutputListItem;
+    public TextView textViewMessageSerialOutputListItem;
     public TerminalAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
-      timeSerialOutput = itemView.findViewById(R.id.timeSerialOutput);
-      textSerialOutput = itemView.findViewById(R.id.textSerialOutput);
+      textViewTimeSerialOutputListItem = itemView.findViewById(
+              R.id.textViewTimeSerialOutputListItem);
+      textViewMessageSerialOutputListItem = itemView.findViewById(
+              R.id.textViewMessageSerialOutputListItem);
     }
   }
 
@@ -38,20 +40,22 @@ public class TerminalRawRVAdapter
   }
 
   @Override
-  public void onBindViewHolder(@NonNull TerminalRawRVAdapter.TerminalAdapterViewHolder holder, int position) {
-    UsbSerialOutputItem currentItem = usbSerialOutputItemList.get(position);
-    holder.timeSerialOutput.setText(currentItem.getTimeInString());
-    holder.textSerialOutput.setText(currentItem.getSerialOutputInString());
+  public void onBindViewHolder(
+          @NonNull TerminalRawRVAdapter.TerminalAdapterViewHolder holder, int position
+  ) {
+    UsbSerialOutputModel currentItem = usbSerialOutputModelList.get(position);
+    holder.textViewTimeSerialOutputListItem.setText(currentItem.getTimeInString());
+    holder.textViewMessageSerialOutputListItem.setText(currentItem.getSerialOutputInString());
   }
 
   @Override
   public int getItemCount() {
-    return usbSerialOutputItemList.size();
+    return usbSerialOutputModelList.size();
   }
 
-  public void appendData(UsbSerialOutputItem usbSerialOutputItem) {
-    usbSerialOutputItemList.add(usbSerialOutputItem);
-    int pos = usbSerialOutputItemList.size() - 1;
+  public void appendData(UsbSerialOutputModel usbSerialOutputModel) {
+    usbSerialOutputModelList.add(usbSerialOutputModel);
+    int pos = usbSerialOutputModelList.size() - 1;
     this.notifyItemInserted(pos);
   }
 }

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void fragmentChangeListener() {
     NavController navController = Navigation.findNavController(
-            this, R.id.fragmentContainerView);
+            this, R.id.fragmentActivityMain);
     navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
       String destLabel = (String) destination.getLabel();
       String logText = "MainActivity.fragmentChangeListener: " +
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void countFragmentOnTheStack() {
     Fragment navHostFragment = getSupportFragmentManager()
-            .findFragmentById(R.id.fragmentContainerView);
+            .findFragmentById(R.id.fragmentActivityMain);
     assert navHostFragment != null;
     int backStackEntryCount = navHostFragment.getChildFragmentManager().getBackStackEntryCount();
 

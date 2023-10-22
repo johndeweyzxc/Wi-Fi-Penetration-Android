@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.usbserial.UsbDeviceItem;
+import com.johndeweydev.awps.repository.UsbDeviceModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 import java.util.ArrayList;
 
 public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.DevicesAdapterViewHolder> {
 
-  private final ArrayList<UsbDeviceItem> deviceModelList = new ArrayList<>();
+  private final ArrayList<UsbDeviceModel> deviceModelList = new ArrayList<>();
   private final RVAdapterCallback rvAdapterCallback;
 
   public interface RVAdapterCallback {
@@ -25,16 +25,19 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
   }
 
   public static class DevicesAdapterViewHolder extends RecyclerView.ViewHolder {
-    public TextView textViewDeviceName;
-    public TextView textViewDeviceVendorId;
-    public TextView textViewDeviceProductId;
-    public MaterialCardView deviceListItemCardLayout;
+    public TextView textViewDeviceNameValueDeviceListItem;
+    public TextView textViewDeviceVendorIdDeviceListItem;
+    public TextView textViewDeviceProductIdValueDeviceListItem;
+    public MaterialCardView materialCardViewDeviceListItem;
     public DevicesAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
-      textViewDeviceName = itemView.findViewById(R.id.textViewDeviceName);
-      textViewDeviceVendorId = itemView.findViewById(R.id.textViewDeviceVendorId);
-      textViewDeviceProductId = itemView.findViewById(R.id.textViewDeviceProductId);
-      deviceListItemCardLayout = itemView.findViewById(R.id.deviceListItemCardLayout);
+      textViewDeviceNameValueDeviceListItem = itemView.findViewById(
+              R.id.textViewDeviceNameValueDeviceListItem);
+      textViewDeviceVendorIdDeviceListItem = itemView.findViewById(
+              R.id.textViewDeviceVendorIdDeviceListItem);
+      textViewDeviceProductIdValueDeviceListItem = itemView.findViewById(
+              R.id.textViewDeviceProductIdValueDeviceListItem);
+      materialCardViewDeviceListItem = itemView.findViewById(R.id.materialCardViewDeviceListItem);
     }
   }
 
@@ -53,12 +56,12 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
 
   @Override
   public void onBindViewHolder(@NonNull DevicesAdapterViewHolder holder, int position) {
-    UsbDeviceItem currentItem = deviceModelList.get(position);
-    holder.textViewDeviceName.setText(currentItem.getDeviceName());
-    holder.textViewDeviceProductId.setText(currentItem.getDeviceProductId());
-    holder.textViewDeviceVendorId.setText(currentItem.getDeviceVendorId());
+    UsbDeviceModel currentItem = deviceModelList.get(position);
+    holder.textViewDeviceNameValueDeviceListItem.setText(currentItem.getDeviceName());
+    holder.textViewDeviceProductIdValueDeviceListItem.setText(currentItem.getDeviceProductId());
+    holder.textViewDeviceVendorIdDeviceListItem.setText(currentItem.getDeviceVendorId());
 
-    holder.deviceListItemCardLayout.setOnClickListener(v -> {
+    holder.materialCardViewDeviceListItem.setOnClickListener(v -> {
       TerminalArgs terminalArgs = new TerminalArgs(
               currentItem.usbDevice.getDeviceId(),
               currentItem.devicePort,
@@ -73,7 +76,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     return deviceModelList.size();
   }
 
-  public void appendData(UsbDeviceItem usbDeviceItem) {
-    deviceModelList.add(usbDeviceItem);
+  public void appendData(UsbDeviceModel usbDeviceModel) {
+    deviceModelList.add(usbDeviceModel);
   }
 }

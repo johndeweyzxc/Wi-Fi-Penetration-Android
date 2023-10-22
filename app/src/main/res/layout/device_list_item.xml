@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_margin="10dp"
-    android:id="@+id/deviceListItemCardLayout">
+    android:id="@+id/materialCardViewDeviceListItem">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,7 +16,7 @@
         android:padding="10dp">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imageViewUsbDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -27,27 +26,27 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewDeviceNameHeader"
+            android:id="@+id/textViewDeviceNameDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_medium"
             android:text="Device Name"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/textViewDeviceName"
-            app:layout_constraintStart_toStartOf="@+id/textViewDeviceName" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewDeviceNameValueDeviceListItem"
+            app:layout_constraintStart_toStartOf="@+id/textViewDeviceNameValueDeviceListItem" />
 
         <TextView
-            android:id="@+id/textViewDeviceName"
+            android:id="@+id/textViewDeviceNameValueDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:fontFamily="@font/roboto"
             android:text="CP210x"
-            app:layout_constraintBottom_toTopOf="@+id/textViewManufacturerHeader"
-            app:layout_constraintStart_toStartOf="@+id/textViewManufacturerHeader" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewManufacturerDeviceListItem"
+            app:layout_constraintStart_toStartOf="@+id/textViewManufacturerDeviceListItem" />
 
         <TextView
-            android:id="@+id/textViewManufacturerHeader"
+            android:id="@+id/textViewManufacturerDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -55,20 +54,20 @@
             android:fontFamily="@font/roboto_medium"
             android:text="Manufacturer"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="@+id/imageView" />
+            app:layout_constraintStart_toEndOf="@+id/imageViewUsbDeviceListItem"
+            app:layout_constraintTop_toTopOf="@+id/imageViewUsbDeviceListItem" />
 
         <TextView
-            android:id="@+id/textViewManufacturer"
+            android:id="@+id/textViewManufacturerValueDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/textViewManufacturerHeader"
-            app:layout_constraintTop_toBottomOf="@+id/textViewManufacturerHeader"
+            app:layout_constraintStart_toStartOf="@+id/textViewManufacturerDeviceListItem"
+            app:layout_constraintTop_toBottomOf="@+id/textViewManufacturerDeviceListItem"
             android:text="Silicon Labs"
             android:fontFamily="@font/roboto"/>
 
         <TextView
-            android:id="@+id/textViewVendorIdHeader"
+            android:id="@+id/textViewVendorIdDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -76,20 +75,20 @@
             android:text="Vendor ID"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewDeviceNameHeader"
-            app:layout_constraintTop_toTopOf="@+id/textViewDeviceNameHeader" />
+            app:layout_constraintStart_toEndOf="@+id/textViewDeviceNameDeviceListItem"
+            app:layout_constraintTop_toTopOf="@+id/textViewDeviceNameDeviceListItem" />
 
         <TextView
-            android:id="@+id/textViewDeviceVendorId"
+            android:id="@+id/textViewDeviceVendorIdDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10C4"
             android:fontFamily="@font/roboto"
-            app:layout_constraintStart_toStartOf="@+id/textViewVendorIdHeader"
-            app:layout_constraintTop_toBottomOf="@+id/textViewVendorIdHeader" />
+            app:layout_constraintStart_toStartOf="@+id/textViewVendorIdDeviceListItem"
+            app:layout_constraintTop_toBottomOf="@+id/textViewVendorIdDeviceListItem" />
 
         <TextView
-            android:id="@+id/textViewProductId"
+            android:id="@+id/textViewProductIdDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -97,17 +96,17 @@
             android:text="Product ID"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewManufacturerHeader"
-            app:layout_constraintTop_toTopOf="@+id/textViewManufacturerHeader" />
+            app:layout_constraintStart_toEndOf="@+id/textViewManufacturerDeviceListItem"
+            app:layout_constraintTop_toTopOf="@+id/textViewManufacturerDeviceListItem" />
 
         <TextView
-            android:id="@+id/textViewDeviceProductId"
+            android:id="@+id/textViewDeviceProductIdValueDeviceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
             android:text="EA60"
-            app:layout_constraintStart_toStartOf="@+id/textViewProductId"
-            app:layout_constraintTop_toBottomOf="@+id/textViewProductId" />
+            app:layout_constraintStart_toStartOf="@+id/textViewProductIdDeviceListItem"
+            app:layout_constraintTop_toBottomOf="@+id/textViewProductIdDeviceListItem" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

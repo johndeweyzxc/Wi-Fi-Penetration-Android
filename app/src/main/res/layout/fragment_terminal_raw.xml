@@ -11,13 +11,13 @@
         android:id="@+id/recyclerViewTerminalRaw"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/commandInputTerminalRaw"
+        app:layout_constraintBottom_toTopOf="@+id/editTextCommandInputTerminalRaw"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/commandInputTerminalRaw"
+        android:id="@+id/editTextCommandInputTerminalRaw"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -26,11 +26,11 @@
         android:inputType="text"
         android:hint="Command"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/commandExecuteTerminalRaw"
+        app:layout_constraintEnd_toStartOf="@+id/buttonCommandWriteTerminalRaw"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/commandExecuteTerminalRaw"
+        android:id="@+id/buttonCommandWriteTerminalRaw"
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

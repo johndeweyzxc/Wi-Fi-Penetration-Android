@@ -1,11 +1,11 @@
-package com.johndeweydev.awps.usbserial;
+package com.johndeweydev.awps.repository;
 
-public class UsbSerialOutputItem {
+public class UsbSerialOutputModel {
   private final String timeInString;
   private final String serialOutputString;
 
 
-  public UsbSerialOutputItem(String timeInString, String serialOutputString) {
+  public UsbSerialOutputModel(String timeInString, String serialOutputString) {
     this.timeInString = timeInString;
     this.serialOutputString = serialOutputString;
   }

@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
-import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
@@ -63,8 +63,8 @@ public class TerminalFragment extends Fragment {
 
     setupRecyclerViewAndObserveData();
 
-    binding.commandExecuteTerminal.setOnClickListener(v -> {
-      String data = binding.commandInputTerminal.getText().toString();
+    binding.editTextCommandWriteTerminal.setOnClickListener(v -> {
+      String data = binding.editTextCommandInputTerminal.getText().toString();
       writeDataToDevice(data);
     });
   }
@@ -76,15 +76,15 @@ public class TerminalFragment extends Fragment {
     layout.setStackFromEnd(true);
     binding.recyclerViewTerminal.setLayoutManager(layout);
 
-    final Observer<UsbSerialOutputItem> serialOutputObserver;
+    final Observer<UsbSerialOutputModel> serialOutputObserver;
     serialOutputObserver = this::handleNewSerialOutputFromLiveData;
     usbSerialViewModel.currentMessageFormatted.observe(
             getViewLifecycleOwner(), serialOutputObserver
     );
   }
 
-  private void handleNewSerialOutputFromLiveData(UsbSerialOutputItem usbSerialOutputItem) {
-    terminalRVAdapter.appendData(usbSerialOutputItem);
+  private void handleNewSerialOutputFromLiveData(UsbSerialOutputModel usbSerialOutputModel) {
+    terminalRVAdapter.appendData(usbSerialOutputModel);
     binding.recyclerViewTerminal.scrollToPosition(terminalRVAdapter.getItemCount() - 1);
   }
 

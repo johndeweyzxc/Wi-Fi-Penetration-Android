@@ -1,8 +1,6 @@
 package com.johndeweydev.awps.repository;
 
-import com.johndeweydev.awps.usbserial.UsbDeviceItem;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
-import com.johndeweydev.awps.usbserial.UsbSerialOutputItem;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModelCallback;
 
@@ -36,13 +34,13 @@ public class UsbSerialRepository {
         String strData = queueData.toString();
         String strTime = createStringTime();
 
-        UsbSerialOutputItem usbSerialOutputItem = new UsbSerialOutputItem(strTime, strData);
-        usbSerialViewModelCallback.onNewDataRaw(usbSerialOutputItem);
+        UsbSerialOutputModel usbSerialOutputModel = new UsbSerialOutputModel(strTime, strData);
+        usbSerialViewModelCallback.onNewDataRaw(usbSerialOutputModel);
 
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          usbSerialViewModelCallback.onNewDataFormatted(usbSerialOutputItem);
+          usbSerialViewModelCallback.onNewDataFormatted(usbSerialOutputModel);
         }
       }
 
@@ -67,7 +65,7 @@ public class UsbSerialRepository {
     return dateFormat.format(calendar.getTime());
   }
 
-  public ArrayList<UsbDeviceItem> discoverDevices() {
+  public ArrayList<UsbDeviceModel> discoverDevices() {
     return UsbSerialMainSingleton.getInstance().getUsbSerialMain().discoverDevices();
   }
 
