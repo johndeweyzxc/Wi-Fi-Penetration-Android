@@ -1,6 +1,7 @@
 package com.johndeweydev.awps.views.terminalfragment;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -22,6 +24,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentTerminalMainBinding;
+import com.johndeweydev.awps.viewmodels.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.terminalscreens.formatted.TerminalFragment;
 import com.johndeweydev.awps.views.terminalfragment.terminalscreens.raw.TerminalRawFragment;
@@ -32,6 +35,7 @@ public class TerminalMainFragment extends Fragment {
 
   private FragmentTerminalMainBinding binding;
   private UsbSerialViewModel usbSerialViewModel;
+  private SessionViewModel sessionViewModel;
   private TerminalArgs terminalArgs = null;
 
   @Override
@@ -78,7 +82,7 @@ public class TerminalMainFragment extends Fragment {
     fragmentList.add(terminalRawFragment);
 
     FragmentStateAdapter adapter = new TerminalMainVPAdapter(terminalArgs, fragmentList,
-            requireActivity().getSupportFragmentManager(), getLifecycle()
+            getChildFragmentManager(), getLifecycle()
     );
 
     binding.viewPagerTerminalViewPager.setAdapter(adapter);
@@ -151,7 +155,16 @@ public class TerminalMainFragment extends Fragment {
   }
 
   private boolean navItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.settingsMenuNavItemTerminalMain) {
+    if (item.getItemId() == R.id.automaticAttackMain) {
+      binding.drawerLayoutTeminalViewPager.close();
+      showAttackTypeDialogSelector();
+      return true;
+    } else if (item.getItemId() == R.id.manualAttackMain) {
+      binding.drawerLayoutTeminalViewPager.close();
+      Navigation.findNavController(binding.getRoot()).navigate(
+              R.id.action_terminalMainFragment_to_armamentSelectionFragment);
+      return true;
+    } else if (item.getItemId() == R.id.settingsMenuNavItemTerminalMain) {
       binding.drawerLayoutTeminalViewPager.close();
 
       // TODO: Navigate to settings
@@ -165,5 +178,36 @@ public class TerminalMainFragment extends Fragment {
       return true;
     }
     return false;
+  }
+
+  private void showAttackTypeDialogSelector() {
+    final String[] choices = new String[]{"PMKID Based Attack", "MIC Based Attack", "Deauther"};
+    sessionViewModel = new ViewModelProvider(requireActivity())
+            .get(SessionViewModel.class);
+
+    final int[] checkedItem = {-1};
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+    builder
+            .setTitle("Select attack mode")
+            .setPositiveButton("Proceed", ((dialog, which) -> {
+              if (checkedItem[0] == -1) {
+                return;
+              }
+              checkedItem[0] = -1;
+              Navigation.findNavController(binding.getRoot()).navigate(
+                      R.id.action_terminalMainFragment_to_autoArmaMainFragment
+              );
+
+            }))
+            .setNegativeButton("Cancel", ((dialog, which) -> {}))
+            .setSingleChoiceItems(choices, checkedItem[0], ((dialog, which) -> {
+
+              checkedItem[0] = which;
+              sessionViewModel.setSelectedArmament(choices[which]);
+            }));
+
+    AlertDialog dialog = builder.create();
+    dialog.show();
   }
 }

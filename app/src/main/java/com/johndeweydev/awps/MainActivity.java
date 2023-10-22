@@ -13,6 +13,7 @@ import androidx.navigation.Navigation;
 
 import com.johndeweydev.awps.repository.UsbSerialRepository;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
+import com.johndeweydev.awps.viewmodels.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModelFactory;
 
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     setContentView(R.layout.activity_main);
     fragmentChangeListener();
+
+    new ViewModelProvider(this).get(SessionViewModel.class);
   }
 
   private void fragmentChangeListener() {

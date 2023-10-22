@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/automaticAttackMain"
+        android:title="Automatic Attack"/>
+    <item
+        android:id="@+id/manualAttackMain"
+        android:title="Manual Attack"/>
+    <item
         android:id="@+id/settingsMenuNavItemTerminalMain"
         android:title="Settings" />
     <item

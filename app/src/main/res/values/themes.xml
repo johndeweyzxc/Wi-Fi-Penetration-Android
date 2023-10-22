@@ -2,13 +2,18 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.awps" parent="Theme.Material3.DayNight.NoActionBar">
         <!--   Color for the app bar and other primary UI elements. -->
-        <item name="colorPrimary">@color/primaryDark</item>
+        <item name="colorPrimary">@color/primary</item>
         <!--   A darker variant of the primary color, used for
            the status bar (on Android 5.0+) and contextual app bars. -->
-        <item name="colorPrimaryVariant">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primaryDark</item>
         <!--   a secondary color for controls like checkboxes and text fields. -->
         <item name="colorOnPrimary">@color/onPrimary</item>
     </style>
 
     <style name="Theme.awps" parent="Base.Theme.awps" />
+
+    <style name="ToolBarTheme">
+        <item name="android:background">@color/primary</item>
+    </style>
+
 </resources>

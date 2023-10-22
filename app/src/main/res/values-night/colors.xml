@@ -2,11 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#595959</color>
 
-    <color name="primaryRed">#330000</color>
+    <color name="primaryRed">#660000</color>
     <color name="onPrimaryRed">#ffcccc</color>
 
     <color name="primary">#664e00</color>
-    <color name="primaryDark">#1a1400</color>
+    <color name="primaryDark">#4d3d00</color>
     <color name="onPrimary">#fff3cc</color>
 </resources>

@@ -6,13 +6,19 @@
     app:startDestination="@id/devicesFragment">
 
     <fragment
-        android:id="@+id/terminalViewPagerFragment"
+        android:id="@+id/terminalMainFragment"
         android:name="com.johndeweydev.awps.views.terminalfragment.TerminalMainFragment"
-        android:label="fragment_terminal_view_pager"
+        android:label="fragment_terminal_main"
         tools:layout="@layout/fragment_terminal_main" >
         <argument
             android:name="terminalArgs"
             app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />
+        <action
+            android:id="@+id/action_terminalMainFragment_to_armamentSelectionFragment"
+            app:destination="@id/armamentSelectionFragment" />
+        <action
+            android:id="@+id/action_terminalMainFragment_to_autoArmaMainFragment"
+            app:destination="@id/autoArmaMainFragment" />
     </fragment>
 
     <fragment
@@ -22,6 +28,25 @@
         tools:layout="@layout/fragment_devices" >
         <action
             android:id="@+id/action_devicesFragment_to_terminalFragment"
-            app:destination="@id/terminalViewPagerFragment" />
+            app:destination="@id/terminalMainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/armamentSelectionFragment"
+        android:name="com.johndeweydev.awps.views.ArmamentSelectionFragment"
+        android:label="fragment_armament_selection"
+        tools:layout="@layout/fragment_armament_selection" >
+        <action
+            android:id="@+id/action_armamentSelectionFragment_to_manualArmaFragment"
+            app:destination="@id/manualArmaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/autoArmaMainFragment"
+        android:name="com.johndeweydev.awps.views.autoarmafragment.AutoArmaMainFragment"
+        android:label="fragment_auto_arma_main"
+        tools:layout="@layout/fragment_auto_arma_main" />
+    <fragment
+        android:id="@+id/manualArmaFragment"
+        android:name="com.johndeweydev.awps.views.ManualArmaFragment"
+        android:label="fragment_manual_arma"
+        tools:layout="@layout/fragment_manual_arma" />
 </navigation>

@@ -9,4 +9,8 @@
         <!--   a secondary color for controls like checkboxes and text fields. -->
         <item name="colorOnPrimary">@color/onPrimary</item>
     </style>
+
+    <style name="ToolBarTheme">
+        <item name="android:background">@color/primaryDark</item>
+    </style>
 </resources>
