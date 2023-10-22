@@ -5,6 +5,7 @@ import static com.johndeweydev.awps.usbserial.UsbSerialStatus.DEVICE_NOT_FOUND;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.DRIVER_NOT_FOUND;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.DRIVER_SET;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.FAILED_OPENING_DEVICE;
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.FAILED_TO_CONNECT;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.HAS_USB_PERMISSION;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.NO_USB_PERMISSION;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.PORT_NOT_FOUND;
@@ -55,32 +56,29 @@ public class UsbSerialMain {
 
   public UsbSerialStatus connect(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
-    if (!UsbSerialControlData.isConnected) {
-      UsbSerialStatus driverStatus = setDriverAndDevice(deviceId, portNum);
-
-      if (driverStatus.equals(DRIVER_SET)) {
-        UsbSerialStatus permissionStatus = hasUsbDevicePermissionGranted();
-
-        if (permissionStatus.equals(HAS_USB_PERMISSION)) {
-          UsbSerialStatus connectionStatus;
-          connectionStatus = connectToDevice(baudRate, dataBits, stopBits, parity, portNum);
-
-          if (connectionStatus.equals(SUCCESSFULLY_CONNECTED)) {
-            UsbSerialControlData.isConnected = true;
-            Log.d("dev-log", "UsbSerialMain.connect: Connected to the device");
-            return SUCCESSFULLY_CONNECTED;
-          } else {
-            return connectionStatus;
-          }
-        } else if (permissionStatus.equals(NO_USB_PERMISSION)) {
-          return NO_USB_PERMISSION;
-        }
-      } else {
-        return driverStatus;
-      }
+    if (UsbSerialControlData.isConnected) {
+      return ALREADY_CONNECTED;
     }
 
-    Log.d("dev-log", "UsbSerialMain.connect: Connected to the device");
+    UsbSerialStatus driverStatus = setDriverAndDevice(deviceId, portNum);
+    UsbSerialStatus permissionStatus;
+    UsbSerialStatus connectionStatus;
+
+    if (driverStatus.equals(DRIVER_SET)) {
+      permissionStatus = hasUsbDevicePermissionGranted();
+    } else {
+      return FAILED_TO_CONNECT;
+    }
+
+    if (permissionStatus.equals(HAS_USB_PERMISSION)) {
+      connectionStatus = connectToDevice(baudRate, dataBits, stopBits, parity, portNum);
+      if (connectionStatus.equals(SUCCESSFULLY_CONNECTED)) {
+        UsbSerialControlData.isConnected = true;
+      }
+    } else if (permissionStatus.equals(NO_USB_PERMISSION)) {
+      return NO_USB_PERMISSION;
+    }
+
     return ALREADY_CONNECTED;
   }
 

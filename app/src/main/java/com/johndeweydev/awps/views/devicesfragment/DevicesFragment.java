@@ -1,5 +1,6 @@
 package com.johndeweydev.awps.views.devicesfragment;
 
+import static com.johndeweydev.awps.usbserial.UsbSerialStatus.ALREADY_CONNECTED;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.NO_USB_PERMISSION;
 import static com.johndeweydev.awps.usbserial.UsbSerialStatus.SUCCESSFULLY_CONNECTED;
 
@@ -53,12 +54,13 @@ public class DevicesFragment extends Fragment {
     public void onReceive(Context context, Intent intent) {
       if(INTENT_ACTION_GRANT_USB.equals(intent.getAction())) {
         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-          Log.d("dev-log", "DevicesFragment.onPermissionGrant.checkPermission: " +
+          Log.d("dev-log", "DevicesFragment.onReceive: " +
                   "Usb device permission granted");
+          Log.d("dev-log", "DevicesFragment.onReceive: Navigating to terminal fragment");
           navigateToTerminalFragment();
           usbDevicePermissionGranted = true;
         } else {
-          Log.d("dev-log", "DevicesFragment.onPermissionDenied: " +
+          Log.d("dev-log", "DevicesFragment.onReceive: " +
                   "Usb device permission denied by user");
           usbDevicePermissionGranted = false;
         }
@@ -86,15 +88,7 @@ public class DevicesFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    DevicesRVAdapter.RVAdapterCallback onDeviceClickCallback;
-    onDeviceClickCallback = terminalArgs -> {
-      this.terminalArgs = terminalArgs;
-      isUsbDevicePermissionGranted();
-    };
-
-    devicesRVAdapter = new DevicesRVAdapter(onDeviceClickCallback);
-    binding.recyclerViewDevices.setAdapter(devicesRVAdapter);
-    binding.recyclerViewDevices.setLayoutManager(new LinearLayoutManager(requireContext()));
+    initializeAdapter();
 
     final Observer<ArrayList<UsbDeviceModel>> deviceListObserver = this::handleUpdateFromLivedata;
     usbSerialViewModel.devicesList.observe(getViewLifecycleOwner(), deviceListObserver);
@@ -107,17 +101,35 @@ public class DevicesFragment extends Fragment {
             this::navItemSelected);
   }
 
+  private void initializeAdapter() {
+    DevicesRVAdapter.RVAdapterCallback onDeviceClickCallback;
+    onDeviceClickCallback = terminalArgs -> {
+      this.terminalArgs = terminalArgs;
+      isUsbDevicePermissionGranted();
+    };
+
+    devicesRVAdapter = new DevicesRVAdapter(onDeviceClickCallback);
+    binding.recyclerViewDevices.setAdapter(devicesRVAdapter);
+    binding.recyclerViewDevices.setLayoutManager(new LinearLayoutManager(requireContext()));
+  }
+
   private void isUsbDevicePermissionGranted() {
     int deviceId = terminalArgs.getDeviceId();
     int portNum = terminalArgs.getPortNum();
 
+    Log.d("dev-log",
+            "DevicesFragment.isUsbDevicePermissionGranted: Connecting to the device");
     UsbSerialStatus result = usbSerialViewModel.connectToDevice(
             19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum
     );
 
     if (result.equals(NO_USB_PERMISSION)) {
+      Log.d("dev-log",
+              "DevicesFragment.isUsbDevicePermissionGranted: Requesting usb device permission");
       requestUsbDevicePermission();
-    } else if (result.equals(SUCCESSFULLY_CONNECTED)) {
+    } else if (result.equals(SUCCESSFULLY_CONNECTED) || result.equals(ALREADY_CONNECTED)) {
+      Log.d("dev-log",
+              "DevicesFragment.isUsbDevicePermissionGranted: Navigating to terminal fragment");
       navigateToTerminalFragment();
     }
   }
@@ -190,6 +202,7 @@ public class DevicesFragment extends Fragment {
   public void onResume() {
     super.onResume();
     Log.d("dev-log", "DevicesFragment.onResume: Fragment resumed");
+    Log.d("dev-log", "DevicesFragment.onResume: Registering usb broadcast receiver");
     registerUsbBroadcastReceiver();
   }
 
@@ -201,13 +214,14 @@ public class DevicesFragment extends Fragment {
         requireActivity().registerReceiver(usbBroadcastReceiver, intentFilter);
         usbBroadcastReceiverRegistered = true;
         Log.d("dev-log", "DevicesFragment.registerUsbBroadcastReceiver: " +
-                "Usb broadcast receiver registered");
+                "Registered usb broadcast receiver");
       }
     }
   }
 
   @Override
   public void onPause() {
+    Log.d("dev-log", "DevicesFragment.onPause: Unregistering usb broadcast receiver");
     unregisterUsbBroadcastReceiver();
     super.onPause();
     Log.d("dev-log", "DevicesFragment.onPause: Fragment paused");
@@ -217,9 +231,9 @@ public class DevicesFragment extends Fragment {
     if (terminalArgs != null) {
       if (usbBroadcastReceiverRegistered && !usbDevicePermissionGranted) {
         requireActivity().unregisterReceiver(usbBroadcastReceiver);
-        Log.d("dev-log", "DevicesFragment.unregisterUsbBroadcastReceiver: " +
-                "Usb broadcast receiver unregistered");
         usbBroadcastReceiverRegistered = false;
+        Log.d("dev-log", "DevicesFragment.unregisterUsbBroadcastReceiver: " +
+                "Unregistered usb broadcast receiver");
       }
     }
   }

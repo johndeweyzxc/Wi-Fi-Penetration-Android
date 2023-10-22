@@ -15,6 +15,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.johndeweydev.awps.databinding.FragmentAutoArmaMainBinding;
 import com.johndeweydev.awps.viewmodels.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 import com.johndeweydev.awps.views.autoarmafragment.autoarmascreens.AutoArmaDashboardFragment;
 import com.johndeweydev.awps.views.autoarmafragment.autoarmascreens.AutoArmaLogsFragment;
 
@@ -24,11 +25,13 @@ public class AutoArmaMainFragment extends Fragment {
 
   private FragmentAutoArmaMainBinding binding;
   private SessionViewModel sessionViewModel;
+  private UsbSerialViewModel usbSerialViewModel;
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     sessionViewModel = new ViewModelProvider(requireActivity()).get(SessionViewModel.class);
+    usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
     binding = FragmentAutoArmaMainBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
@@ -36,8 +39,6 @@ public class AutoArmaMainFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    Toast.makeText(requireActivity(), sessionViewModel.getSelectedArmament(), Toast.LENGTH_SHORT).show();
 
     ArrayList<Fragment> fragmentList = new ArrayList<>();
     AutoArmaDashboardFragment autoArmaDashboardFragment = new AutoArmaDashboardFragment();
@@ -55,4 +56,6 @@ public class AutoArmaMainFragment extends Fragment {
     });
 
   }
+
+
 }

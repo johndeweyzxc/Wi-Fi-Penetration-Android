@@ -24,6 +24,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentTerminalMainBinding;
+import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.terminalscreens.formatted.TerminalFragment;
@@ -47,6 +48,7 @@ public class TerminalMainFragment extends Fragment {
     if (getArguments() == null) {
       throw new NullPointerException("getArguments is null");
     } else {
+      Log.d("dev-log", "TerminalMainFragment.onCreateView: Initializing fragment args");
       initializeTerminalMainFragmentArgs();
     }
     return binding.getRoot();
@@ -66,26 +68,7 @@ public class TerminalMainFragment extends Fragment {
       throw new NullPointerException("terminalArgs is null");
     }
 
-    Bundle bundle = new Bundle();
-    bundle.putInt("deviceId", terminalArgs.getDeviceId());
-    bundle.putInt("portNum", terminalArgs.getPortNum());
-    bundle.putInt("baudRate", terminalArgs.getBaudRate());
-
-    ArrayList<Fragment> fragmentList = new ArrayList<>();
-
-    TerminalFragment terminalFragment = new TerminalFragment();
-    terminalFragment.setArguments(bundle);
-    fragmentList.add(terminalFragment);
-
-    TerminalRawFragment terminalRawFragment = new TerminalRawFragment();
-    terminalRawFragment.setArguments(bundle);
-    fragmentList.add(terminalRawFragment);
-
-    FragmentStateAdapter adapter = new TerminalMainVPAdapter(terminalArgs, fragmentList,
-            getChildFragmentManager(), getLifecycle()
-    );
-
-    binding.viewPagerTerminalMain.setAdapter(adapter);
+    initializeViewPager();
 
     TabLayout tabLayout = binding.tabLayoutTerminalMain;
     ViewPager2 viewPager2 = binding.viewPagerTerminalMain;
@@ -104,20 +87,66 @@ public class TerminalMainFragment extends Fragment {
     );
     binding.navigationViewTerminalMain.setNavigationItemSelectedListener(
             this::navItemSelected);
+
     setupErrorWriteListener();
     setupErrorOnNewDataListener();
   }
 
+  private void initializeViewPager() {
+    Bundle bundle = new Bundle();
+    bundle.putInt("deviceId", terminalArgs.getDeviceId());
+    bundle.putInt("portNum", terminalArgs.getPortNum());
+    bundle.putInt("baudRate", terminalArgs.getBaudRate());
+
+    ArrayList<Fragment> fragmentList = new ArrayList<>();
+
+    TerminalFragment terminalFragment = new TerminalFragment();
+    terminalFragment.setArguments(bundle);
+    fragmentList.add(terminalFragment);
+
+    TerminalRawFragment terminalRawFragment = new TerminalRawFragment();
+    terminalRawFragment.setArguments(bundle);
+    fragmentList.add(terminalRawFragment);
+
+    FragmentStateAdapter adapter = new TerminalMainVPAdapter(terminalArgs, fragmentList,
+            getChildFragmentManager(), getLifecycle()
+    );
+    binding.viewPagerTerminalMain.setAdapter(adapter);
+  }
+
   private void setupErrorWriteListener() {
     final Observer<String> writeErrorListener = s -> {
+      if (s == null) {
+        return;
+      }
+      usbSerialViewModel.currentErrorInput.setValue(null);
+      Log.d("dev-log", "TerminalMainFragment.setupErrorWriteListener: " +
+              "Disconnecting from device");
+      disconnectFromDevice();
       Toast.makeText(requireActivity(), "Error writing " + s, Toast.LENGTH_SHORT).show();
+      Log.d("dev-log", "TerminalMainFragment.setupErrorWriteListener: " +
+              "Popping this fragment off the back stack");
+      Navigation.findNavController(binding.getRoot()).popBackStack();
     };
     usbSerialViewModel.currentErrorInput.observe(getViewLifecycleOwner(), writeErrorListener);
   }
 
   private void setupErrorOnNewDataListener() {
     final Observer<String> onNewDataErrorListener = s -> {
+      if (s == null) {
+        return;
+      }
+      usbSerialViewModel.currentErrorOnNewData.setValue(null);
+      Log.d("dev-log", "TerminalMainFragment.setupErrorOnNewDataListener: " +
+              "Stopping event read");
+      usbSerialViewModel.stopEventDrivenReadFromDevice();
+      Log.d("dev-log", "TerminalMainFragment.setupErrorOnNewDataListener: " +
+              "Disconnecting from device");
+      disconnectFromDevice();
       Toast.makeText(requireActivity(), "Error: " + s, Toast.LENGTH_SHORT).show();
+      Log.d("dev-log", "TerminalMainFragment.setupErrorOnNewDataListener: " +
+              "Popping this fragment off the back stack");
+      Navigation.findNavController(binding.getRoot()).popBackStack();
     };
     usbSerialViewModel.currentErrorOnNewData.observe(
             getViewLifecycleOwner(), onNewDataErrorListener);
@@ -128,6 +157,7 @@ public class TerminalMainFragment extends Fragment {
   public void onResume() {
     super.onResume();
     Log.d("dev-log", "TerminalMainFragment.onResume: Fragment resumed");
+    Log.d("dev-log", "TerminalMainFragment.onResume: Connecting to device");
     connectToDevice();
   }
 
@@ -138,13 +168,27 @@ public class TerminalMainFragment extends Fragment {
 
     int deviceId = terminalArgs.getDeviceId();
     int portNum = terminalArgs.getPortNum();
-    usbSerialViewModel.connectToDevice(
+    UsbSerialStatus status = usbSerialViewModel.connectToDevice(
             19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum);
-    usbSerialViewModel.startEventDrivenReadFromDevice();
+
+    if (status.equals(UsbSerialStatus.SUCCESSFULLY_CONNECTED)
+            || status.equals(UsbSerialStatus.ALREADY_CONNECTED)
+    ) {
+      Log.d("dev-log",
+              "TerminalMainFragment.connectToDevice: Starting event read");
+      usbSerialViewModel.startEventDrivenReadFromDevice();
+    } else if (status.equals(UsbSerialStatus.FAILED_TO_CONNECT)) {
+      Log.d("dev-log", "TerminalMainFragment.connectToDevice: Disconnecting from device");
+      disconnectFromDevice();
+      Toast.makeText(requireActivity(), "Failed to connect to the device", Toast.LENGTH_SHORT)
+              .show();
+      Navigation.findNavController(binding.getRoot()).popBackStack();
+    }
   }
 
   @Override
   public void onPause() {
+    Log.d("dev-log", "TerminalMainFragment.onPause: Disconnecting from the device");
     disconnectFromDevice();
     super.onPause();
     Log.d("dev-log", "TerminalMainFragment.onPause: Fragment paused");
@@ -196,6 +240,8 @@ public class TerminalMainFragment extends Fragment {
                 return;
               }
               checkedItem[0] = -1;
+              Log.d("dev-log", "TerminalMainFragment.showAttackTypeDialogSelector: " +
+                      "Navigating to auto arma main fragment");
               Navigation.findNavController(binding.getRoot()).navigate(
                       R.id.action_terminalMainFragment_to_autoArmaMainFragment
               );
