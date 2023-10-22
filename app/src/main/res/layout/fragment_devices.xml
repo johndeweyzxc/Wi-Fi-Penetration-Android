@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:theme="@style/ToolBarTheme"
                 app:navigationIcon="@drawable/ic_menu_24"
-                app:menu="@menu/device_top_app_bar_menu"
+                app:menu="@menu/devices_drawer_menu"
                 app:title="Select Device"
                 app:titleTextColor="@color/white" />
 
@@ -58,6 +58,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/device_selection_menu_nav"/>
+        app:menu="@menu/devices_top_right_menu"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

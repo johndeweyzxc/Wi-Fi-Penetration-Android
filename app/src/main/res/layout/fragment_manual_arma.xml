@@ -122,7 +122,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonStopManualArma"
+        app:layout_constraintBottom_toTopOf="@+id/buttonStartStopManualArma"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAttackLogManualArma">
@@ -165,13 +165,13 @@
         android:visibility="gone"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonStopManualArma"
+        app:layout_constraintBottom_toTopOf="@+id/buttonStartStopManualArma"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAccessPointsManualArma">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewFormattedLogsAutoArmaLogs"
+            android:id="@+id/recyclerViewAttackLogsAutoArmaLogs"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="5dp"
@@ -184,24 +184,22 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/buttonStopManualArma"
+        android:id="@+id/buttonCloseAutoArmaDashboard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_marginEnd="5dp"
-        android:backgroundTint="@color/primaryRed"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="Stop"
-        app:icon="@drawable/ic_stop_24"
+        android:layout_marginBottom="10dp"
+        android:text="Close"
+        app:cornerRadius="15dp"
+        app:icon="@drawable/ic_close_session_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/buttonStartStopManualArma"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/button"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonStartStopManualArma"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -210,10 +208,11 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="Start"
+        app:cornerRadius="15dp"
         app:icon="@drawable/ic_start_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonStopManualArma" />
+        app:layout_constraintStart_toEndOf="@+id/buttonCloseAutoArmaDashboard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
