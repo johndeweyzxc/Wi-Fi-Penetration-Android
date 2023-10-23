@@ -13,15 +13,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentManualArmaBinding;
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.SessionViewModel;
-import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
 
 public class ManualArmaFragment extends Fragment {
 

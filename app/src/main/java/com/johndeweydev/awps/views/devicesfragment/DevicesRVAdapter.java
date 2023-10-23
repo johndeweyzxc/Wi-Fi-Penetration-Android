@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.repository.UsbDeviceModel;
+import com.johndeweydev.awps.repository.usbserialrepository.UsbDeviceModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 import java.util.ArrayList;

@@ -1,12 +1,13 @@
-package com.johndeweydev.awps.viewmodels;
+package com.johndeweydev.awps.viewmodels.usbserialviewmodel;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.repository.UsbSerialRepository;
-import com.johndeweydev.awps.repository.UsbDeviceModel;
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
+import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialRepository;
+import com.johndeweydev.awps.repository.usbserialrepository.UsbDeviceModel;
+import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.LauncherSerialDataVmEvent;
 
 import java.util.ArrayList;
 
@@ -20,7 +21,7 @@ public class UsbSerialViewModel extends ViewModel {
   public MutableLiveData<String> currentErrorOnNewData = new MutableLiveData<>();
 
   public UsbSerialViewModel(UsbSerialRepository aUsbSerialRepository) {
-    UsbSerialViewModelCallback usbSerialViewModelCallback = new UsbSerialViewModelCallback() {
+    LauncherSerialDataVmEvent launcherSerialDataVmEvent = new LauncherSerialDataVmEvent() {
       @Override
       public void onNewDataRaw(UsbSerialOutputModel usbSerialOutputModel) {
         currentMessageRaw.postValue(usbSerialOutputModel);
@@ -40,7 +41,7 @@ public class UsbSerialViewModel extends ViewModel {
     };
 
     usbSerialRepository = aUsbSerialRepository;
-    usbSerialRepository.setUsbSerialViewModelCallback(usbSerialViewModelCallback);
+    usbSerialRepository.setUsbSerialViewModelCallback(launcherSerialDataVmEvent);
   }
 
   public int checkAvailableUsbDevices() {

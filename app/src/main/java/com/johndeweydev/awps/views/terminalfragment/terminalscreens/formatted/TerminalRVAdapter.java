@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
+import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels;
+package com.johndeweydev.awps.viewmodels.sessionviewmodel;
 
 public interface LauncherMicEvent {
   void onLauncherMicScannedAccessPoint(String scannedAccessPoint);

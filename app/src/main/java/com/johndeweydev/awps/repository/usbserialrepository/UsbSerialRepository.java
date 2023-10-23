@@ -1,8 +1,8 @@
-package com.johndeweydev.awps.repository;
+package com.johndeweydev.awps.repository.usbserialrepository;
 
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.UsbSerialViewModelCallback;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.LauncherSerialDataVmEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ public class UsbSerialRepository {
   private final StringBuilder queueData = new StringBuilder();
 
   public void setUsbSerialViewModelCallback(
-          UsbSerialViewModelCallback usbSerialViewModelCallback
+          LauncherSerialDataVmEvent launcherSerialDataVmEvent
   ) {
-    UsbSerialRepositoryCallback usbSerialRepositoryCallback = new UsbSerialRepositoryCallback() {
+    LauncherSerialDataEvent launcherSerialDataEvent = new LauncherSerialDataEvent() {
       @Override
       public void onNewData(String data) {
         char[] dataChar = data.toCharArray();
@@ -35,27 +35,27 @@ public class UsbSerialRepository {
         String strTime = createStringTime();
 
         UsbSerialOutputModel usbSerialOutputModel = new UsbSerialOutputModel(strTime, strData);
-        usbSerialViewModelCallback.onNewDataRaw(usbSerialOutputModel);
+        launcherSerialDataVmEvent.onNewDataRaw(usbSerialOutputModel);
 
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          usbSerialViewModelCallback.onNewDataFormatted(usbSerialOutputModel);
+          launcherSerialDataVmEvent.onNewDataFormatted(usbSerialOutputModel);
         }
       }
 
       @Override
       public void onErrorNewData(String errorMessageOnNewData) {
-        usbSerialViewModelCallback.onErrorNewData(errorMessageOnNewData);
+        launcherSerialDataVmEvent.onErrorNewData(errorMessageOnNewData);
       }
       @Override
       public void onErrorWriting(String dataToWrite) {
-        usbSerialViewModelCallback.onErrorWriting(dataToWrite);
+        launcherSerialDataVmEvent.onErrorWriting(dataToWrite);
       }
     };
 
     UsbSerialMainSingleton.getInstance().getUsbSerialMain().setUsbSerialRepositoryCallback(
-            usbSerialRepositoryCallback
+            launcherSerialDataEvent
     );
   }
 

@@ -1,6 +1,6 @@
-package com.johndeweydev.awps.repository;
+package com.johndeweydev.awps.repository.usbserialrepository;
 
-public interface UsbSerialRepositoryCallback {
+public interface LauncherSerialDataEvent {
   void onNewData(String data);
   void onErrorNewData(String errorMessageOnNewData);
   void onErrorWriting(String dataToWrite);

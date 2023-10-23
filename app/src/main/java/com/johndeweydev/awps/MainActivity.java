@@ -11,11 +11,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.johndeweydev.awps.repository.UsbSerialRepository;
+import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialRepository;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
-import com.johndeweydev.awps.viewmodels.SessionViewModel;
-import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
-import com.johndeweydev.awps.viewmodels.UsbSerialViewModelFactory;
+import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 

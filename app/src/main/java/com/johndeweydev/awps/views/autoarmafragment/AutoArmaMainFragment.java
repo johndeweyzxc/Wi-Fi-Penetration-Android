@@ -19,8 +19,8 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentAutoArmaMainBinding;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.SessionViewModel;
-import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
 import com.johndeweydev.awps.views.autoarmafragment.autoarmascreens.dashboard.AutoArmaDashboardFragment;
 import com.johndeweydev.awps.views.autoarmafragment.autoarmascreens.logs.AutoArmaLogsFragment;
 

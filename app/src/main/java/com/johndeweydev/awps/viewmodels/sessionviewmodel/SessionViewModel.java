@@ -1,11 +1,9 @@
-package com.johndeweydev.awps.viewmodels;
+package com.johndeweydev.awps.viewmodels.sessionviewmodel;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
-
-import java.util.ArrayList;
+import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
 
 public class SessionViewModel extends ViewModel {
 
