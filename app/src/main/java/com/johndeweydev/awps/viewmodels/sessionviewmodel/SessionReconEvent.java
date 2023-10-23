@@ -1,6 +1,6 @@
 package com.johndeweydev.awps.viewmodels.sessionviewmodel;
 
-public interface LauncherReconEvent {
+public interface SessionReconEvent {
   void onLauncherReconScannedAccessPoint(String scannedAccessPoint);
   void onLauncherReconFinishScanning();
 }

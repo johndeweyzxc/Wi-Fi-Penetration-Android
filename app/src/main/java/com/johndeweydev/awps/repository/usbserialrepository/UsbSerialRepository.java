@@ -1,8 +1,9 @@
 package com.johndeweydev.awps.repository.usbserialrepository;
 
+import com.johndeweydev.awps.repository.repointerface.LauncherSerialDataEvent;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.usbserialviewmodel.LauncherSerialDataVmEvent;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class UsbSerialRepository {
   private final StringBuilder queueData = new StringBuilder();
 
   public void setUsbSerialViewModelCallback(
-          LauncherSerialDataVmEvent launcherSerialDataVmEvent
+          UsbSerialEvent usbSerialEvent
   ) {
     LauncherSerialDataEvent launcherSerialDataEvent = new LauncherSerialDataEvent() {
       @Override
@@ -35,22 +36,22 @@ public class UsbSerialRepository {
         String strTime = createStringTime();
 
         UsbSerialOutputModel usbSerialOutputModel = new UsbSerialOutputModel(strTime, strData);
-        launcherSerialDataVmEvent.onNewDataRaw(usbSerialOutputModel);
+        usbSerialEvent.onNewDataRaw(usbSerialOutputModel);
 
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          launcherSerialDataVmEvent.onNewDataFormatted(usbSerialOutputModel);
+          usbSerialEvent.onNewDataFormatted(usbSerialOutputModel);
         }
       }
 
       @Override
       public void onErrorNewData(String errorMessageOnNewData) {
-        launcherSerialDataVmEvent.onErrorNewData(errorMessageOnNewData);
+        usbSerialEvent.onErrorNewData(errorMessageOnNewData);
       }
       @Override
       public void onErrorWriting(String dataToWrite) {
-        launcherSerialDataVmEvent.onErrorWriting(dataToWrite);
+        usbSerialEvent.onErrorWriting(dataToWrite);
       }
     };
 

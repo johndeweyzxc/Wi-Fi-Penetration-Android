@@ -1,6 +1,6 @@
 package com.johndeweydev.awps.viewmodels.sessionviewmodel;
 
-public interface LauncherPmkidEvent {
+public interface SessionPmkidEvent {
   void onLauncherPmkidScannedAccessPoint(String scannedAccessPoint);
   void onLauncherPmkidFinishScanning();
   void onLauncherPmkidLaunchingSequence();

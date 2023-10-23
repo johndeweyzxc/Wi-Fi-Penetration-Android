@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.repository.usbserialrepository;
+package com.johndeweydev.awps.repository.repointerface;
 
 public interface LauncherSerialDataEvent {
   void onNewData(String data);
