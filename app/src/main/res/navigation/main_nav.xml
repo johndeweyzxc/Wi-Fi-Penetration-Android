@@ -43,10 +43,26 @@
         android:id="@+id/autoArmaMainFragment"
         android:name="com.johndeweydev.awps.views.autoarmafragment.AutoArmaMainFragment"
         android:label="fragment_auto_arma_main"
-        tools:layout="@layout/fragment_auto_arma_main" />
+        tools:layout="@layout/fragment_auto_arma_main" >
+        <argument
+            android:name="autoArmaArgs"
+            app:argType="com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs" />
+        <action
+            android:id="@+id/action_autoArmaMainFragment_to_devicesFragment"
+            app:destination="@id/devicesFragment"
+            app:popUpTo="@id/devicesFragment"
+            app:popUpToInclusive="false"/>
+    </fragment>
     <fragment
         android:id="@+id/manualArmaFragment"
-        android:name="com.johndeweydev.awps.views.ManualArmaFragment"
+        android:name="com.johndeweydev.awps.views.manualarmafragment.ManualArmaFragment"
         android:label="fragment_manual_arma"
-        tools:layout="@layout/fragment_manual_arma" />
+        tools:layout="@layout/fragment_manual_arma" >
+        <action
+            android:id="@+id/action_manualArmaFragment_to_devicesFragment"
+            app:destination="@id/devicesFragment" />
+        <argument
+            android:name="manualArmaArgs"
+            app:argType="com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs" />
+    </fragment>
 </navigation>

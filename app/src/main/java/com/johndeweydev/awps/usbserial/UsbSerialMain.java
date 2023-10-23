@@ -74,6 +74,7 @@ public class UsbSerialMain {
       connectionStatus = connectToDevice(baudRate, dataBits, stopBits, parity, portNum);
       if (connectionStatus.equals(SUCCESSFULLY_CONNECTED)) {
         UsbSerialControlData.isConnected = true;
+        return SUCCESSFULLY_CONNECTED;
       }
     } else if (permissionStatus.equals(NO_USB_PERMISSION)) {
       return NO_USB_PERMISSION;

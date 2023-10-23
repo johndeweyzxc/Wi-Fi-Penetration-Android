@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    tools:context=".views.autoarmafragment.autoarmascreens.AutoArmaLogsFragment">
+    tools:context=".views.autoarmafragment.autoarmascreens.logs.AutoArmaLogsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutFormattedLogsAutoArmaLogs"

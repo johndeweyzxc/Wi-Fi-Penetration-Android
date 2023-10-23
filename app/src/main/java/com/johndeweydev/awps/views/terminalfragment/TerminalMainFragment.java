@@ -1,6 +1,5 @@
 package com.johndeweydev.awps.views.terminalfragment;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +26,7 @@ import com.johndeweydev.awps.databinding.FragmentTerminalMainBinding;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
+import com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs;
 import com.johndeweydev.awps.views.terminalfragment.terminalscreens.formatted.TerminalFragment;
 import com.johndeweydev.awps.views.terminalfragment.terminalscreens.raw.TerminalRawFragment;
 
@@ -63,13 +63,22 @@ public class TerminalMainFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
     if (terminalArgs == null) {
+      // TODO: Replace NPE, instead show an error message and pop this fragment
       throw new NullPointerException("terminalArgs is null");
     }
-
     initializeViewPager();
+    synchronizeTabsWithViewPager();
+    binding.materialToolBarTerminalMain.setNavigationOnClickListener(v ->
+            binding.drawerLayoutTeminalViewPager.open()
+    );
+    binding.navigationViewTerminalMain.setNavigationItemSelectedListener(
+            this::navItemSelected);
+    setupErrorWriteListener();
+    setupErrorOnNewDataListener();
+  }
 
+  private void synchronizeTabsWithViewPager() {
     TabLayout tabLayout = binding.tabLayoutTerminalMain;
     ViewPager2 viewPager2 = binding.viewPagerTerminalMain;
     TabLayoutMediator.TabConfigurationStrategy tabConfigurationStrategy;
@@ -81,15 +90,6 @@ public class TerminalMainFragment extends Fragment {
       }
     };
     new TabLayoutMediator(tabLayout, viewPager2, tabConfigurationStrategy).attach();
-
-    binding.materialToolBarTerminalMain.setNavigationOnClickListener(v ->
-            binding.drawerLayoutTeminalViewPager.open()
-    );
-    binding.navigationViewTerminalMain.setNavigationItemSelectedListener(
-            this::navItemSelected);
-
-    setupErrorWriteListener();
-    setupErrorOnNewDataListener();
   }
 
   private void initializeViewPager() {
@@ -121,8 +121,11 @@ public class TerminalMainFragment extends Fragment {
       }
       usbSerialViewModel.currentErrorInput.setValue(null);
       Log.d("dev-log", "TerminalMainFragment.setupErrorWriteListener: " +
-              "Disconnecting from device");
-      disconnectFromDevice();
+              "Stopping event read");
+      usbSerialViewModel.stopEventDrivenReadFromDevice();
+      Log.d("dev-log", "TerminalMainFragment.setupErrorWriteListener: " +
+              "Disconnecting from the device");
+      usbSerialViewModel.disconnectFromDevice();
       Toast.makeText(requireActivity(), "Error writing " + s, Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "TerminalMainFragment.setupErrorWriteListener: " +
               "Popping this fragment off the back stack");
@@ -141,8 +144,8 @@ public class TerminalMainFragment extends Fragment {
               "Stopping event read");
       usbSerialViewModel.stopEventDrivenReadFromDevice();
       Log.d("dev-log", "TerminalMainFragment.setupErrorOnNewDataListener: " +
-              "Disconnecting from device");
-      disconnectFromDevice();
+              "Disconnecting from the device");
+      usbSerialViewModel.disconnectFromDevice();
       Toast.makeText(requireActivity(), "Error: " + s, Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "TerminalMainFragment.setupErrorOnNewDataListener: " +
               "Popping this fragment off the back stack");
@@ -152,7 +155,6 @@ public class TerminalMainFragment extends Fragment {
             getViewLifecycleOwner(), onNewDataErrorListener);
   }
 
-  @SuppressLint("UnspecifiedRegisterReceiverFlag")
   @Override
   public void onResume() {
     super.onResume();
@@ -178,25 +180,27 @@ public class TerminalMainFragment extends Fragment {
               "TerminalMainFragment.connectToDevice: Starting event read");
       usbSerialViewModel.startEventDrivenReadFromDevice();
     } else if (status.equals(UsbSerialStatus.FAILED_TO_CONNECT)) {
-      Log.d("dev-log", "TerminalMainFragment.connectToDevice: Disconnecting from device");
-      disconnectFromDevice();
+      Log.d("dev-log", "TerminalMainFragment.connectToDevice: Stopping event read");
+      usbSerialViewModel.stopEventDrivenReadFromDevice();
+      Log.d("dev-log", "TerminalMainFragment.connectToDevice: " +
+              "Disconnecting from the device");
+      usbSerialViewModel.disconnectFromDevice();
       Toast.makeText(requireActivity(), "Failed to connect to the device", Toast.LENGTH_SHORT)
               .show();
+      Log.d("dev-log", "TerminalMainFragment.connectToDevice: " +
+              "Popping this fragment off the back stack");
       Navigation.findNavController(binding.getRoot()).popBackStack();
     }
   }
 
   @Override
   public void onPause() {
+    Log.d("dev-log", "TerminalMainFragment.onPause: Stopping event read");
+    usbSerialViewModel.stopEventDrivenReadFromDevice();
     Log.d("dev-log", "TerminalMainFragment.onPause: Disconnecting from the device");
-    disconnectFromDevice();
+    usbSerialViewModel.disconnectFromDevice();
     super.onPause();
     Log.d("dev-log", "TerminalMainFragment.onPause: Fragment paused");
-  }
-
-  private void disconnectFromDevice() {
-    usbSerialViewModel.stopEventDrivenReadFromDevice();
-    usbSerialViewModel.disconnectFromDevice();
   }
 
   private boolean navItemSelected(MenuItem item) {
@@ -240,12 +244,7 @@ public class TerminalMainFragment extends Fragment {
                 return;
               }
               checkedItem[0] = -1;
-              Log.d("dev-log", "TerminalMainFragment.showAttackTypeDialogSelector: " +
-                      "Navigating to auto arma main fragment");
-              Navigation.findNavController(binding.getRoot()).navigate(
-                      R.id.action_terminalMainFragment_to_autoArmaMainFragment
-              );
-
+              navigateToAutoArmaFragment();
             }))
             .setNegativeButton("Cancel", ((dialog, which) -> {}))
             .setSingleChoiceItems(choices, checkedItem[0], ((dialog, which) -> {
@@ -256,5 +255,22 @@ public class TerminalMainFragment extends Fragment {
 
     AlertDialog dialog = builder.create();
     dialog.show();
+  }
+
+  private void navigateToAutoArmaFragment() {
+    Log.d("dev-log", "TerminalMainFragment.showAttackTypeDialogSelector: " +
+            "Navigating to auto arma main fragment");
+
+    AutoArmaArgs autoArmaArgs = new AutoArmaArgs(
+            terminalArgs.getDeviceId(),
+            terminalArgs.getPortNum(),
+            terminalArgs.getBaudRate()
+    );
+
+    TerminalMainFragmentDirections
+            .ActionTerminalMainFragmentToAutoArmaMainFragment action;
+    action = TerminalMainFragmentDirections
+            .actionTerminalMainFragmentToAutoArmaMainFragment(autoArmaArgs);
+    Navigation.findNavController(binding.getRoot()).navigate(action);
   }
 }

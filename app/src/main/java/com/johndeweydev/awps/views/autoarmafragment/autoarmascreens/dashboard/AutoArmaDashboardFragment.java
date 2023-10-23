@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.views.autoarmafragment.autoarmascreens;
+package com.johndeweydev.awps.views.autoarmafragment.autoarmascreens.dashboard;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,18 +10,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentAutoArmaDashboardBinding;
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
+import com.johndeweydev.awps.viewmodels.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.UsbSerialViewModel;
 
 public class AutoArmaDashboardFragment extends Fragment {
 
   private FragmentAutoArmaDashboardBinding binding;
   private MaterialButton buttonStartStop;
+  private UsbSerialViewModel usbSerialViewModel;
+  private SessionViewModel sessionViewModel;
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+    usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
+    sessionViewModel = new ViewModelProvider(requireActivity()).get(SessionViewModel.class);
     binding = FragmentAutoArmaDashboardBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
@@ -29,6 +38,20 @@ public class AutoArmaDashboardFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    setStartStopAttackLogic();
+
+    binding.textViewAttackConfigValueAutoArmaDashboard.setText(
+            sessionViewModel.getSelectedArmament()
+    );
+    setupObserverData();
+  }
+
+  private void setupObserverData() {
+
+
+  }
+
+  private void setStartStopAttackLogic() {
     buttonStartStop = binding.buttonStopStartAutoArmaDashboard;
 
     Drawable startIcon = ResourcesCompat.getDrawable(

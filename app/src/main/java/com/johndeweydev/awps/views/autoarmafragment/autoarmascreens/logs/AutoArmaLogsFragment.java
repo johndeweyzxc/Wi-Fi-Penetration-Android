@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.views.autoarmafragment.autoarmascreens;
+package com.johndeweydev.awps.views.autoarmafragment.autoarmascreens.logs;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.johndeweydev.awps.databinding.FragmentAutoArmaLogsBinding;
+
+// TODO: Handle bundle arguments
 
 public class AutoArmaLogsFragment extends Fragment {
 
