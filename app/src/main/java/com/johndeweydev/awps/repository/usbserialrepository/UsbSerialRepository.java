@@ -1,11 +1,10 @@
 package com.johndeweydev.awps.repository.usbserialrepository;
 
-import com.johndeweydev.awps.repository.UsbSerialDataEvent;
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
-import com.johndeweydev.awps.repository.usbserialrepository.models.UsbDeviceModel;
-import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
-import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialRepositoryEvent;
+import com.johndeweydev.awps.launcher.LauncherStages;
+import com.johndeweydev.awps.launcher.LauncherEvent;
+import com.johndeweydev.awps.models.LauncherOutputModel;
+import com.johndeweydev.awps.models.UsbDeviceModel;
+import com.johndeweydev.awps.launcher.LauncherSingleton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,9 +18,9 @@ public class UsbSerialRepository {
   public void setUsbSerialViewModelCallback(
           UsbSerialRepositoryEvent usbSerialRepositoryEvent
   ) {
-    UsbSerialDataEvent usbSerialDataEvent = new UsbSerialDataEvent() {
+    LauncherEvent launcherEvent = new LauncherEvent() {
       @Override
-      public void onUsbSerialOutput(String data) {
+      public void onLauncherOutput(String data) {
         char[] dataChar = data.toCharArray();
         for (char c : dataChar) {
           if (c == '\n') {
@@ -37,28 +36,28 @@ public class UsbSerialRepository {
         String strData = queueData.toString();
         String strTime = createStringTime();
 
-        UsbSerialOutputModel usbSerialOutputModel = new UsbSerialOutputModel(strTime, strData);
-        usbSerialRepositoryEvent.onRepositoryOutputRaw(usbSerialOutputModel);
+        LauncherOutputModel launcherOutputModel = new LauncherOutputModel(strTime, strData);
+        usbSerialRepositoryEvent.onRepositoryOutputRaw(launcherOutputModel);
 
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          usbSerialRepositoryEvent.onRepositoryOutputFormatted(usbSerialOutputModel);
+          usbSerialRepositoryEvent.onRepositoryOutputFormatted(launcherOutputModel);
         }
       }
 
       @Override
-      public void onUsbOutputError(String errorMessageOnNewData) {
+      public void onLauncherOutputError(String errorMessageOnNewData) {
         usbSerialRepositoryEvent.onRepositoryOutputError(errorMessageOnNewData);
       }
       @Override
-      public void onUsbInputError(String dataToWrite) {
+      public void onLauncherInputError(String dataToWrite) {
         usbSerialRepositoryEvent.onRepositoryInputError(dataToWrite);
       }
     };
 
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().setLauncherSerialDataEvent(
-            usbSerialDataEvent
+    LauncherSingleton.getInstance().getLauncher().setLauncherSerialDataEvent(
+            launcherEvent
     );
   }
 
@@ -69,29 +68,41 @@ public class UsbSerialRepository {
   }
 
   public ArrayList<UsbDeviceModel> discoverDevices() {
-    return UsbSerialMainSingleton.getInstance().getUsbSerialMain().discoverDevices();
+    return LauncherSingleton.getInstance().getLauncher().discoverDevices();
   }
 
-  public UsbSerialStatus connect(
+  public String connect(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
-    return UsbSerialMainSingleton.getInstance().getUsbSerialMain().connect(
+    LauncherStages status = LauncherSingleton.getInstance().getLauncher().connect(
             baudRate, dataBits, stopBits, parity, deviceId, portNum
     );
+
+    switch (status) {
+      case ALREADY_CONNECTED: return "Already connected";
+      case DEVICE_NOT_FOUND: return "Device not found";
+      case DRIVER_NOT_FOUND: return "Driver not found";
+      case PORT_NOT_FOUND: return "Port not found";
+      case NO_USB_PERMISSION: return "No usb permission";
+      case SUCCESSFULLY_CONNECTED: return "Successfully connected";
+      case UNSUPPORTED_PORT_PARAMETERS: return "Unsupported port parameters";
+      case FAILED_OPENING_DEVICE: return "Failed to open the device";
+      default: return "None";
+    }
   }
 
   public void disconnect() {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().disconnect();
+    LauncherSingleton.getInstance().getLauncher().disconnect();
   }
 
   public void startReading() {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().startReading();
+    LauncherSingleton.getInstance().getLauncher().startReading();
   }
 
   public void stopReading() {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().stopReading();
+    LauncherSingleton.getInstance().getLauncher().stopReading();
   }
 
   public void writeData(String data) {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().writeData(data);
+    LauncherSingleton.getInstance().getLauncher().writeData(data);
   }
 }

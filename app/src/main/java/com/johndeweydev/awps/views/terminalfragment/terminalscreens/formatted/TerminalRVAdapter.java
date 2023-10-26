@@ -9,14 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
+import com.johndeweydev.awps.models.LauncherOutputModel;
 
 import java.util.ArrayList;
 
 public class TerminalRVAdapter extends RecyclerView
         .Adapter<TerminalRVAdapter.TerminalAdapterViewHolder> {
 
-  private final ArrayList<UsbSerialOutputModel> usbSerialOutputModelList = new ArrayList<>();
+  private final ArrayList<LauncherOutputModel> launcherOutputModelList = new ArrayList<>();
 
   public static class TerminalAdapterViewHolder extends RecyclerView.ViewHolder {
     public TextView textViewTimeSerialOutputListItem;
@@ -41,19 +41,19 @@ public class TerminalRVAdapter extends RecyclerView
 
   @Override
   public void onBindViewHolder(@NonNull TerminalAdapterViewHolder holder, int position) {
-    UsbSerialOutputModel currentItem = usbSerialOutputModelList.get(position);
+    LauncherOutputModel currentItem = launcherOutputModelList.get(position);
     holder.textViewTimeSerialOutputListItem.setText(currentItem.getTime());
     holder.textViewMessageSerialOutputListItem.setText(currentItem.getOutput());
   }
 
   @Override
   public int getItemCount() {
-    return usbSerialOutputModelList.size();
+    return launcherOutputModelList.size();
   }
 
-  public void appendData(UsbSerialOutputModel usbSerialOutputModel) {
-    usbSerialOutputModelList.add(usbSerialOutputModel);
-    int pos = usbSerialOutputModelList.size() - 1;
+  public void appendData(LauncherOutputModel launcherOutputModel) {
+    launcherOutputModelList.add(launcherOutputModel);
+    int pos = launcherOutputModelList.size() - 1;
     this.notifyItemInserted(pos);
   }
 }

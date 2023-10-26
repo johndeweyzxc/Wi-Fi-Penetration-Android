@@ -4,12 +4,12 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
+import com.johndeweydev.awps.models.LauncherOutputModel;
 import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
-import com.johndeweydev.awps.repository.sessionrepository.models.MicFirstMessageModel;
-import com.johndeweydev.awps.repository.sessionrepository.models.MicSecondMessageModel;
-import com.johndeweydev.awps.repository.sessionrepository.models.PmkidFirstMessageModel;
-import com.johndeweydev.awps.usbserial.UsbSerialStatus;
+import com.johndeweydev.awps.models.MicFirstMessageModel;
+import com.johndeweydev.awps.models.MicSecondMessageModel;
+import com.johndeweydev.awps.models.PmkidFirstMessageModel;
+import com.johndeweydev.awps.repository.sessionrepository.SessionRepositoryEvent;
 
 public class SessionViewModel extends ViewModel {
 
@@ -20,7 +20,7 @@ public class SessionViewModel extends ViewModel {
   public MutableLiveData<Integer> nearbyAccessPoints = new MutableLiveData<>(0);
   public MutableLiveData<Integer> failedAttacks = new MutableLiveData<>(0);
   public MutableLiveData<Integer> keysFound = new MutableLiveData<>(0);
-  public MutableLiveData<UsbSerialOutputModel>
+  public MutableLiveData<LauncherOutputModel>
           currentMessageFormatted = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
@@ -28,12 +28,12 @@ public class SessionViewModel extends ViewModel {
   SessionRepositoryEvent sessionRepositoryEvent = new SessionRepositoryEvent() {
 
     @Override
-    public void onRepositoryOutputRaw(UsbSerialOutputModel usbSerialOutputModel) {
+    public void onRepositoryOutputRaw(LauncherOutputModel launcherOutputModel) {
 
     }
 
     @Override
-    public void onRepositoryOutputFormatted(UsbSerialOutputModel usbSerialOutputModel) {
+    public void onRepositoryOutputFormatted(LauncherOutputModel launcherOutputModel) {
 
     }
 
@@ -150,7 +150,7 @@ public class SessionViewModel extends ViewModel {
     sessionRepository.setSessionEvent(sessionRepositoryEvent);
   }
 
-  public UsbSerialStatus connectToDevice(
+  public String connectToDevice(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum
   ) {
     return sessionRepository.connect(baudRate, dataBits, stopBits, parity, deviceId, portNum);

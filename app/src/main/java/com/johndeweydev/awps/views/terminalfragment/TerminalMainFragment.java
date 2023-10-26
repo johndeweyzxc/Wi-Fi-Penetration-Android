@@ -23,8 +23,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentTerminalMainBinding;
-import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
 import com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs;
 import com.johndeweydev.awps.views.terminalfragment.terminalscreens.formatted.TerminalFragment;
@@ -37,7 +35,6 @@ public class TerminalMainFragment extends Fragment {
   private FragmentTerminalMainBinding binding;
   private String selectedArmament;
   private UsbSerialViewModel usbSerialViewModel;
-  private SessionViewModel sessionViewModel;
   private TerminalArgs terminalArgs = null;
 
   @Override
@@ -171,16 +168,16 @@ public class TerminalMainFragment extends Fragment {
 
     int deviceId = terminalArgs.getDeviceId();
     int portNum = terminalArgs.getPortNum();
-    UsbSerialStatus status = usbSerialViewModel.connectToDevice(
+    String result = usbSerialViewModel.connectToDevice(
             19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum);
 
-    if (status.equals(UsbSerialStatus.SUCCESSFULLY_CONNECTED)
-            || status.equals(UsbSerialStatus.ALREADY_CONNECTED)
-    ) {
+    if (result.equals("Successfully connected") || result.equals("Already connected")) {
+
       Log.d("dev-log",
               "TerminalMainFragment.connectToDevice: Starting event read");
       usbSerialViewModel.startEventDrivenReadFromDevice();
-    } else if (status.equals(UsbSerialStatus.FAILED_TO_CONNECT)) {
+    } else if (result.equals("Failed to connect")) {
+
       Log.d("dev-log", "TerminalMainFragment.connectToDevice: Stopping event read");
       usbSerialViewModel.stopEventDrivenReadFromDevice();
       Log.d("dev-log", "TerminalMainFragment.connectToDevice: " +
@@ -232,8 +229,6 @@ public class TerminalMainFragment extends Fragment {
 
   private void showAttackTypeDialogSelector() {
     final String[] choices = new String[]{"PMKID Based Attack", "MIC Based Attack", "Deauther"};
-    sessionViewModel = new ViewModelProvider(requireActivity())
-            .get(SessionViewModel.class);
 
     final int[] checkedItem = {-1};
 

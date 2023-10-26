@@ -1,11 +1,11 @@
-package com.johndeweydev.awps.viewmodels.sessionviewmodel;
+package com.johndeweydev.awps.repository.sessionrepository;
 
 import androidx.annotation.Nullable;
 
-import com.johndeweydev.awps.repository.sessionrepository.models.MicFirstMessageModel;
-import com.johndeweydev.awps.repository.sessionrepository.models.MicSecondMessageModel;
-import com.johndeweydev.awps.repository.sessionrepository.models.PmkidFirstMessageModel;
-import com.johndeweydev.awps.viewmodels.RepositorySerialDataEvent;
+import com.johndeweydev.awps.models.MicFirstMessageModel;
+import com.johndeweydev.awps.models.MicSecondMessageModel;
+import com.johndeweydev.awps.models.PmkidFirstMessageModel;
+import com.johndeweydev.awps.repository.RepositorySerialDataEvent;
 
 public interface SessionRepositoryEvent extends RepositorySerialDataEvent {
 

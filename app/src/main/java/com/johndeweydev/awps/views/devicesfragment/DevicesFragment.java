@@ -1,9 +1,5 @@
 package com.johndeweydev.awps.views.devicesfragment;
 
-import static com.johndeweydev.awps.usbserial.UsbSerialStatus.ALREADY_CONNECTED;
-import static com.johndeweydev.awps.usbserial.UsbSerialStatus.NO_USB_PERMISSION;
-import static com.johndeweydev.awps.usbserial.UsbSerialStatus.SUCCESSFULLY_CONNECTED;
-
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -30,9 +26,8 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.BuildConfig;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
-import com.johndeweydev.awps.repository.usbserialrepository.models.UsbDeviceModel;
-import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
-import com.johndeweydev.awps.usbserial.UsbSerialStatus;
+import com.johndeweydev.awps.launcher.LauncherSingleton;
+import com.johndeweydev.awps.models.UsbDeviceModel;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
@@ -119,15 +114,17 @@ public class DevicesFragment extends Fragment {
 
     Log.d("dev-log",
             "DevicesFragment.isUsbDevicePermissionGranted: Connecting to the device");
-    UsbSerialStatus result = usbSerialViewModel.connectToDevice(
+    String result = usbSerialViewModel.connectToDevice(
             19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum
     );
 
-    if (result.equals(NO_USB_PERMISSION)) {
+    if (result.equals("No usb permission")) {
+
       Log.d("dev-log",
               "DevicesFragment.isUsbDevicePermissionGranted: Requesting usb device permission");
       requestUsbDevicePermission();
-    } else if (result.equals(SUCCESSFULLY_CONNECTED) || result.equals(ALREADY_CONNECTED)) {
+    } else if (result.equals("Successfully connected") || result.equals("Already connected")) {
+
       Log.d("dev-log",
               "DevicesFragment.isUsbDevicePermissionGranted: Navigating to terminal fragment");
       navigateToTerminalFragment();
@@ -140,9 +137,9 @@ public class DevicesFragment extends Fragment {
     pendingIntent = PendingIntent.getBroadcast(requireActivity(), 0,
             new Intent(INTENT_ACTION_GRANT_USB), flags
     );
-    UsbSerialMainSingleton.getUsbManager().requestPermission(
-            UsbSerialMainSingleton.getInstance()
-                    .getUsbSerialMain()
+    LauncherSingleton.getUsbManager().requestPermission(
+            LauncherSingleton.getInstance()
+                    .getLauncher()
                     .getUsbSerialDriver()
                     .getDevice(),
             pendingIntent

@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.repository.sessionrepository.models;
+package com.johndeweydev.awps.models;
 
 public class PmkidFirstMessageModel {
   private String bssid;

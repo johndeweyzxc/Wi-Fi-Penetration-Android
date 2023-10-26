@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
+import com.johndeweydev.awps.models.LauncherOutputModel;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
@@ -76,15 +76,15 @@ public class TerminalFragment extends Fragment {
     layout.setStackFromEnd(true);
     binding.recyclerViewTerminal.setLayoutManager(layout);
 
-    final Observer<UsbSerialOutputModel> serialOutputObserver;
+    final Observer<LauncherOutputModel> serialOutputObserver;
     serialOutputObserver = this::handleNewSerialOutputFromLiveData;
     usbSerialViewModel.currentMessageFormatted.observe(
             getViewLifecycleOwner(), serialOutputObserver
     );
   }
 
-  private void handleNewSerialOutputFromLiveData(UsbSerialOutputModel usbSerialOutputModel) {
-    terminalRVAdapter.appendData(usbSerialOutputModel);
+  private void handleNewSerialOutputFromLiveData(LauncherOutputModel launcherOutputModel) {
+    terminalRVAdapter.appendData(launcherOutputModel);
     binding.recyclerViewTerminal.scrollToPosition(terminalRVAdapter.getItemCount() - 1);
   }
 

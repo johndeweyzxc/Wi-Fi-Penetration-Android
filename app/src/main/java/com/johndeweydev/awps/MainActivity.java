@@ -13,7 +13,7 @@ import androidx.navigation.Navigation;
 
 import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
 import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialRepository;
-import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
+import com.johndeweydev.awps.launcher.LauncherSingleton;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
 
     UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-    UsbSerialMainSingleton.setUsbManager(usbManager);
+    LauncherSingleton.setUsbManager(usbManager);
 
     // Initialize the view model to be use for terminal serial input/output
     UsbSerialRepository usbSerialRepository = new UsbSerialRepository();

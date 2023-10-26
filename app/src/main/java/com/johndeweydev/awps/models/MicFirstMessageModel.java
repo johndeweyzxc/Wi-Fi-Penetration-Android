@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.repository.sessionrepository.models;
+package com.johndeweydev.awps.models;
 
 public class MicFirstMessageModel {
   private String bssid;

@@ -1,13 +1,12 @@
 package com.johndeweydev.awps.repository.sessionrepository;
 
-import com.johndeweydev.awps.repository.UsbSerialDataEvent;
-import com.johndeweydev.awps.repository.UsbSerialOutputModel;
-import com.johndeweydev.awps.repository.sessionrepository.models.MicFirstMessageModel;
-import com.johndeweydev.awps.repository.sessionrepository.models.MicSecondMessageModel;
-import com.johndeweydev.awps.repository.sessionrepository.models.PmkidFirstMessageModel;
-import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
-import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionRepositoryEvent;
+import com.johndeweydev.awps.launcher.LauncherStages;
+import com.johndeweydev.awps.launcher.LauncherEvent;
+import com.johndeweydev.awps.models.LauncherOutputModel;
+import com.johndeweydev.awps.models.MicFirstMessageModel;
+import com.johndeweydev.awps.models.MicSecondMessageModel;
+import com.johndeweydev.awps.models.PmkidFirstMessageModel;
+import com.johndeweydev.awps.launcher.LauncherSingleton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,9 +20,9 @@ public class SessionRepository {
   private final StringBuilder queueData = new StringBuilder();
   private SessionRepositoryEvent sessionRepositoryEvent;
 
-  UsbSerialDataEvent usbSerialDataEvent = new UsbSerialDataEvent() {
+  LauncherEvent launcherEvent = new LauncherEvent() {
     @Override
-    public void onUsbSerialOutput(String data) {
+    public void onLauncherOutput(String data) {
       char[] dataChar = data.toCharArray();
       for (char c : dataChar) {
         if (c == '\n') {
@@ -36,33 +35,33 @@ public class SessionRepository {
     }
 
     @Override
-    public void onUsbOutputError(String error) {
+    public void onLauncherOutputError(String error) {
       sessionRepositoryEvent.onRepositoryOutputError(error);
     }
 
     @Override
-    public void onUsbInputError(String input) {
+    public void onLauncherInputError(String input) {
       sessionRepositoryEvent.onRepositoryInputError(input);
     }
   };
 
   public void setSessionEvent(SessionRepositoryEvent sessionRepositoryEvent) {
     this.sessionRepositoryEvent = sessionRepositoryEvent;
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().setLauncherSerialDataEvent(
-            usbSerialDataEvent);
+    LauncherSingleton.getInstance().getLauncher().setLauncherSerialDataEvent(
+            launcherEvent);
   }
 
   private void processFormattedOutput() {
     String data = queueData.toString();
     String time = createStringTime();
 
-    UsbSerialOutputModel usbSerialOutputModel = new UsbSerialOutputModel(time, data);
-    sessionRepositoryEvent.onRepositoryOutputRaw(usbSerialOutputModel);
+    LauncherOutputModel launcherOutputModel = new LauncherOutputModel(time, data);
+    sessionRepositoryEvent.onRepositoryOutputRaw(launcherOutputModel);
 
     char firstChar = data.charAt(0);
     char lastChar = data.charAt(data.length() - 2);
     if (firstChar == '{' && lastChar == '}') {
-      sessionRepositoryEvent.onRepositoryOutputFormatted(usbSerialOutputModel);
+      sessionRepositoryEvent.onRepositoryOutputFormatted(launcherOutputModel);
       String[] splitStrData = data.split(",");
 
       ArrayList<String> strDataList = new ArrayList<>(Arrays.asList(splitStrData));
@@ -243,7 +242,8 @@ public class SessionRepository {
         sessionRepositoryEvent.onRepositoryTaskCreated();
       case "INJECTED_DEAUTH":
         int numberOfInjectedDeauthentications = Integer.parseInt(strDataList.get(2));
-        sessionRepositoryEvent.onRepositoryTaskStatus("DEAUTH", numberOfInjectedDeauthentications);
+        sessionRepositoryEvent.onRepositoryTaskStatus("DEAUTH",
+                numberOfInjectedDeauthentications);
       case "STOPPED":
         sessionRepositoryEvent.onRepositoryDeauthStop(strDataList.get(2));
     }
@@ -259,26 +259,37 @@ public class SessionRepository {
     sessionRepositoryEvent.onRepositoryScannedAccessPoint(macAddress, ssid, rssi, channel);
   }
 
-  public UsbSerialStatus connect(
+  public String connect(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
-    return UsbSerialMainSingleton.getInstance().getUsbSerialMain().connect(
+    LauncherStages status = LauncherSingleton.getInstance().getLauncher().connect(
             baudRate, dataBits, stopBits, parity, deviceId, portNum
     );
+    switch (status) {
+      case ALREADY_CONNECTED: return "Already connected";
+      case DEVICE_NOT_FOUND: return "Device not found";
+      case DRIVER_NOT_FOUND: return "Driver not found";
+      case PORT_NOT_FOUND: return "Port not found";
+      case NO_USB_PERMISSION: return "No usb permission";
+      case SUCCESSFULLY_CONNECTED: return "Successfully connected";
+      case UNSUPPORTED_PORT_PARAMETERS: return "Unsupported port parameters";
+      case FAILED_OPENING_DEVICE: return "Failed to open the device";
+      default: return "None";
+    }
   }
 
   public void disconnect() {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().disconnect();
+    LauncherSingleton.getInstance().getLauncher().disconnect();
   }
 
   public void startReading() {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().startReading();
+    LauncherSingleton.getInstance().getLauncher().startReading();
   }
 
   public void stopReading() {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().stopReading();
+    LauncherSingleton.getInstance().getLauncher().stopReading();
   }
 
   public void writeData(String data) {
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().writeData(data);
+    LauncherSingleton.getInstance().getLauncher().writeData(data);
   }
 }

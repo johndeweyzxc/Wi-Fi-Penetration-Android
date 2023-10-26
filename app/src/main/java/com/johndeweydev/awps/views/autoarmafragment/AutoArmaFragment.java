@@ -17,7 +17,6 @@ import androidx.navigation.Navigation;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentAutoArmaBinding;
-import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 
 public class AutoArmaFragment extends Fragment {
@@ -120,16 +119,16 @@ public class AutoArmaFragment extends Fragment {
 
     int deviceId = autoArmaArgs.getDeviceId();
     int portNum = autoArmaArgs.getPortNum();
-    UsbSerialStatus status = sessionViewModel.connectToDevice(
+    String result = sessionViewModel.connectToDevice(
             19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum);
 
-    if (status.equals(UsbSerialStatus.SUCCESSFULLY_CONNECTED)
-            || status.equals(UsbSerialStatus.ALREADY_CONNECTED)
-    ) {
+    if (result.equals("Successfully connected") || result.equals("Already connected")) {
+
       Log.d("dev-log",
               "AutoArmaFragment.connectToDevice: Starting event read");
       sessionViewModel.startEventDrivenReadFromDevice();
-    } else if (status.equals(UsbSerialStatus.FAILED_TO_CONNECT)) {
+    } else if (result.equals("Failed to connect")) {
+
       Log.d("dev-log", "AutoArmaFragment.connectToDevice: " +
               "Failed to connect to the device");
       stopEventReadAndDisconnectFromDevice();

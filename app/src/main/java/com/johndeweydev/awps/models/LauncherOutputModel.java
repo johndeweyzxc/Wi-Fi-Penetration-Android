@@ -1,12 +1,12 @@
-package com.johndeweydev.awps.repository;
+package com.johndeweydev.awps.models;
 
-public class UsbSerialOutputModel {
+public class LauncherOutputModel {
 
   private final String time;
   private final String output;
 
 
-  public UsbSerialOutputModel(String time, String output) {
+  public LauncherOutputModel(String time, String output) {
     this.time = time;
     this.output = output;
   }
