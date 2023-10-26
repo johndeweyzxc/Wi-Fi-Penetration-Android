@@ -10,11 +10,13 @@ public class AutoArmaArgs implements Parcelable {
   private final int deviceId;
   private final int portNum;
   private final int baudRate;
+  private String selectedArmament = "";
 
-  public AutoArmaArgs(int aDeviceId, int aPortNum, int aBaudRate) {
+  public AutoArmaArgs(int aDeviceId, int aPortNum, int aBaudRate, String selectedArmament) {
     deviceId = aDeviceId;
     portNum = aPortNum;
     baudRate = aBaudRate;
+    this.selectedArmament = selectedArmament;
   }
 
   public int getDeviceId() {
@@ -29,10 +31,13 @@ public class AutoArmaArgs implements Parcelable {
     return baudRate;
   }
 
+  public String getSelectedArmament() {return selectedArmament;}
+
   protected AutoArmaArgs(Parcel in) {
     deviceId = in.readInt();
     portNum = in.readInt();
     baudRate = in.readInt();
+    selectedArmament = in.readString();
   }
 
   public static final Creator<com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs>
@@ -58,5 +63,6 @@ public class AutoArmaArgs implements Parcelable {
     dest.writeInt(deviceId);
     dest.writeInt(portNum);
     dest.writeInt(baudRate);
+    dest.writeString(selectedArmament);
   }
 }

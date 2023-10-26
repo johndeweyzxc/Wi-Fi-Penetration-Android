@@ -1,6 +1,8 @@
 package com.johndeweydev.awps.repository.usbserialrepository;
 
-public class UsbSerialOutputModel {
+import com.johndeweydev.awps.repository.LauncherSerialOutputModel;
+
+public class UsbSerialOutputModel implements LauncherSerialOutputModel {
   private final String timeInString;
   private final String serialOutputString;
 
@@ -10,10 +12,12 @@ public class UsbSerialOutputModel {
     this.serialOutputString = serialOutputString;
   }
 
+  @Override
   public String getTimeInString() {
     return timeInString;
   }
 
+  @Override
   public String getSerialOutputInString() {
     return serialOutputString;
   }

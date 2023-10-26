@@ -24,7 +24,7 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
 import com.johndeweydev.awps.repository.usbserialrepository.UsbDeviceModel;
-import com.johndeweydev.awps.repository.repointerface.LauncherSerialDataEvent;
+import com.johndeweydev.awps.repository.LauncherSerialDataEvent;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -44,7 +44,7 @@ public class UsbSerialMain {
     private static boolean isReading = false;
   }
 
-  public void setUsbSerialRepositoryCallback(
+  public void setLauncherSerialDataEvent(
           LauncherSerialDataEvent launcherSerialDataEvent
   ) {
     this.launcherSerialDataEvent = launcherSerialDataEvent;
@@ -171,7 +171,7 @@ public class UsbSerialMain {
     public void onNewData(byte[] data) {
       if (data.length > 0) {
         String strData = new String(data, StandardCharsets.US_ASCII);
-        launcherSerialDataEvent.onNewData(strData);
+        launcherSerialDataEvent.onSerialOutput(strData);
       }
     }
 
@@ -179,7 +179,7 @@ public class UsbSerialMain {
     public void onRunError(Exception e) {
       Log.e("dev-log", "UsbIoManagerListener.onRunError: An error has occurred "
               + e.getMessage());
-      launcherSerialDataEvent.onErrorNewData(e.getMessage());
+      launcherSerialDataEvent.onSerialOutputError(e.getMessage());
     }
   };
 
@@ -236,7 +236,7 @@ public class UsbSerialMain {
     } catch (Exception e) {
       Log.e("dev-log", "UsbSerialMain.writeData: An error has occurred "
               + e.getMessage());
-      launcherSerialDataEvent.onErrorWriting(str);
+      launcherSerialDataEvent.onSerialInputError(str);
     }
 
   }

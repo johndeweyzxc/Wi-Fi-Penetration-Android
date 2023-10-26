@@ -22,19 +22,19 @@ public class UsbSerialViewModel extends ViewModel {
   public UsbSerialViewModel(UsbSerialRepository aUsbSerialRepository) {
     UsbSerialEvent usbSerialEvent = new UsbSerialEvent() {
       @Override
-      public void onNewDataRaw(UsbSerialOutputModel usbSerialOutputModel) {
+      public void onSerialOutputRaw(UsbSerialOutputModel usbSerialOutputModel) {
         currentMessageRaw.postValue(usbSerialOutputModel);
       }
       @Override
-      public void onNewDataFormatted(UsbSerialOutputModel usbSerialOutputModel) {
+      public void onSerialOutputFormatted(UsbSerialOutputModel usbSerialOutputModel) {
         currentMessageFormatted.postValue(usbSerialOutputModel);
       }
       @Override
-      public void onErrorNewData(String errorMessageOnNewData) {
+      public void onSerialOutputError(String errorMessageOnNewData) {
         currentErrorOnNewData.postValue(errorMessageOnNewData);
       }
       @Override
-      public void onErrorWriting(String dataToWrite) {
+      public void onSerialInputError(String dataToWrite) {
         currentErrorInput.postValue(dataToWrite);
       }
     };

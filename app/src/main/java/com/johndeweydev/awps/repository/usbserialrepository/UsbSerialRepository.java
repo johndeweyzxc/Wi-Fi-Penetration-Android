@@ -1,6 +1,6 @@
 package com.johndeweydev.awps.repository.usbserialrepository;
 
-import com.johndeweydev.awps.repository.repointerface.LauncherSerialDataEvent;
+import com.johndeweydev.awps.repository.LauncherSerialDataEvent;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialEvent;
@@ -19,7 +19,7 @@ public class UsbSerialRepository {
   ) {
     LauncherSerialDataEvent launcherSerialDataEvent = new LauncherSerialDataEvent() {
       @Override
-      public void onNewData(String data) {
+      public void onSerialOutput(String data) {
         char[] dataChar = data.toCharArray();
         for (char c : dataChar) {
           if (c == '\n') {
@@ -36,26 +36,26 @@ public class UsbSerialRepository {
         String strTime = createStringTime();
 
         UsbSerialOutputModel usbSerialOutputModel = new UsbSerialOutputModel(strTime, strData);
-        usbSerialEvent.onNewDataRaw(usbSerialOutputModel);
+        usbSerialEvent.onSerialOutputRaw(usbSerialOutputModel);
 
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          usbSerialEvent.onNewDataFormatted(usbSerialOutputModel);
+          usbSerialEvent.onSerialOutputFormatted(usbSerialOutputModel);
         }
       }
 
       @Override
-      public void onErrorNewData(String errorMessageOnNewData) {
-        usbSerialEvent.onErrorNewData(errorMessageOnNewData);
+      public void onSerialOutputError(String errorMessageOnNewData) {
+        usbSerialEvent.onSerialOutputError(errorMessageOnNewData);
       }
       @Override
-      public void onErrorWriting(String dataToWrite) {
-        usbSerialEvent.onErrorWriting(dataToWrite);
+      public void onSerialInputError(String dataToWrite) {
+        usbSerialEvent.onSerialInputError(dataToWrite);
       }
     };
 
-    UsbSerialMainSingleton.getInstance().getUsbSerialMain().setUsbSerialRepositoryCallback(
+    UsbSerialMainSingleton.getInstance().getUsbSerialMain().setLauncherSerialDataEvent(
             launcherSerialDataEvent
     );
   }

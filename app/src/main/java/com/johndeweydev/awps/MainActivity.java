@@ -11,9 +11,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
 import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialRepository;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModelFactory;
 
@@ -26,16 +28,20 @@ public class MainActivity extends AppCompatActivity {
     UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
     UsbSerialMainSingleton.setUsbManager(usbManager);
 
+    // Initialize the view model to be use for terminal serial input/output
     UsbSerialRepository usbSerialRepository = new UsbSerialRepository();
     UsbSerialViewModelFactory usbSerialViewModelFactory = new UsbSerialViewModelFactory(
-            usbSerialRepository
-    );
+            usbSerialRepository);
     new ViewModelProvider(this, usbSerialViewModelFactory).get(UsbSerialViewModel.class);
-
+    
     setContentView(R.layout.activity_main);
     fragmentChangeListener();
 
-    new ViewModelProvider(this).get(SessionViewModel.class);
+    // Initialize the view model to be use for manual and automatic attack
+    SessionRepository sessionRepository = new SessionRepository();
+    SessionViewModelFactory sessionViewModelFactory = new SessionViewModelFactory(
+            sessionRepository);
+    new ViewModelProvider(this, sessionViewModelFactory).get(SessionViewModel.class);
   }
 
   private void fragmentChangeListener() {

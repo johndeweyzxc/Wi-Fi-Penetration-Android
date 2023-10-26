@@ -35,6 +35,7 @@ import java.util.ArrayList;
 public class TerminalMainFragment extends Fragment {
 
   private FragmentTerminalMainBinding binding;
+  private String selectedArmament;
   private UsbSerialViewModel usbSerialViewModel;
   private SessionViewModel sessionViewModel;
   private TerminalArgs terminalArgs = null;
@@ -250,7 +251,7 @@ public class TerminalMainFragment extends Fragment {
             .setSingleChoiceItems(choices, checkedItem[0], ((dialog, which) -> {
 
               checkedItem[0] = which;
-              sessionViewModel.setSelectedArmament(choices[which]);
+              selectedArmament = choices[which];
             }));
 
     AlertDialog dialog = builder.create();
@@ -264,8 +265,8 @@ public class TerminalMainFragment extends Fragment {
     AutoArmaArgs autoArmaArgs = new AutoArmaArgs(
             terminalArgs.getDeviceId(),
             terminalArgs.getPortNum(),
-            terminalArgs.getBaudRate()
-    );
+            terminalArgs.getBaudRate(),
+            selectedArmament);
 
     TerminalMainFragmentDirections
             .ActionTerminalMainFragmentToAutoArmaMainFragment action;

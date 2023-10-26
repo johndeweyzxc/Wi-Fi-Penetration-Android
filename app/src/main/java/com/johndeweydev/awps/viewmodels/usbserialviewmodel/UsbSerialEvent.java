@@ -3,8 +3,8 @@ package com.johndeweydev.awps.viewmodels.usbserialviewmodel;
 import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
 
 public interface UsbSerialEvent {
-  void onNewDataRaw(UsbSerialOutputModel usbSerialOutputModel);
-  void onNewDataFormatted(UsbSerialOutputModel usbSerialOutputModel);
-  void onErrorNewData(String errorMessageOnNewData);
-  void onErrorWriting(String dataToWrite);
+  void onSerialOutputRaw(UsbSerialOutputModel usbSerialOutputModel);
+  void onSerialOutputFormatted(UsbSerialOutputModel usbSerialOutputModel);
+  void onSerialOutputError(String errorMessageOnNewData);
+  void onSerialInputError(String dataToWrite);
 }
