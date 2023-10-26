@@ -23,8 +23,8 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbDeviceModel;
-import com.johndeweydev.awps.repository.LauncherSerialDataEvent;
+import com.johndeweydev.awps.repository.usbserialrepository.models.UsbDeviceModel;
+import com.johndeweydev.awps.repository.UsbSerialDataEvent;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +37,7 @@ public class UsbSerialMain {
   private UsbSerialDriver usbSerialDriver;
   private UsbSerialPort usbSerialPort;
   private SerialInputOutputManager serialInputOutputManager;
-  private LauncherSerialDataEvent launcherSerialDataEvent;
+  private UsbSerialDataEvent usbSerialDataEvent;
 
   private static class UsbSerialControlData {
     private static boolean isConnected = false;
@@ -45,9 +45,9 @@ public class UsbSerialMain {
   }
 
   public void setLauncherSerialDataEvent(
-          LauncherSerialDataEvent launcherSerialDataEvent
+          UsbSerialDataEvent usbSerialDataEvent
   ) {
-    this.launcherSerialDataEvent = launcherSerialDataEvent;
+    this.usbSerialDataEvent = usbSerialDataEvent;
   }
 
   public UsbSerialDriver getUsbSerialDriver() {
@@ -171,7 +171,7 @@ public class UsbSerialMain {
     public void onNewData(byte[] data) {
       if (data.length > 0) {
         String strData = new String(data, StandardCharsets.US_ASCII);
-        launcherSerialDataEvent.onSerialOutput(strData);
+        usbSerialDataEvent.onUsbSerialOutput(strData);
       }
     }
 
@@ -179,7 +179,7 @@ public class UsbSerialMain {
     public void onRunError(Exception e) {
       Log.e("dev-log", "UsbIoManagerListener.onRunError: An error has occurred "
               + e.getMessage());
-      launcherSerialDataEvent.onSerialOutputError(e.getMessage());
+      usbSerialDataEvent.onUsbOutputError(e.getMessage());
     }
   };
 
@@ -236,7 +236,7 @@ public class UsbSerialMain {
     } catch (Exception e) {
       Log.e("dev-log", "UsbSerialMain.writeData: An error has occurred "
               + e.getMessage());
-      launcherSerialDataEvent.onSerialInputError(str);
+      usbSerialDataEvent.onUsbInputError(str);
     }
 
   }

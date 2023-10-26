@@ -30,7 +30,7 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.BuildConfig;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbDeviceModel;
+import com.johndeweydev.awps.repository.usbserialrepository.models.UsbDeviceModel;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;

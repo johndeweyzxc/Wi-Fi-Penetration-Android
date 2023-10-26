@@ -1,9 +1,11 @@
 package com.johndeweydev.awps.repository.usbserialrepository;
 
-import com.johndeweydev.awps.repository.LauncherSerialDataEvent;
+import com.johndeweydev.awps.repository.UsbSerialDataEvent;
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
+import com.johndeweydev.awps.repository.usbserialrepository.models.UsbDeviceModel;
 import com.johndeweydev.awps.usbserial.UsbSerialMainSingleton;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
-import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialEvent;
+import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialRepositoryEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,11 +17,11 @@ public class UsbSerialRepository {
   private final StringBuilder queueData = new StringBuilder();
 
   public void setUsbSerialViewModelCallback(
-          UsbSerialEvent usbSerialEvent
+          UsbSerialRepositoryEvent usbSerialRepositoryEvent
   ) {
-    LauncherSerialDataEvent launcherSerialDataEvent = new LauncherSerialDataEvent() {
+    UsbSerialDataEvent usbSerialDataEvent = new UsbSerialDataEvent() {
       @Override
-      public void onSerialOutput(String data) {
+      public void onUsbSerialOutput(String data) {
         char[] dataChar = data.toCharArray();
         for (char c : dataChar) {
           if (c == '\n') {
@@ -36,27 +38,27 @@ public class UsbSerialRepository {
         String strTime = createStringTime();
 
         UsbSerialOutputModel usbSerialOutputModel = new UsbSerialOutputModel(strTime, strData);
-        usbSerialEvent.onSerialOutputRaw(usbSerialOutputModel);
+        usbSerialRepositoryEvent.onRepositoryOutputRaw(usbSerialOutputModel);
 
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          usbSerialEvent.onSerialOutputFormatted(usbSerialOutputModel);
+          usbSerialRepositoryEvent.onRepositoryOutputFormatted(usbSerialOutputModel);
         }
       }
 
       @Override
-      public void onSerialOutputError(String errorMessageOnNewData) {
-        usbSerialEvent.onSerialOutputError(errorMessageOnNewData);
+      public void onUsbOutputError(String errorMessageOnNewData) {
+        usbSerialRepositoryEvent.onRepositoryOutputError(errorMessageOnNewData);
       }
       @Override
-      public void onSerialInputError(String dataToWrite) {
-        usbSerialEvent.onSerialInputError(dataToWrite);
+      public void onUsbInputError(String dataToWrite) {
+        usbSerialRepositoryEvent.onRepositoryInputError(dataToWrite);
       }
     };
 
     UsbSerialMainSingleton.getInstance().getUsbSerialMain().setLauncherSerialDataEvent(
-            launcherSerialDataEvent
+            usbSerialDataEvent
     );
   }
 

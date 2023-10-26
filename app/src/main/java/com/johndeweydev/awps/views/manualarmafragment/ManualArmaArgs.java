@@ -10,11 +10,13 @@ public class ManualArmaArgs implements Parcelable {
   private final int deviceId;
   private final int portNum;
   private final int baudRate;
+  private String selectedArmament = "";
 
-  public ManualArmaArgs(int aDeviceId, int aPortNum, int aBaudRate) {
-    deviceId = aDeviceId;
-    portNum = aPortNum;
-    baudRate = aBaudRate;
+  public ManualArmaArgs(int deviceId, int portNum, int baudRate, String selectedArmament) {
+    this.deviceId = deviceId;
+    this.portNum = portNum;
+    this.baudRate = baudRate;
+    this.selectedArmament = selectedArmament;
   }
 
   public int getDeviceId() {
@@ -29,10 +31,13 @@ public class ManualArmaArgs implements Parcelable {
     return baudRate;
   }
 
+  public String getSelectedArmament() {return selectedArmament;}
+
   protected ManualArmaArgs(Parcel in) {
     deviceId = in.readInt();
     portNum = in.readInt();
     baudRate = in.readInt();
+    selectedArmament = in.readString();
   }
 
   public static final Creator<com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs>
@@ -58,5 +63,6 @@ public class ManualArmaArgs implements Parcelable {
     dest.writeInt(deviceId);
     dest.writeInt(portNum);
     dest.writeInt(baudRate);
+    dest.writeString(selectedArmament);
   }
 }

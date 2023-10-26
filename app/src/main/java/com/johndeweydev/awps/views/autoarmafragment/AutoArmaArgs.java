@@ -12,10 +12,10 @@ public class AutoArmaArgs implements Parcelable {
   private final int baudRate;
   private String selectedArmament = "";
 
-  public AutoArmaArgs(int aDeviceId, int aPortNum, int aBaudRate, String selectedArmament) {
-    deviceId = aDeviceId;
-    portNum = aPortNum;
-    baudRate = aBaudRate;
+  public AutoArmaArgs(int deviceId, int portNum, int baudRate, String selectedArmament) {
+    this.deviceId = deviceId;
+    this.portNum = portNum;
+    this.baudRate = baudRate;
     this.selectedArmament = selectedArmament;
   }
 

@@ -41,9 +41,9 @@
     </fragment>
     <fragment
         android:id="@+id/autoArmaMainFragment"
-        android:name="com.johndeweydev.awps.views.autoarmafragment.AutoArmaMainFragment"
+        android:name="com.johndeweydev.awps.views.autoarmafragment.AutoArmaFragment"
         android:label="fragment_auto_arma_main"
-        tools:layout="@layout/fragment_auto_arma_main" >
+        tools:layout="@layout/fragment_auto_arma" >
         <argument
             android:name="autoArmaArgs"
             app:argType="com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs" />

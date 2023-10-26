@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.johndeweydev.awps.databinding.FragmentTerminalRawBinding;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
 import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 

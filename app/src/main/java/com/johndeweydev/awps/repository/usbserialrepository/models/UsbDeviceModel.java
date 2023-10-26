@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.repository.usbserialrepository;
+package com.johndeweydev.awps.repository.usbserialrepository.models;
 
 import android.hardware.usb.UsbDevice;
 

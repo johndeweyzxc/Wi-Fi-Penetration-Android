@@ -120,7 +120,7 @@ public class TerminalMainFragment extends Fragment {
       if (s == null) {
         return;
       }
-      usbSerialViewModel.currentErrorInput.setValue(null);
+      usbSerialViewModel.currentSerialInputError.setValue(null);
       Log.d("dev-log", "TerminalMainFragment.setupErrorWriteListener: " +
               "Stopping event read");
       usbSerialViewModel.stopEventDrivenReadFromDevice();
@@ -132,7 +132,7 @@ public class TerminalMainFragment extends Fragment {
               "Popping this fragment off the back stack");
       Navigation.findNavController(binding.getRoot()).popBackStack();
     };
-    usbSerialViewModel.currentErrorInput.observe(getViewLifecycleOwner(), writeErrorListener);
+    usbSerialViewModel.currentSerialInputError.observe(getViewLifecycleOwner(), writeErrorListener);
   }
 
   private void setupErrorOnNewDataListener() {
@@ -140,7 +140,7 @@ public class TerminalMainFragment extends Fragment {
       if (s == null) {
         return;
       }
-      usbSerialViewModel.currentErrorOnNewData.setValue(null);
+      usbSerialViewModel.currentSerialOutputError.setValue(null);
       Log.d("dev-log", "TerminalMainFragment.setupErrorOnNewDataListener: " +
               "Stopping event read");
       usbSerialViewModel.stopEventDrivenReadFromDevice();
@@ -152,7 +152,7 @@ public class TerminalMainFragment extends Fragment {
               "Popping this fragment off the back stack");
       Navigation.findNavController(binding.getRoot()).popBackStack();
     };
-    usbSerialViewModel.currentErrorOnNewData.observe(
+    usbSerialViewModel.currentSerialOutputError.observe(
             getViewLifecycleOwner(), onNewDataErrorListener);
   }
 

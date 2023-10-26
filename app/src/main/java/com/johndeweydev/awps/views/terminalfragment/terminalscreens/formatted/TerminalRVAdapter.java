@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
 
 import java.util.ArrayList;
 
@@ -42,8 +42,8 @@ public class TerminalRVAdapter extends RecyclerView
   @Override
   public void onBindViewHolder(@NonNull TerminalAdapterViewHolder holder, int position) {
     UsbSerialOutputModel currentItem = usbSerialOutputModelList.get(position);
-    holder.textViewTimeSerialOutputListItem.setText(currentItem.getTimeInString());
-    holder.textViewMessageSerialOutputListItem.setText(currentItem.getSerialOutputInString());
+    holder.textViewTimeSerialOutputListItem.setText(currentItem.getTime());
+    holder.textViewMessageSerialOutputListItem.setText(currentItem.getOutput());
   }
 
   @Override

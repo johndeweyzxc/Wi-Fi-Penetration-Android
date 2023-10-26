@@ -1,23 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.autoarmafragment.autoarmascreens.dashboard.AutoArmaDashboardFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".views.autoarmafragment.AutoArmaFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayoutAutoArma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/materialToolBarAutoArma"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ToolBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:menu="@menu/auto_arma_dashboard_top_right_menu"
+            app:title="Automatic Attack"
+            app:titleTextColor="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutAttackConfigAutoArmaDashboard"
+        android:id="@+id/constraintLayoutAttackConfigAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewCurrentTargetAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutAutoArma">
 
         <TextView
-            android:id="@+id/textViewAttackConfigValueAutoArmaDashboard"
+            android:id="@+id/textViewAttackConfigValueAutoArma"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -31,30 +57,38 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/textViewCurrentTargetAutoArmaDashboard"
+        android:id="@+id/textViewCurrentTargetAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:fontFamily="@font/roboto_medium"
         android:text="Current Target"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutCurrentTargetAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutAttackConfigAutoArmaDashboard" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutAttackConfigAutoArma" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutCurrentTargetAutoArmaDashboard"
+        android:id="@+id/constraintLayoutCurrentTargetAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewStatisticsAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewCurrentTargetAutoArmaDashboard">
+        app:layout_constraintTop_toBottomOf="@+id/textViewCurrentTargetAutoArma">
 
         <TextView
-            android:id="@+id/textViewMacAddressAutoArmaDashboard"
+            android:id="@+id/textViewMacAddressAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -66,7 +100,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewSsidAutoArmaDashboard"
+            android:id="@+id/textViewSsidAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -75,10 +109,10 @@
             android:text="Service Set Identifier:"
             android:textAlignment="center"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewMacAddressAutoArmaDashboard" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewMacAddressAutoArma" />
 
         <TextView
-            android:id="@+id/textViewMacAddressValueAutoArmaDashboard"
+            android:id="@+id/textViewMacAddressValueAutoArma"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -86,13 +120,13 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="12:34:56:78:90:AB"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewMacAddressAutoArmaDashboard"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewMacAddressAutoArma"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewMacAddressAutoArmaDashboard"
-            app:layout_constraintTop_toTopOf="@+id/textViewMacAddressAutoArmaDashboard" />
+            app:layout_constraintStart_toEndOf="@+id/textViewMacAddressAutoArma"
+            app:layout_constraintTop_toTopOf="@+id/textViewMacAddressAutoArma" />
 
         <TextView
-            android:id="@+id/textViewSsidValueAutoArmaDashboard"
+            android:id="@+id/textViewSsidValueAutoArma"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -100,39 +134,47 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="WIFI_NAME123456789"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewSsidAutoArmaDashboard"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewSsidAutoArma"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewSsidAutoArmaDashboard"
-            app:layout_constraintTop_toTopOf="@+id/textViewSsidAutoArmaDashboard" />
+            app:layout_constraintStart_toEndOf="@+id/textViewSsidAutoArma"
+            app:layout_constraintTop_toTopOf="@+id/textViewSsidAutoArma" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/textViewStatisticsAutoArmaDashboard"
+        android:id="@+id/textViewStatisticsAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:fontFamily="@font/roboto_medium"
         android:text="Statistics"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutStatisticsAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutCurrentTargetAutoArmaDashboard" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutCurrentTargetAutoArma" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutStatisticsAutoArmaDashboard"
+        android:id="@+id/constraintLayoutStatisticsAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutLauncherStatusAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewStatisticsAutoArmaDashboard">
+        app:layout_constraintTop_toBottomOf="@+id/textViewStatisticsAutoArma">
 
         <ImageView
-            android:id="@+id/imageViewApScannedAutoArmaDashboard"
+            android:id="@+id/imageViewApScannedAutoArma"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
@@ -142,95 +184,99 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewApScannedAutoArmaDashboard"
+            android:id="@+id/textViewApScannedAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:text="Scanned access points: 32"
             android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewApScannedAutoArmaDashboard"
-            app:layout_constraintStart_toEndOf="@+id/imageViewApScannedAutoArmaDashboard"
-            app:layout_constraintTop_toTopOf="@+id/imageViewApScannedAutoArmaDashboard" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewApScannedAutoArma"
+            app:layout_constraintStart_toEndOf="@+id/imageViewApScannedAutoArma"
+            app:layout_constraintTop_toTopOf="@+id/imageViewApScannedAutoArma" />
 
         <ImageView
-            android:id="@+id/imageViewNearbyApAutoArmaDashboard"
+            android:id="@+id/imageViewNearbyApAutoArma"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:src="@drawable/ic_nearby_ap_24"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewApScannedAutoArmaDashboard"
-            app:layout_constraintStart_toStartOf="@+id/imageViewApScannedAutoArmaDashboard"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewApScannedAutoArmaDashboard" />
+            app:layout_constraintEnd_toEndOf="@+id/imageViewApScannedAutoArma"
+            app:layout_constraintStart_toStartOf="@+id/imageViewApScannedAutoArma"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewApScannedAutoArma" />
 
         <TextView
-            android:id="@+id/textViewNearbyApAutoArmaDashboard"
+            android:id="@+id/textViewNearbyApAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:text="Nearby access points: 12"
             android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewNearbyApAutoArmaDashboard"
-            app:layout_constraintStart_toEndOf="@+id/imageViewNearbyApAutoArmaDashboard"
-            app:layout_constraintTop_toTopOf="@+id/imageViewNearbyApAutoArmaDashboard" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewNearbyApAutoArma"
+            app:layout_constraintStart_toEndOf="@+id/imageViewNearbyApAutoArma"
+            app:layout_constraintTop_toTopOf="@+id/imageViewNearbyApAutoArma" />
 
         <ImageView
-            android:id="@+id/imageViewFailedAttacksAutoArmaDashboard"
+            android:id="@+id/imageViewFailedAttacksAutoArma"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:src="@drawable/ic_failed_attempts_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewNearbyApAutoArmaDashboard" />
+            app:layout_constraintTop_toBottomOf="@+id/imageViewNearbyApAutoArma" />
 
         <TextView
-            android:id="@+id/textViewFailedAttacksAutoArmaDashboard"
+            android:id="@+id/textViewFailedAttacksAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:text="Failed attacks: 20"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewFailedAttacksAutoArmaDashboard"
-            app:layout_constraintStart_toEndOf="@+id/imageViewFailedAttacksAutoArmaDashboard"
-            app:layout_constraintTop_toTopOf="@+id/imageViewFailedAttacksAutoArmaDashboard" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewFailedAttacksAutoArma"
+            app:layout_constraintStart_toEndOf="@+id/imageViewFailedAttacksAutoArma"
+            app:layout_constraintTop_toTopOf="@+id/imageViewFailedAttacksAutoArma" />
 
         <ImageView
-            android:id="@+id/imageViewKeysFoundAutoArmaDashboard"
+            android:id="@+id/imageViewKeysFoundAutoArma"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="5dp"
             android:src="@drawable/ic_pmkid_mic_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewFailedAttacksAutoArmaDashboard" />
+            app:layout_constraintTop_toBottomOf="@+id/imageViewFailedAttacksAutoArma" />
 
         <TextView
-            android:id="@+id/textViewTotalKeysFoundAutoArmaDashboard"
+            android:id="@+id/textViewTotalKeysFoundAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="Keys found: 120"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewKeysFoundAutoArmaDashboard"
-            app:layout_constraintStart_toEndOf="@+id/imageViewKeysFoundAutoArmaDashboard"
-            app:layout_constraintTop_toTopOf="@+id/imageViewKeysFoundAutoArmaDashboard" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewKeysFoundAutoArma"
+            app:layout_constraintStart_toEndOf="@+id/imageViewKeysFoundAutoArma"
+            app:layout_constraintTop_toTopOf="@+id/imageViewKeysFoundAutoArma" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutLauncherStatusAutoArmaDashboard"
+        android:id="@+id/constraintLayoutLauncherStatusAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutRawLogsAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutStatisticsAutoArmaDashboard">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutStatisticsAutoArma">
 
         <TextView
-            android:id="@+id/textViewLauncherStatusValueAutoArmaDashboard"
+            android:id="@+id/textViewLauncherStatusValueAutoArma"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -243,31 +289,62 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutRawLogsAutoArma"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_smooth_corner"
+        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCloseAutoArma"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutLauncherStatusAutoArma">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewRawLogsAutoArma"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <Button
-        android:id="@+id/buttonCloseAutoArmaDashboard"
+        android:id="@+id/buttonCloseAutoArma"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
         android:text="Close"
         app:cornerRadius="15dp"
         app:icon="@drawable/ic_close_session_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonStopStartAutoArmaDashboard"
+        app:layout_constraintEnd_toStartOf="@+id/buttonStopStartAutoArma"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonStopStartAutoArmaDashboard"
+        android:id="@+id/buttonStopStartAutoArma"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:text="Start"
         app:cornerRadius="15dp"
         app:icon="@drawable/ic_start_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonCloseAutoArmaDashboard" />
-
+        app:layout_constraintStart_toEndOf="@+id/buttonCloseAutoArma" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

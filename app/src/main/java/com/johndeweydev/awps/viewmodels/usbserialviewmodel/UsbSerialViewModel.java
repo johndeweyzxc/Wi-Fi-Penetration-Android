@@ -3,9 +3,9 @@ package com.johndeweydev.awps.viewmodels.usbserialviewmodel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
 import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialRepository;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbDeviceModel;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
+import com.johndeweydev.awps.repository.usbserialrepository.models.UsbDeviceModel;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 
 import java.util.ArrayList;
@@ -16,31 +16,31 @@ public class UsbSerialViewModel extends ViewModel {
   public MutableLiveData<ArrayList<UsbDeviceModel>> devicesList = new MutableLiveData<>();
   public MutableLiveData<UsbSerialOutputModel> currentMessageFormatted = new MutableLiveData<>();
   public MutableLiveData<UsbSerialOutputModel> currentMessageRaw = new MutableLiveData<>();
-  public MutableLiveData<String> currentErrorInput = new MutableLiveData<>();
-  public MutableLiveData<String> currentErrorOnNewData = new MutableLiveData<>();
+  public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
+  public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
 
   public UsbSerialViewModel(UsbSerialRepository aUsbSerialRepository) {
-    UsbSerialEvent usbSerialEvent = new UsbSerialEvent() {
+    UsbSerialRepositoryEvent usbSerialRepositoryEvent = new UsbSerialRepositoryEvent() {
       @Override
-      public void onSerialOutputRaw(UsbSerialOutputModel usbSerialOutputModel) {
-        currentMessageRaw.postValue(usbSerialOutputModel);
+      public void onRepositoryOutputRaw(UsbSerialOutputModel launcherSerialOutput) {
+        currentMessageRaw.postValue(launcherSerialOutput);
       }
       @Override
-      public void onSerialOutputFormatted(UsbSerialOutputModel usbSerialOutputModel) {
-        currentMessageFormatted.postValue(usbSerialOutputModel);
+      public void onRepositoryOutputFormatted(UsbSerialOutputModel launcherSerialOutput) {
+        currentMessageFormatted.postValue(launcherSerialOutput);
       }
       @Override
-      public void onSerialOutputError(String errorMessageOnNewData) {
-        currentErrorOnNewData.postValue(errorMessageOnNewData);
+      public void onRepositoryOutputError(String error) {
+        currentSerialOutputError.postValue(error);
       }
       @Override
-      public void onSerialInputError(String dataToWrite) {
-        currentErrorInput.postValue(dataToWrite);
+      public void onRepositoryInputError(String input) {
+        currentSerialInputError.postValue(input);
       }
     };
 
     usbSerialRepository = aUsbSerialRepository;
-    usbSerialRepository.setUsbSerialViewModelCallback(usbSerialEvent);
+    usbSerialRepository.setUsbSerialViewModelCallback(usbSerialRepositoryEvent);
   }
 
   public int checkAvailableUsbDevices() {

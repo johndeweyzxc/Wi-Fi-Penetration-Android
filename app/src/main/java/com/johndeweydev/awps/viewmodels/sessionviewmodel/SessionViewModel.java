@@ -4,116 +4,117 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.repository.sessionrepository.models.SessionOutputModel;
+import com.johndeweydev.awps.repository.UsbSerialOutputModel;
 import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
 import com.johndeweydev.awps.repository.sessionrepository.models.MicFirstMessageModel;
 import com.johndeweydev.awps.repository.sessionrepository.models.MicSecondMessageModel;
 import com.johndeweydev.awps.repository.sessionrepository.models.PmkidFirstMessageModel;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialOutputModel;
 import com.johndeweydev.awps.usbserial.UsbSerialStatus;
 
 public class SessionViewModel extends ViewModel {
 
   private String selectedArmament;
   public SessionRepository sessionRepository;
-  public MutableLiveData<String> currentAttackLogList = new MutableLiveData<>();
+  public MutableLiveData<String> attackLogs = new MutableLiveData<>();
   public MutableLiveData<Integer> scannedAccessPoints = new MutableLiveData<>(0);
   public MutableLiveData<Integer> nearbyAccessPoints = new MutableLiveData<>(0);
   public MutableLiveData<Integer> failedAttacks = new MutableLiveData<>(0);
   public MutableLiveData<Integer> keysFound = new MutableLiveData<>(0);
-  public MutableLiveData<SessionOutputModel> sessionOutputModel = new MutableLiveData<>();
-  public MutableLiveData<String> currentOnSerialInputError = new MutableLiveData<>();
-  public MutableLiveData<String> currentOnSerialOutputError = new MutableLiveData<>();
+  public MutableLiveData<UsbSerialOutputModel>
+          currentMessageFormatted = new MutableLiveData<>();
+  public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
+  public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
 
-  SessionEvent sessionEvent = new SessionEvent() {
+  SessionRepositoryEvent sessionRepositoryEvent = new SessionRepositoryEvent() {
+
     @Override
-    public void onSerialOutputRaw(SessionOutputModel sessionOutputModel) {
+    public void onRepositoryOutputRaw(UsbSerialOutputModel usbSerialOutputModel) {
 
     }
 
     @Override
-    public void onSerialOutputFormatted(SessionOutputModel sessionOutputModel) {
+    public void onRepositoryOutputFormatted(UsbSerialOutputModel usbSerialOutputModel) {
 
     }
 
     @Override
-    public void onSerialOutputError(String errorMessageOnNewData) {
+    public void onRepositoryOutputError(String error) {
 
     }
 
     @Override
-    public void onSerialInputError(String dataToWrite) {
+    public void onRepositoryInputError(String input) {
 
     }
 
     @Override
-    public void onLauncherCommandParserCurrentArma(String armament, String targetBssid) {
+    public void onRepositoryCommandParserCurrentArma(String armament, String targetBssid) {
 
     }
 
     @Override
-    public void onLauncherCommandParserTargetAndArmaSet(String armament, String targetBssid) {
+    public void onRepositoryCommandParserTargetAndArmaSet(String armament, String targetBssid) {
 
     }
 
     @Override
-    public void onLauncherStarted() {
+    public void onRepositoryStarted() {
 
     }
 
     @Override
-    public void onLauncherArmamentActivation() {
+    public void onRepositoryArmamentActivation() {
 
     }
 
     @Override
-    public void onLauncherArmamentDeactivation() {
+    public void onRepositoryArmamentDeactivation() {
 
     }
 
     @Override
-    public void onLauncherNumberOfFoundAccessPoints(String numberOfAps) {
+    public void onRepositoryNumberOfFoundAccessPoints(String numberOfAps) {
 
     }
 
     @Override
-    public void onLauncherScannedAccessPoint(
+    public void onRepositoryScannedAccessPoint(
             String macAddress, String ssid, String rssi, String channel) {
 
     }
 
     @Override
-    public void onLauncherFinishScanning() {
+    public void onRepositoryFinishScanning() {
 
     }
 
     @Override
-    public void onLauncherAccessPointNotFound() {
+    public void onRepositoryAccessPointNotFound() {
 
     }
 
     @Override
-    public void onLauncherLaunchingSequence() {
+    public void onRepositoryLaunchingSequence() {
 
     }
 
     @Override
-    public void onLauncherTaskCreated() {
+    public void onRepositoryTaskCreated() {
 
     }
 
     @Override
-    public void onLauncherPmkidWrongKeyType(String keyType) {
+    public void onRepositoryPmkidWrongKeyType(String keyType) {
 
     }
 
     @Override
-    public void onLauncherTaskStatus(String attackType, int attackStatus) {
+    public void onRepositoryTaskStatus(String attackType, int attackStatus) {
 
     }
 
     @Override
-    public void onLauncherEapolMessage(
+    public void onRepositoryEapolMessage(
             String attackType,
             int messageNumber,
             @Nullable PmkidFirstMessageModel pmkidFirstMessageModel,
@@ -124,29 +125,29 @@ public class SessionViewModel extends ViewModel {
     }
 
     @Override
-    public void onLauncherFinishingSequence() {
+    public void onRepositoryFinishingSequence() {
 
     }
 
     @Override
-    public void onLauncherSuccess() {
+    public void onRepositorySuccess() {
 
     }
 
     @Override
-    public void onLauncherFailure(String targetBssid) {
+    public void onRepositoryFailure(String targetBssid) {
 
     }
 
     @Override
-    public void onLauncherDeauthStop(String targetBssid) {
+    public void onRepositoryDeauthStop(String targetBssid) {
 
     }
   };
 
   public SessionViewModel(SessionRepository sessionRepository) {
     this.sessionRepository = sessionRepository;
-    sessionRepository.setSessionEvent(sessionEvent);
+    sessionRepository.setSessionEvent(sessionRepositoryEvent);
   }
 
   public UsbSerialStatus connectToDevice(
