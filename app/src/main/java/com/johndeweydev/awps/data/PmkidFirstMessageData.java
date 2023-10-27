@@ -1,11 +1,11 @@
-package com.johndeweydev.awps.models;
+package com.johndeweydev.awps.data;
 
-public class PmkidFirstMessageModel {
+public class PmkidFirstMessageData {
   private String bssid;
   private String client;
   private String pmkid;
 
-  public PmkidFirstMessageModel(String bssid, String client, String pmkid) {
+  public PmkidFirstMessageData(String bssid, String client, String pmkid) {
     this.bssid = bssid;
     this.client = client;
     this.pmkid = pmkid;

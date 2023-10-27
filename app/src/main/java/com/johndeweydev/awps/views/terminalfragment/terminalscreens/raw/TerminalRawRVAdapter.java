@@ -9,14 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.models.LauncherOutputModel;
+import com.johndeweydev.awps.data.LauncherOutputData;
 
 import java.util.ArrayList;
 
 public class TerminalRawRVAdapter
         extends RecyclerView.Adapter<TerminalRawRVAdapter.TerminalAdapterViewHolder> {
 
-  private final ArrayList<LauncherOutputModel> launcherOutputModelList = new ArrayList<>();
+  private final ArrayList<LauncherOutputData> launcherOutputDataList = new ArrayList<>();
 
   public static class TerminalAdapterViewHolder extends RecyclerView.ViewHolder {
     public TextView textViewTimeSerialOutputListItem;
@@ -43,19 +43,19 @@ public class TerminalRawRVAdapter
   public void onBindViewHolder(
           @NonNull TerminalRawRVAdapter.TerminalAdapterViewHolder holder, int position
   ) {
-    LauncherOutputModel currentItem = launcherOutputModelList.get(position);
+    LauncherOutputData currentItem = launcherOutputDataList.get(position);
     holder.textViewTimeSerialOutputListItem.setText(currentItem.getTime());
     holder.textViewMessageSerialOutputListItem.setText(currentItem.getOutput());
   }
 
   @Override
   public int getItemCount() {
-    return launcherOutputModelList.size();
+    return launcherOutputDataList.size();
   }
 
-  public void appendData(LauncherOutputModel launcherOutputModel) {
-    launcherOutputModelList.add(launcherOutputModel);
-    int pos = launcherOutputModelList.size() - 1;
+  public void appendData(LauncherOutputData launcherOutputData) {
+    launcherOutputDataList.add(launcherOutputData);
+    int pos = launcherOutputDataList.size() - 1;
     this.notifyItemInserted(pos);
   }
 }

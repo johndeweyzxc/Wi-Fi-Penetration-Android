@@ -1,11 +1,11 @@
-package com.johndeweydev.awps.models;
+package com.johndeweydev.awps.data;
 
-public class MicFirstMessageModel {
+public class MicFirstMessageData {
   private String bssid;
   private String client;
   private String anonce;
 
-  public MicFirstMessageModel(String bssid, String client, String anonce) {
+  public MicFirstMessageData(String bssid, String client, String anonce) {
     this.bssid = bssid;
     this.client = client;
     this.anonce = anonce;

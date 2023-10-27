@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.models;
+package com.johndeweydev.awps.data;
 
 import android.hardware.usb.UsbDevice;
 
@@ -6,13 +6,13 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 
 import java.util.Locale;
 
-public class UsbDeviceModel {
+public class UsbDeviceData {
 
   public UsbDevice usbDevice;
   public int devicePort;
   public UsbSerialDriver usbSerialDriver;
 
-  public UsbDeviceModel(UsbDevice usbDevice, int devicePort, UsbSerialDriver usbSerialDriver) {
+  public UsbDeviceData(UsbDevice usbDevice, int devicePort, UsbSerialDriver usbSerialDriver) {
     this.usbDevice = usbDevice;
     this.devicePort = devicePort;
     this.usbSerialDriver = usbSerialDriver;

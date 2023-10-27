@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.models.UsbDeviceModel;
+import com.johndeweydev.awps.data.UsbDeviceData;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 import java.util.ArrayList;
 
 public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.DevicesAdapterViewHolder> {
 
-  private final ArrayList<UsbDeviceModel> deviceModelList = new ArrayList<>();
+  private final ArrayList<UsbDeviceData> deviceModelList = new ArrayList<>();
   private final RVAdapterCallback rvAdapterCallback;
 
   public interface RVAdapterCallback {
@@ -56,7 +56,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
 
   @Override
   public void onBindViewHolder(@NonNull DevicesAdapterViewHolder holder, int position) {
-    UsbDeviceModel currentItem = deviceModelList.get(position);
+    UsbDeviceData currentItem = deviceModelList.get(position);
     holder.textViewDeviceNameValueDeviceListItem.setText(currentItem.getDeviceName());
     holder.textViewDeviceProductIdValueDeviceListItem.setText(currentItem.getDeviceProductId());
     holder.textViewDeviceVendorIdDeviceListItem.setText(currentItem.getDeviceVendorId());
@@ -76,7 +76,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     return deviceModelList.size();
   }
 
-  public void appendData(UsbDeviceModel usbDeviceModel) {
-    deviceModelList.add(usbDeviceModel);
+  public void appendData(UsbDeviceData usbDeviceData) {
+    deviceModelList.add(usbDeviceData);
   }
 }

@@ -1,11 +1,11 @@
 package com.johndeweydev.awps.repository;
 
-import com.johndeweydev.awps.models.LauncherOutputModel;
+import com.johndeweydev.awps.data.LauncherOutputData;
 
 public interface RepositorySerialDataEvent {
 
-  void onRepositoryOutputRaw(LauncherOutputModel launcherOutputModel);
-  void onRepositoryOutputFormatted(LauncherOutputModel launcherOutputModel);
+  void onRepositoryOutputRaw(LauncherOutputData launcherOutputData);
+  void onRepositoryOutputFormatted(LauncherOutputData launcherOutputData);
   void onRepositoryOutputError(String error);
   void onRepositoryInputError(String input);
 }

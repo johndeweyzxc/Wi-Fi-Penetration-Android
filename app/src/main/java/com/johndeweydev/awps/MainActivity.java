@@ -12,12 +12,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
-import com.johndeweydev.awps.repository.usbserialrepository.UsbSerialRepository;
+import com.johndeweydev.awps.repository.terminalrepository.TerminalRepository;
 import com.johndeweydev.awps.launcher.LauncherSingleton;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
-import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
-import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModelFactory;
+import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
+import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,10 +29,10 @@ public class MainActivity extends AppCompatActivity {
     LauncherSingleton.setUsbManager(usbManager);
 
     // Initialize the view model to be use for terminal serial input/output
-    UsbSerialRepository usbSerialRepository = new UsbSerialRepository();
-    UsbSerialViewModelFactory usbSerialViewModelFactory = new UsbSerialViewModelFactory(
-            usbSerialRepository);
-    new ViewModelProvider(this, usbSerialViewModelFactory).get(UsbSerialViewModel.class);
+    TerminalRepository terminalRepository = new TerminalRepository();
+    TerminalViewModelFactory terminalViewModelFactory = new TerminalViewModelFactory(
+            terminalRepository);
+    new ViewModelProvider(this, terminalViewModelFactory).get(TerminalViewModel.class);
     
     setContentView(R.layout.activity_main);
     fragmentChangeListener();

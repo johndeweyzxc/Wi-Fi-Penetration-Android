@@ -1,12 +1,12 @@
-package com.johndeweydev.awps.models;
+package com.johndeweydev.awps.data;
 
-public class LauncherOutputModel {
+public class LauncherOutputData {
 
   private final String time;
   private final String output;
 
 
-  public LauncherOutputModel(String time, String output) {
+  public LauncherOutputData(String time, String output) {
     this.time = time;
     this.output = output;
   }

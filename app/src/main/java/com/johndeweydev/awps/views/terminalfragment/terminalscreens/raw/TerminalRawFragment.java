@@ -13,14 +13,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.johndeweydev.awps.databinding.FragmentTerminalRawBinding;
-import com.johndeweydev.awps.models.LauncherOutputModel;
-import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
+import com.johndeweydev.awps.data.LauncherOutputData;
+import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 public class TerminalRawFragment extends Fragment {
 
   private FragmentTerminalRawBinding binding;
-  private UsbSerialViewModel usbSerialViewModel;
+  private TerminalViewModel terminalViewModel;
   private TerminalRawRVAdapter terminalRawRVAdapter;
   private TerminalArgs terminalArgs;
 
@@ -31,7 +31,7 @@ public class TerminalRawFragment extends Fragment {
           @Nullable ViewGroup container,
           @Nullable Bundle savedInstanceState
   ) {
-    usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
+    terminalViewModel = new ViewModelProvider(requireActivity()).get(TerminalViewModel.class);
     binding = FragmentTerminalRawBinding.inflate(inflater, container, false);
 
     Bundle argsFromBundle = getArguments();
@@ -76,20 +76,20 @@ public class TerminalRawFragment extends Fragment {
     layout.setStackFromEnd(true);
     binding.recyclerViewTerminalRaw.setLayoutManager(layout);
 
-    final Observer<LauncherOutputModel> serialOutputItemObserver;
+    final Observer<LauncherOutputData> serialOutputItemObserver;
     serialOutputItemObserver = this::handleNewSerialOutputFromLiveData;
-    usbSerialViewModel.currentMessageRaw.observe(
+    terminalViewModel.currentMessageRaw.observe(
             getViewLifecycleOwner(), serialOutputItemObserver);
   }
 
-  private void handleNewSerialOutputFromLiveData(LauncherOutputModel launcherOutputModel) {
-    terminalRawRVAdapter.appendData(launcherOutputModel);
+  private void handleNewSerialOutputFromLiveData(LauncherOutputData launcherOutputData) {
+    terminalRawRVAdapter.appendData(launcherOutputData);
     binding.recyclerViewTerminalRaw.scrollToPosition(terminalRawRVAdapter.getItemCount() - 1);
   }
 
   private void writeDataToDevice(String data) {
     if (data.length() > 1) {
-      usbSerialViewModel.writeDataToDevice(data);
+      terminalViewModel.writeDataToDevice(data);
     }
   }
 }

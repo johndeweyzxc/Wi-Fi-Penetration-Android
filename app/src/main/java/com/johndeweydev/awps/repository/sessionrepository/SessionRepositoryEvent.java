@@ -2,9 +2,9 @@ package com.johndeweydev.awps.repository.sessionrepository;
 
 import androidx.annotation.Nullable;
 
-import com.johndeweydev.awps.models.MicFirstMessageModel;
-import com.johndeweydev.awps.models.MicSecondMessageModel;
-import com.johndeweydev.awps.models.PmkidFirstMessageModel;
+import com.johndeweydev.awps.data.MicFirstMessageData;
+import com.johndeweydev.awps.data.MicSecondMessageData;
+import com.johndeweydev.awps.data.PmkidFirstMessageData;
 import com.johndeweydev.awps.repository.RepositorySerialDataEvent;
 
 public interface SessionRepositoryEvent extends RepositorySerialDataEvent {
@@ -28,9 +28,9 @@ public interface SessionRepositoryEvent extends RepositorySerialDataEvent {
   void onRepositoryEapolMessage(
           String attackType,
           int messageNumber,
-          @Nullable PmkidFirstMessageModel pmkidFirstMessageModel,
-          @Nullable MicFirstMessageModel micFirstMessageModel,
-          @Nullable MicSecondMessageModel micSecondMessageModel);
+          @Nullable PmkidFirstMessageData pmkidFirstMessageData,
+          @Nullable MicFirstMessageData micFirstMessageData,
+          @Nullable MicSecondMessageData micSecondMessageData);
   void onRepositoryFinishingSequence();
   void onRepositorySuccess();
   void onRepositoryFailure(String targetBssid);

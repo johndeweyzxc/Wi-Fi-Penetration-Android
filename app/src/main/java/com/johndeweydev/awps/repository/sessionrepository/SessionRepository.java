@@ -2,10 +2,10 @@ package com.johndeweydev.awps.repository.sessionrepository;
 
 import com.johndeweydev.awps.launcher.LauncherStages;
 import com.johndeweydev.awps.launcher.LauncherEvent;
-import com.johndeweydev.awps.models.LauncherOutputModel;
-import com.johndeweydev.awps.models.MicFirstMessageModel;
-import com.johndeweydev.awps.models.MicSecondMessageModel;
-import com.johndeweydev.awps.models.PmkidFirstMessageModel;
+import com.johndeweydev.awps.data.LauncherOutputData;
+import com.johndeweydev.awps.data.MicFirstMessageData;
+import com.johndeweydev.awps.data.MicSecondMessageData;
+import com.johndeweydev.awps.data.PmkidFirstMessageData;
 import com.johndeweydev.awps.launcher.LauncherSingleton;
 
 import java.text.SimpleDateFormat;
@@ -55,13 +55,13 @@ public class SessionRepository {
     String data = queueData.toString();
     String time = createStringTime();
 
-    LauncherOutputModel launcherOutputModel = new LauncherOutputModel(time, data);
-    sessionRepositoryEvent.onRepositoryOutputRaw(launcherOutputModel);
+    LauncherOutputData launcherOutputData = new LauncherOutputData(time, data);
+    sessionRepositoryEvent.onRepositoryOutputRaw(launcherOutputData);
 
     char firstChar = data.charAt(0);
     char lastChar = data.charAt(data.length() - 2);
     if (firstChar == '{' && lastChar == '}') {
-      sessionRepositoryEvent.onRepositoryOutputFormatted(launcherOutputModel);
+      sessionRepositoryEvent.onRepositoryOutputFormatted(launcherOutputData);
       String[] splitStrData = data.split(",");
 
       ArrayList<String> strDataList = new ArrayList<>(Arrays.asList(splitStrData));
@@ -144,11 +144,11 @@ public class SessionRepository {
         String client = strDataList.get(3);
         String pmkid = strDataList.get(4);
 
-        PmkidFirstMessageModel pmkidFirstMessageModel = new PmkidFirstMessageModel(
+        PmkidFirstMessageData pmkidFirstMessageData = new PmkidFirstMessageData(
                 bssid, client, pmkid
         );
         sessionRepositoryEvent.onRepositoryEapolMessage(
-                "PMKID", 1, pmkidFirstMessageModel,
+                "PMKID", 1, pmkidFirstMessageData,
                 null, null);
       case "FINISHING_SEQUENCE":
         sessionRepositoryEvent.onRepositoryFinishingSequence();
@@ -182,10 +182,10 @@ public class SessionRepository {
         String client = strDataList.get(3);
         String anonce = strDataList.get(4);
 
-        MicFirstMessageModel micFirstMessageModel = new MicFirstMessageModel(bssid, client, anonce);
+        MicFirstMessageData micFirstMessageData = new MicFirstMessageData(bssid, client, anonce);
         sessionRepositoryEvent.onRepositoryEapolMessage(
                 "MIC", 1, null,
-                micFirstMessageModel, null);
+                micFirstMessageData, null);
       case "MSG_2":
         String secondMessageInfo = strDataList.get(4) + strDataList.get(5) + strDataList.get(6) +
                 strDataList.get(7) + strDataList.get(8) + strDataList.get(9);
@@ -197,12 +197,12 @@ public class SessionRepository {
         String mic = strDataList.get(12);
         String wpaKeyData = strDataList.get(13);
 
-        MicSecondMessageModel micSecondMessageModel = new MicSecondMessageModel(
+        MicSecondMessageData micSecondMessageData = new MicSecondMessageData(
                 clientM2, bssidM2, secondMessageInfo, replayCounter, snonce, mic, wpaKeyData
         );
         sessionRepositoryEvent.onRepositoryEapolMessage(
                 "MIC", 2, null, null,
-                micSecondMessageModel);
+                micSecondMessageData);
       case "FINISHING SEQUENCE":
         sessionRepositoryEvent.onRepositoryFinishingSequence();
       case "SUCCESS":

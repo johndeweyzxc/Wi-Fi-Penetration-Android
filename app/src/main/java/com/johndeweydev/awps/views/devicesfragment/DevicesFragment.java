@@ -27,8 +27,8 @@ import com.johndeweydev.awps.BuildConfig;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
 import com.johndeweydev.awps.launcher.LauncherSingleton;
-import com.johndeweydev.awps.models.UsbDeviceModel;
-import com.johndeweydev.awps.viewmodels.usbserialviewmodel.UsbSerialViewModel;
+import com.johndeweydev.awps.data.UsbDeviceData;
+import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class DevicesFragment extends Fragment {
 
   public static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
   private FragmentDevicesBinding binding;
-  private UsbSerialViewModel usbSerialViewModel;
+  private TerminalViewModel terminalViewModel;
   private DevicesRVAdapter devicesRVAdapter;
   private TerminalArgs terminalArgs = null;
   private final BroadcastReceiver usbBroadcastReceiver;
@@ -75,7 +75,7 @@ public class DevicesFragment extends Fragment {
           @Nullable Bundle savedInstanceState
   ) {
     binding = FragmentDevicesBinding.inflate(inflater, container, false);
-    usbSerialViewModel = new ViewModelProvider(requireActivity()).get(UsbSerialViewModel.class);
+    terminalViewModel = new ViewModelProvider(requireActivity()).get(TerminalViewModel.class);
     return binding.getRoot();
   }
 
@@ -85,8 +85,8 @@ public class DevicesFragment extends Fragment {
 
     initializeAdapter();
 
-    final Observer<ArrayList<UsbDeviceModel>> deviceListObserver = this::handleUpdateFromLivedata;
-    usbSerialViewModel.devicesList.observe(getViewLifecycleOwner(), deviceListObserver);
+    final Observer<ArrayList<UsbDeviceData>> deviceListObserver = this::handleUpdateFromLivedata;
+    terminalViewModel.devicesList.observe(getViewLifecycleOwner(), deviceListObserver);
     findUsbDevices();
 
     binding.materialToolBarDevices.setNavigationOnClickListener(
@@ -114,7 +114,7 @@ public class DevicesFragment extends Fragment {
 
     Log.d("dev-log",
             "DevicesFragment.isUsbDevicePermissionGranted: Connecting to the device");
-    String result = usbSerialViewModel.connectToDevice(
+    String result = terminalViewModel.connectToDevice(
             19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum
     );
 
@@ -152,15 +152,15 @@ public class DevicesFragment extends Fragment {
     Navigation.findNavController(binding.getRoot()).navigate(action);
   }
 
-  private void handleUpdateFromLivedata(ArrayList<UsbDeviceModel> usbDeviceModelList) {
-    for (int i = 0; i < usbDeviceModelList.size(); i++) {
-      devicesRVAdapter.appendData(usbDeviceModelList.get(i));
+  private void handleUpdateFromLivedata(ArrayList<UsbDeviceData> usbDeviceDataList) {
+    for (int i = 0; i < usbDeviceDataList.size(); i++) {
+      devicesRVAdapter.appendData(usbDeviceDataList.get(i));
       devicesRVAdapter.notifyItemInserted(i);
     }
   }
 
   private void findUsbDevices() {
-    int size = usbSerialViewModel.checkAvailableUsbDevices();
+    int size = terminalViewModel.checkAvailableUsbDevices();
     if (size == 0) {
       binding.textViewNoConnectedDevices.setVisibility(View.VISIBLE);
       Log.d("dev-log", "DevicesFragment.findUsbDevices: No devices connected");

@@ -1,6 +1,6 @@
-package com.johndeweydev.awps.models;
+package com.johndeweydev.awps.data;
 
-public class MicSecondMessageModel {
+public class MicSecondMessageData {
   public String client;
   public String bssid;
 
@@ -14,7 +14,7 @@ public class MicSecondMessageModel {
   public String mic;
   public String wpaKeyData;
 
-  public MicSecondMessageModel(
+  public MicSecondMessageData(
           String client,
           String bssid,
           String messageInfo,

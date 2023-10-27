@@ -21,7 +21,7 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-import com.johndeweydev.awps.models.UsbDeviceModel;
+import com.johndeweydev.awps.data.UsbDeviceData;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -190,12 +190,12 @@ public class Launcher {
     }
   }
 
-  public ArrayList<UsbDeviceModel> discoverDevices() {
+  public ArrayList<UsbDeviceData> discoverDevices() {
     UsbManager usbManager = LauncherSingleton.getUsbManager();
     UsbSerialProber usbDefaultProber = UsbSerialProber.getDefaultProber();
     UsbSerialProber usbCustomProber = getCustomProber();
 
-    ArrayList<UsbDeviceModel> usbDeviceModelList = new ArrayList<>();
+    ArrayList<UsbDeviceData> usbDeviceDataList = new ArrayList<>();
 
     for(UsbDevice device : usbManager.getDeviceList().values()) {
       UsbSerialDriver driver = usbDefaultProber.probeDevice(device);
@@ -209,12 +209,12 @@ public class Launcher {
       if (driver != null) {
         int totalPorts = driver.getPorts().size();
         for (int port = 0; port < totalPorts; port++) {
-          usbDeviceModelList.add(new UsbDeviceModel(device, port, driver));
+          usbDeviceDataList.add(new UsbDeviceData(device, port, driver));
         }
       }
     }
 
-    return usbDeviceModelList;
+    return usbDeviceDataList;
   }
 
   public void writeData(String str) {

@@ -1,9 +1,9 @@
-package com.johndeweydev.awps.repository.usbserialrepository;
+package com.johndeweydev.awps.repository.terminalrepository;
 
 import com.johndeweydev.awps.launcher.LauncherStages;
 import com.johndeweydev.awps.launcher.LauncherEvent;
-import com.johndeweydev.awps.models.LauncherOutputModel;
-import com.johndeweydev.awps.models.UsbDeviceModel;
+import com.johndeweydev.awps.data.LauncherOutputData;
+import com.johndeweydev.awps.data.UsbDeviceData;
 import com.johndeweydev.awps.launcher.LauncherSingleton;
 
 import java.text.SimpleDateFormat;
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class UsbSerialRepository {
+public class TerminalRepository {
 
   private final StringBuilder queueData = new StringBuilder();
 
   public void setUsbSerialViewModelCallback(
-          UsbSerialRepositoryEvent usbSerialRepositoryEvent
+          TerminalRepositoryEvent terminalRepositoryEvent
   ) {
     LauncherEvent launcherEvent = new LauncherEvent() {
       @Override
@@ -36,23 +36,23 @@ public class UsbSerialRepository {
         String strData = queueData.toString();
         String strTime = createStringTime();
 
-        LauncherOutputModel launcherOutputModel = new LauncherOutputModel(strTime, strData);
-        usbSerialRepositoryEvent.onRepositoryOutputRaw(launcherOutputModel);
+        LauncherOutputData launcherOutputData = new LauncherOutputData(strTime, strData);
+        terminalRepositoryEvent.onRepositoryOutputRaw(launcherOutputData);
 
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          usbSerialRepositoryEvent.onRepositoryOutputFormatted(launcherOutputModel);
+          terminalRepositoryEvent.onRepositoryOutputFormatted(launcherOutputData);
         }
       }
 
       @Override
       public void onLauncherOutputError(String errorMessageOnNewData) {
-        usbSerialRepositoryEvent.onRepositoryOutputError(errorMessageOnNewData);
+        terminalRepositoryEvent.onRepositoryOutputError(errorMessageOnNewData);
       }
       @Override
       public void onLauncherInputError(String dataToWrite) {
-        usbSerialRepositoryEvent.onRepositoryInputError(dataToWrite);
+        terminalRepositoryEvent.onRepositoryInputError(dataToWrite);
       }
     };
 
@@ -67,7 +67,7 @@ public class UsbSerialRepository {
     return dateFormat.format(calendar.getTime());
   }
 
-  public ArrayList<UsbDeviceModel> discoverDevices() {
+  public ArrayList<UsbDeviceData> discoverDevices() {
     return LauncherSingleton.getInstance().getLauncher().discoverDevices();
   }
 

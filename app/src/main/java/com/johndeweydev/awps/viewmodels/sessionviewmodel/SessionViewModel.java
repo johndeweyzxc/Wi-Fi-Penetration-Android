@@ -4,11 +4,11 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.models.LauncherOutputModel;
+import com.johndeweydev.awps.data.LauncherOutputData;
 import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
-import com.johndeweydev.awps.models.MicFirstMessageModel;
-import com.johndeweydev.awps.models.MicSecondMessageModel;
-import com.johndeweydev.awps.models.PmkidFirstMessageModel;
+import com.johndeweydev.awps.data.MicFirstMessageData;
+import com.johndeweydev.awps.data.MicSecondMessageData;
+import com.johndeweydev.awps.data.PmkidFirstMessageData;
 import com.johndeweydev.awps.repository.sessionrepository.SessionRepositoryEvent;
 
 public class SessionViewModel extends ViewModel {
@@ -20,7 +20,7 @@ public class SessionViewModel extends ViewModel {
   public MutableLiveData<Integer> nearbyAccessPoints = new MutableLiveData<>(0);
   public MutableLiveData<Integer> failedAttacks = new MutableLiveData<>(0);
   public MutableLiveData<Integer> keysFound = new MutableLiveData<>(0);
-  public MutableLiveData<LauncherOutputModel>
+  public MutableLiveData<LauncherOutputData>
           currentMessageFormatted = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
@@ -28,12 +28,12 @@ public class SessionViewModel extends ViewModel {
   SessionRepositoryEvent sessionRepositoryEvent = new SessionRepositoryEvent() {
 
     @Override
-    public void onRepositoryOutputRaw(LauncherOutputModel launcherOutputModel) {
+    public void onRepositoryOutputRaw(LauncherOutputData launcherOutputData) {
 
     }
 
     @Override
-    public void onRepositoryOutputFormatted(LauncherOutputModel launcherOutputModel) {
+    public void onRepositoryOutputFormatted(LauncherOutputData launcherOutputData) {
 
     }
 
@@ -117,9 +117,9 @@ public class SessionViewModel extends ViewModel {
     public void onRepositoryEapolMessage(
             String attackType,
             int messageNumber,
-            @Nullable PmkidFirstMessageModel pmkidFirstMessageModel,
-            @Nullable MicFirstMessageModel micFirstMessageModel,
-            @Nullable MicSecondMessageModel micSecondMessageModel
+            @Nullable PmkidFirstMessageData pmkidFirstMessageData,
+            @Nullable MicFirstMessageData micFirstMessageData,
+            @Nullable MicSecondMessageData micSecondMessageData
     ) {
 
     }
