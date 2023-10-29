@@ -31,7 +31,7 @@ public class ManualArmaRVAdapter extends
   @Override
   public ManualArmaAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View v = LayoutInflater.from(parent.getContext()).inflate(
-            R.layout.manual_arma_attack_log_list_item, parent, false);
+            R.layout.rv_manual_arma_attack_log_item, parent, false);
     return new ManualArmaAdapterViewHolder(v);
   }
 

@@ -22,7 +22,7 @@ import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 public class AutoArmaFragment extends Fragment {
 
   private FragmentAutoArmaBinding binding;
-  private AutoArmaArgs autoArmaArgs;
+  private AutoArmaArgs autoArmaArgs = null;
   private SessionViewModel sessionViewModel;
 
 
@@ -33,18 +33,14 @@ public class AutoArmaFragment extends Fragment {
     binding = FragmentAutoArmaBinding.inflate(inflater, container, false);
 
     if (getArguments() == null) {
-      throw new NullPointerException("getArguments is null");
+      Log.d("dev-log", "AutoArmaFragment.onCreateView: Get arguments is null");
     } else {
       Log.d("dev-log", "AutoArmaFragment.onCreateView: Initializing fragment args");
-      initializeAutoArmaMainFragmentArgs();
+      AutoArmaFragmentArgs autoArmaFragmentArgs;
+      autoArmaFragmentArgs = AutoArmaFragmentArgs.fromBundle(getArguments());
+      autoArmaArgs = autoArmaFragmentArgs.getAutoArmaArgs();
     }
     return binding.getRoot();
-  }
-
-  private void initializeAutoArmaMainFragmentArgs() {
-    AutoArmaFragmentArgs autoArmaFragmentArgs;
-    autoArmaFragmentArgs = AutoArmaFragmentArgs.fromBundle(getArguments());
-    autoArmaArgs = autoArmaFragmentArgs.getAutoArmaArgs();
   }
 
   @Override
@@ -52,13 +48,16 @@ public class AutoArmaFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     if (autoArmaArgs == null) {
-      // TODO: Replace NPE, instead show an error message and pop this fragment
-      throw new NullPointerException("terminalArgs is null");
+      Log.d("dev-log", "AutoArmaFragment.onViewCreated: Auto arma args is null");
+      Navigation.findNavController(binding.getRoot()).navigate(
+              R.id.action_autoArmaMainFragment_to_devicesFragment);
+      return;
     }
 
-    binding.appBarLayoutAutoArma.setOnClickListener(v -> {
-      Navigation.findNavController(binding.getRoot()).popBackStack();
-    });
+    sessionViewModel.selectedArmament = autoArmaArgs.getSelectedArmament();
+
+    binding.appBarLayoutAutoArma.setOnClickListener(v ->
+            Navigation.findNavController(binding.getRoot()).popBackStack());
 
     setupSerialInputErrorListener();
     setupSerialOutputErrorListener();
@@ -112,11 +111,6 @@ public class AutoArmaFragment extends Fragment {
   }
 
   private void connectToDevice() {
-    if (autoArmaArgs == null) {
-      // TODO: Replace NPE, instead show an error message and pop this fragment
-      throw new NullPointerException("terminalArgs is null");
-    }
-
     int deviceId = autoArmaArgs.getDeviceId();
     int portNum = autoArmaArgs.getPortNum();
     String result = sessionViewModel.connectToDevice(
@@ -141,6 +135,14 @@ public class AutoArmaFragment extends Fragment {
     }
   }
 
+  @Override
+  public void onPause() {
+    Log.d("dev-log", "AutoArmaFragment.onPause: Fragment pausing");
+    stopEventReadAndDisconnectFromDevice();
+    super.onPause();
+    Log.d("dev-log", "AutoArmaFragment.onPause: Fragment paused");
+  }
+
   private void stopEventReadAndDisconnectFromDevice() {
     Log.d("dev-log", "AutoArmaFragment.stopEventReadAndDisconnectFromDevice: " +
             "Stopping event read");
@@ -148,15 +150,5 @@ public class AutoArmaFragment extends Fragment {
     Log.d("dev-log", "AutoArmaFragment.stopEventReadAndDisconnectFromDevice: " +
             "Disconnecting from the device");
     sessionViewModel.disconnectFromDevice();
-  }
-
-  @Override
-  public void onPause() {
-    Log.d("dev-log", "AutoArmaFragment.onPause: Stopping event read");
-    sessionViewModel.stopEventDrivenReadFromDevice();
-    Log.d("dev-log", "AutoArmaFragment.onPause: Disconnecting from the device");
-    sessionViewModel.disconnectFromDevice();
-    super.onPause();
-    Log.d("dev-log", "AutoArmaFragment.onPause: Fragment paused");
   }
 }

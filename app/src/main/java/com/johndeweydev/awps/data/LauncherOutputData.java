@@ -2,7 +2,7 @@ package com.johndeweydev.awps.data;
 
 public class LauncherOutputData {
 
-  private final String time;
+  private String time;
   private final String output;
 
 
@@ -17,5 +17,9 @@ public class LauncherOutputData {
 
   public String getOutput() {
     return output;
+  }
+
+  public void setTime(String time) {
+    this.time = time;
   }
 }

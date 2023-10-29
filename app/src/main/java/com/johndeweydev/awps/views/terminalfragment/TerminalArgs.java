@@ -11,10 +11,11 @@ public class TerminalArgs implements Parcelable {
   private final int portNum;
   private final int baudRate;
 
-  public TerminalArgs(int aDeviceId, int aPortNum, int aBaudRate) {
-    deviceId = aDeviceId;
-    portNum = aPortNum;
-    baudRate = aBaudRate;
+  public TerminalArgs(int deviceId, int portNum, int baudRate) {
+
+    this.deviceId = deviceId;
+    this.portNum = portNum;
+    this.baudRate = baudRate;
   }
 
   public int getDeviceId() {

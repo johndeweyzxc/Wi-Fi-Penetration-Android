@@ -48,16 +48,19 @@ public class Launcher {
     return usbSerialDriver;
   }
 
-  public LauncherStages connect(
+  public LauncherStages initiateConnectionToDevice(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
     if (isConnectedToTheDevice) {
+      Log.d("dev-log", "Launcher.initiateConnectionToDevice: " +
+              "Already connected to the device");
       return ALREADY_CONNECTED;
     }
 
-    LauncherStages driverAndDeviceStageStatus = setDriverAndDevice(deviceId, portNum);
+    LauncherStages driverAndDeviceStageStatus = initializeDriverAndDevice(deviceId, portNum);
     boolean permissionStatus;
     if (driverAndDeviceStageStatus.equals(DRIVER_SET)) {
-      permissionStatus = hasUsbDevicePermissionGranted();
+      UsbManager usbManager = LauncherSingleton.getUsbManager();
+      permissionStatus = usbManager.hasPermission(usbDevice);
     } else {
       return driverAndDeviceStageStatus;
     }
@@ -68,6 +71,8 @@ public class Launcher {
             parity, portNum);
     if (connectionStageStatus.equals(SUCCESSFULLY_CONNECTED)) {
       isConnectedToTheDevice = true;
+      Log.d("dev-log", "Launcher.initiateConnectionToDevice: " +
+              "Connected to the device");
       return SUCCESSFULLY_CONNECTED;
     } else {
       return connectionStageStatus;
@@ -88,23 +93,18 @@ public class Launcher {
         usbSerialPort.setParameters(baudRate, dataBits, stopBits, parity);
         return SUCCESSFULLY_CONNECTED;
       } catch (UnsupportedOperationException e) {
-        Log.w("dev-log", "UsbSerialMain.connectToDevice: Unsupported port parameters");
+        Log.w("dev-log", "Launcher.connectToDevice: Unsupported port parameters");
         return UNSUPPORTED_PORT_PARAMETERS;
       }
     } catch (Exception e) {
-      Log.w("dev-log", "UsbSerialMain.connectToDevice: Connection failed, "
+      Log.w("dev-log", "Launcher.connectToDevice: Connection failed, "
               + e.getMessage());
       disconnect();
       return FAILED_OPENING_DEVICE;
     }
   }
 
-  private boolean hasUsbDevicePermissionGranted() {
-    UsbManager usbManager = LauncherSingleton.getUsbManager();
-    return usbManager.hasPermission(usbDevice);
-  }
-
-  private LauncherStages setDriverAndDevice(int deviceId, int portNum) {
+  private LauncherStages initializeDriverAndDevice(int deviceId, int portNum) {
     UsbManager usbManager = LauncherSingleton.getUsbManager();
     for (UsbDevice device: usbManager.getDeviceList().values()) {
       if (device.getDeviceId() == deviceId) {
@@ -113,7 +113,7 @@ public class Launcher {
     }
 
     if(usbDevice == null) {
-      Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Device not found");
+      Log.w("dev-log", "Launcher.setDriverOfDevice: Device not found");
       return DEVICE_NOT_FOUND;
     }
 
@@ -123,7 +123,7 @@ public class Launcher {
     }
 
     if(usbSerialDriver == null) {
-      Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Driver not found for device");
+      Log.w("dev-log", "Launcher.setDriverOfDevice: Driver not found for device");
       return DRIVER_NOT_FOUND;
     }
 
@@ -151,7 +151,7 @@ public class Launcher {
     } catch (IOException ignored) {}
     usbSerialPort = null;
     isConnectedToTheDevice = false;
-    Log.d("dev-log", "UsbSerialMain.disconnect: Disconnected from the device");
+    Log.d("dev-log", "Launcher.disconnect: Disconnected from the device");
   }
 
   SerialInputOutputManager.Listener newDataListener = new SerialInputOutputManager.Listener() {
@@ -165,7 +165,7 @@ public class Launcher {
 
     @Override
     public void onRunError(Exception e) {
-      Log.e("dev-log", "UsbIoManagerListener.onRunError: An error has occurred "
+      Log.e("dev-log", "Launcher.onRunError: An error has occurred "
               + e.getMessage());
       launcherEvent.onLauncherOutputError(e.getMessage());
     }
@@ -176,7 +176,7 @@ public class Launcher {
       serialInputOutputManager = new SerialInputOutputManager(usbSerialPort, newDataListener);
       serialInputOutputManager.start();
       eventDrivenReadIsTurnedOn = true;
-      Log.d("dev-log", "UsbSerialMain.startReading: Started event driven read");
+      Log.d("dev-log", "Launcher.startReading: Started event driven read");
     }
   }
 

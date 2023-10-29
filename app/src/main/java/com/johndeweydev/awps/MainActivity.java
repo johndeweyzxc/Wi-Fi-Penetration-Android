@@ -11,11 +11,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
-import com.johndeweydev.awps.repository.terminalrepository.TerminalRepository;
 import com.johndeweydev.awps.launcher.LauncherSingleton;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
+import com.johndeweydev.awps.repository.terminalrepository.TerminalRepository;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModelFactory;
 
@@ -33,15 +30,9 @@ public class MainActivity extends AppCompatActivity {
     TerminalViewModelFactory terminalViewModelFactory = new TerminalViewModelFactory(
             terminalRepository);
     new ViewModelProvider(this, terminalViewModelFactory).get(TerminalViewModel.class);
-    
+
     setContentView(R.layout.activity_main);
     fragmentChangeListener();
-
-    // Initialize the view model to be use for manual and automatic attack
-    SessionRepository sessionRepository = new SessionRepository();
-    SessionViewModelFactory sessionViewModelFactory = new SessionViewModelFactory(
-            sessionRepository);
-    new ViewModelProvider(this, sessionViewModelFactory).get(SessionViewModel.class);
   }
 
   private void fragmentChangeListener() {

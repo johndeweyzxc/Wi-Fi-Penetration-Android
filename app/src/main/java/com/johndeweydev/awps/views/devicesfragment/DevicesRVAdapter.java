@@ -49,7 +49,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
   @Override
   public DevicesAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View v = LayoutInflater.from(parent.getContext()).inflate(
-            R.layout.device_list_item, parent, false
+            R.layout.rv_device_item, parent, false
     );
     return new DevicesAdapterViewHolder(v);
   }
@@ -62,6 +62,9 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     holder.textViewDeviceVendorIdDeviceListItem.setText(currentItem.getDeviceVendorId());
 
     holder.materialCardViewDeviceListItem.setOnClickListener(v -> {
+
+      // TODO: Refactor and simplify this code
+
       TerminalArgs terminalArgs = new TerminalArgs(
               currentItem.usbDevice.getDeviceId(),
               currentItem.devicePort,

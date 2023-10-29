@@ -1,5 +1,7 @@
 package com.johndeweydev.awps.repository.terminalrepository;
 
+import android.util.Log;
+
 import com.johndeweydev.awps.launcher.LauncherStages;
 import com.johndeweydev.awps.launcher.LauncherEvent;
 import com.johndeweydev.awps.data.LauncherOutputData;
@@ -14,48 +16,53 @@ import java.util.Locale;
 public class TerminalRepository {
 
   private final StringBuilder queueData = new StringBuilder();
+  private TerminalRepositoryEvent terminalRepositoryEvent;
 
-  public void setUsbSerialViewModelCallback(
+  LauncherEvent launcherEvent = new LauncherEvent() {
+    @Override
+    public void onLauncherOutput(String data) {
+      char[] dataChar = data.toCharArray();
+      for (char c : dataChar) {
+        if (c == '\n') {
+          notifyViewModelAboutData();
+          queueData.setLength(0);
+        } else {
+          queueData.append(c);
+        }
+      }
+    }
+
+    private void notifyViewModelAboutData() {
+      String strData = queueData.toString();
+      String strTime = createStringTime();
+
+      LauncherOutputData launcherOutputData = new LauncherOutputData(strTime, strData);
+
+      char firstChar = strData.charAt(0);
+      char lastChar = strData.charAt(strData.length() - 2);
+      if (firstChar == '{' && lastChar == '}') {
+        terminalRepositoryEvent.onRepositoryOutputFormatted(launcherOutputData);
+      } else {
+        terminalRepositoryEvent.onRepositoryOutputRaw(launcherOutputData);
+      }
+    }
+
+    @Override
+    public void onLauncherOutputError(String error) {
+      terminalRepositoryEvent.onRepositoryOutputError(error);
+    }
+    @Override
+    public void onLauncherInputError(String input) {
+      terminalRepositoryEvent.onRepositoryInputError(input);
+    }
+  };
+
+  public void setEventHandler(
           TerminalRepositoryEvent terminalRepositoryEvent
   ) {
-    LauncherEvent launcherEvent = new LauncherEvent() {
-      @Override
-      public void onLauncherOutput(String data) {
-        char[] dataChar = data.toCharArray();
-        for (char c : dataChar) {
-          if (c == '\n') {
-            notifyViewModelAboutData();
-            queueData.setLength(0);
-          } else {
-            queueData.append(c);
-          }
-        }
-      }
-
-      private void notifyViewModelAboutData() {
-        String strData = queueData.toString();
-        String strTime = createStringTime();
-
-        LauncherOutputData launcherOutputData = new LauncherOutputData(strTime, strData);
-        terminalRepositoryEvent.onRepositoryOutputRaw(launcherOutputData);
-
-        char firstChar = strData.charAt(0);
-        char lastChar = strData.charAt(strData.length() - 2);
-        if (firstChar == '{' && lastChar == '}') {
-          terminalRepositoryEvent.onRepositoryOutputFormatted(launcherOutputData);
-        }
-      }
-
-      @Override
-      public void onLauncherOutputError(String errorMessageOnNewData) {
-        terminalRepositoryEvent.onRepositoryOutputError(errorMessageOnNewData);
-      }
-      @Override
-      public void onLauncherInputError(String dataToWrite) {
-        terminalRepositoryEvent.onRepositoryInputError(dataToWrite);
-      }
-    };
-
+    this.terminalRepositoryEvent = terminalRepositoryEvent;
+    Log.d("dev-log", "TerminalRepository.setEventHandler: Setting event " +
+            "handlers in launcher");
     LauncherSingleton.getInstance().getLauncher().setLauncherSerialDataEvent(
             launcherEvent
     );
@@ -73,7 +80,7 @@ public class TerminalRepository {
 
   public String connect(
           int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
-    LauncherStages status = LauncherSingleton.getInstance().getLauncher().connect(
+    LauncherStages status = LauncherSingleton.getInstance().getLauncher().initiateConnectionToDevice(
             baudRate, dataBits, stopBits, parity, deviceId, portNum
     );
 

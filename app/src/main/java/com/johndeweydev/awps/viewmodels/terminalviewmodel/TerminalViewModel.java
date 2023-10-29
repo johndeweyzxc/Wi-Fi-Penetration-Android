@@ -1,5 +1,7 @@
 package com.johndeweydev.awps.viewmodels.terminalviewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -14,33 +16,45 @@ public class TerminalViewModel extends ViewModel {
 
   public TerminalRepository terminalRepository;
   public MutableLiveData<ArrayList<UsbDeviceData>> devicesList = new MutableLiveData<>();
-  public MutableLiveData<LauncherOutputData> currentMessageFormatted = new MutableLiveData<>();
-  public MutableLiveData<LauncherOutputData> currentMessageRaw = new MutableLiveData<>();
+  public MutableLiveData<LauncherOutputData> currentSerialOutput = new MutableLiveData<>();
+  public MutableLiveData<LauncherOutputData> currentSerialOutputRaw = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
 
-  public TerminalViewModel(TerminalRepository aTerminalRepository) {
-    TerminalRepositoryEvent terminalRepositoryEvent = new TerminalRepositoryEvent() {
-      @Override
-      public void onRepositoryOutputRaw(LauncherOutputData launcherSerialOutput) {
-        currentMessageRaw.postValue(launcherSerialOutput);
-      }
-      @Override
-      public void onRepositoryOutputFormatted(LauncherOutputData launcherSerialOutput) {
-        currentMessageFormatted.postValue(launcherSerialOutput);
-      }
-      @Override
-      public void onRepositoryOutputError(String error) {
-        currentSerialOutputError.postValue(error);
-      }
-      @Override
-      public void onRepositoryInputError(String input) {
-        currentSerialInputError.postValue(input);
-      }
-    };
+  TerminalRepositoryEvent terminalRepositoryEvent = new TerminalRepositoryEvent() {
+    @Override
+    public void onRepositoryOutputRaw(LauncherOutputData launcherSerialOutputData) {
+      Log.d("dev-log", "TerminalViewModel.onRepositoryOutputRaw: Serial -> " +
+              launcherSerialOutputData.getOutput());
 
-    terminalRepository = aTerminalRepository;
-    terminalRepository.setUsbSerialViewModelCallback(terminalRepositoryEvent);
+      String time = "[" + launcherSerialOutputData.getTime() + "]";
+      launcherSerialOutputData.setTime(time);
+      currentSerialOutputRaw.postValue(launcherSerialOutputData);
+    }
+    @Override
+    public void onRepositoryOutputFormatted(LauncherOutputData launcherSerialOutputData) {
+      Log.d("dev-log", "TerminalViewModel.onRepositoryOutputFormatted: Serial -> " +
+              launcherSerialOutputData.getOutput());
+
+      String time = "[" + launcherSerialOutputData.getTime() + "]";
+      launcherSerialOutputData.setTime(time);
+      currentSerialOutput.postValue(launcherSerialOutputData);
+    }
+    @Override
+    public void onRepositoryOutputError(String error) {
+      Log.d("dev-log", "TerminalViewModel.onRepositoryOutputError: Serial -> " + error);
+      currentSerialOutputError.postValue(error);
+    }
+    @Override
+    public void onRepositoryInputError(String input) {
+      Log.d("dev-log", "TerminalViewModel.onRepositoryInputError: Serial -> " + input);
+      currentSerialInputError.postValue(input);
+    }
+  };
+  public TerminalViewModel(TerminalRepository terminalRepository) {
+    Log.d("dev-log", "TerminalViewModel: Setting event handler in terminal repository");
+    this.terminalRepository = terminalRepository;
+    terminalRepository.setEventHandler(terminalRepositoryEvent);
   }
 
   public int checkAvailableUsbDevices() {

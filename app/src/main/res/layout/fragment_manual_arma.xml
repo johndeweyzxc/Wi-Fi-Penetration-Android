@@ -27,6 +27,15 @@
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/linearProgressIndicatorMainTaskIndicatorManualArma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:indicatorColor="@color/primaryRed"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutManualArma" />
+
     <TextView
         android:id="@+id/textViewAttackConfigManualArma"
         android:layout_width="match_parent"
@@ -88,7 +97,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:counterMaxLength="6"
+        app:counterMaxLength="12"
         app:counterEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -100,7 +109,7 @@
             android:id="@+id/textInputEditTextMacAddressManualArma"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:maxLength="6"/>
+            android:maxLength="12"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -117,29 +126,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutTargetInputManualArma" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAttackLogsManualArma"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="10dp"
         android:background="@drawable/bg_smooth_corner"
-        android:padding="10dp"
         app:layout_constraintBottom_toTopOf="@+id/buttonStartManualArma"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAttackLogManualArma">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewAttackLogsManualArma"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@+id/textViewAttackLogManualArma" />
 
     <TextView
         android:id="@+id/textViewAccessPointsManualArma"

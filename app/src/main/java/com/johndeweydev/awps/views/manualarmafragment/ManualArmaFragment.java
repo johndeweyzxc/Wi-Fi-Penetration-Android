@@ -1,10 +1,12 @@
 package com.johndeweydev.awps.views.manualarmafragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,38 +15,45 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentManualArmaBinding;
+import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
+
+import java.util.Objects;
 
 public class ManualArmaFragment extends Fragment {
 
   private FragmentManualArmaBinding binding;
-  private ManualArmaArgs manualArmaArgs;
+  private ManualArmaArgs manualArmaArgs = null;
   private SessionViewModel sessionViewModel;
-  private ManualArmaRVAdapter manualArmaRVAdapter;
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    sessionViewModel = new ViewModelProvider(requireActivity()).get(SessionViewModel.class);
+    SessionRepository sessionRepository = new SessionRepository();
+    SessionViewModelFactory sessionViewModelFactory = new SessionViewModelFactory(
+            sessionRepository);
+    sessionViewModel = new ViewModelProvider(this, sessionViewModelFactory).get(
+            SessionViewModel.class);
+
     binding = FragmentManualArmaBinding.inflate(inflater, container, false);
 
     if (getArguments() == null) {
-      throw new NullPointerException("getArguments is null");
+      Log.d("dev-log", "ManualArmaFragment.onCreateView: Get arguments is null");
     } else {
       Log.d("dev-log", "ManualArmaFragment.onCreateView: Initializing fragment args");
-      initializeManualArmaFragmentArgs();
+      ManualArmaFragmentArgs manualArmaFragmentArgs;
+      manualArmaFragmentArgs = ManualArmaFragmentArgs.fromBundle(getArguments());
+      manualArmaArgs = manualArmaFragmentArgs.getManualArmaArgs();
     }
     return binding.getRoot();
-  }
-
-  private void initializeManualArmaFragmentArgs() {
-    ManualArmaFragmentArgs manualArmaFragmentArgs;
-    manualArmaFragmentArgs = ManualArmaFragmentArgs.fromBundle(getArguments());
-    manualArmaArgs = manualArmaFragmentArgs.getManualArmaArgs();
   }
 
   @Override
@@ -52,24 +61,133 @@ public class ManualArmaFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     if (manualArmaArgs == null) {
-      throw new NullPointerException("terminalArgs is null");
+      Log.d("dev-log", "ManualArmaFragment.onViewCreated: Manual arma args is null");
+      Navigation.findNavController(binding.getRoot()).popBackStack();
+      return;
     }
 
-    binding.materialToolBarManualArma.setOnClickListener(v -> {
+    sessionViewModel.automaticAttack = false;
+    sessionViewModel.selectedArmament = manualArmaArgs.getSelectedArmament();
+    binding.textViewAttackConfigValueManualArma.setText(sessionViewModel.selectedArmament);
+
+    binding.materialToolBarManualArma.setOnClickListener(v ->
+            Navigation.findNavController(binding.getRoot()).popBackStack()
+    );
+
+    binding.buttonStartManualArma.setOnClickListener(v -> {
+      View currentView = this.requireActivity().getCurrentFocus();
+      if (currentView != null) {
+        buttonPressedStartArma(currentView);
+      }
+    });
+
+    binding.buttonCloseManualArma.setOnClickListener(v -> {
+      if (sessionViewModel.attackOnGoing) {
+        sessionViewModel.writeControlCodeDeactivationToLauncher();
+        sessionViewModel.attackOnGoing = false;
+      }
+
+      // TODO: Set the launcher event callback for terminal fragment
+
       Navigation.findNavController(binding.getRoot()).popBackStack();
     });
 
-    binding.textInputEditTextMacAddressManualArma.setOnClickListener(v -> {
-
-    });
-
-    setupRecyclerViewAndObserverData();
-    setupSerialInputErrorListener();
-    setupSerialOutputErrorListener();
+    ManualArmaRVAdapter manualArmaRVAdapter = setupRecyclerView();
+    setupObservers(manualArmaRVAdapter);
   }
 
-  private void setupRecyclerViewAndObserverData() {
+  private void buttonPressedStartArma(View view) {
+    InputMethodManager inputMethodManager = (InputMethodManager) requireActivity()
+            .getSystemService(Context.INPUT_METHOD_SERVICE);
+    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
+    TextInputEditText macAddressInput = binding.textInputEditTextMacAddressManualArma;
+    if (macAddressInput.getText() == null || macAddressInput.getText().toString().isEmpty()) {
+      Toast.makeText(requireActivity(), "Mac address cannot be null or empty",
+              Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    sessionViewModel.writeInstructionCodeToLauncher(macAddressInput.getText().toString());
+  }
+
+  private ManualArmaRVAdapter setupRecyclerView() {
+    ManualArmaRVAdapter manualArmaRVAdapter = new ManualArmaRVAdapter();
+    LinearLayoutManager layout = new LinearLayoutManager(requireContext());
+    layout.setStackFromEnd(true);
+    binding.recyclerViewAttackLogsManualArma.setAdapter(manualArmaRVAdapter);
+    binding.recyclerViewAttackLogsManualArma.setLayoutManager(layout);
+    return manualArmaRVAdapter;
+  }
+
+  private void setupObservers(ManualArmaRVAdapter manualArmaRVAdapter) {
+
+    // Everytime the launcher is started, always enable the 'start' and 'close' button
+    final Observer<String> launcherStartedObserver = s -> {
+      binding.buttonStartManualArma.setEnabled(true);
+      binding.buttonCloseManualArma.setEnabled(true);
+    };
+    sessionViewModel.launcherStarted.observe(getViewLifecycleOwner(), launcherStartedObserver);
+
+    // Show a confirmation dialog on whether to activate the attack, this disables the 'close'
+    // and 'start' button if the user activates the attack
+    final Observer<String> armamentActivateConfirmationObserver = s -> {
+      MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+      builder.setTitle("Armament Activate")
+              .setMessage(s)
+              .setPositiveButton("ACTIVATE", ((dialog, which) -> {
+                sessionViewModel.writeControlCodeActivationToLauncher();
+                binding.buttonStartManualArma.setEnabled(false);
+                binding.buttonCloseManualArma.setEnabled(false);
+              }))
+              .setNegativeButton("CANCEL", (dialog, which) -> Objects.requireNonNull(
+                      binding.textInputEditTextMacAddressManualArma.getText()
+              ).clear()).show();
+    };
+    sessionViewModel.launcherActivateConfirmation.observe(getViewLifecycleOwner(),
+            armamentActivateConfirmationObserver);
+
+    // Append logs to the recycler view
+    final Observer<String> attackLogsObserver = s -> {
+      manualArmaRVAdapter.appendData(s);
+      binding.recyclerViewAttackLogsManualArma.scrollToPosition(
+              manualArmaRVAdapter.getItemCount() - 1);
+    };
+    sessionViewModel.currentAttackLog.observe(getViewLifecycleOwner(), attackLogsObserver);
+
+    // Allow the user to close or deactivate the currently running attack by
+    // enabling the 'close' button so the user can click it
+    final Observer<String> launcherMainTaskObserver = s -> {
+      binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.VISIBLE);
+      binding.buttonCloseManualArma.setEnabled(true);
+    };
+    sessionViewModel.launcherMainTaskCreated.observe(getViewLifecycleOwner(),
+            launcherMainTaskObserver);
+
+    // Send a deactivation request to the launcher which will make the launcher restart,
+    // this also enables the 'start' button
+    final Observer<String> launcherExecutionResultObserver = s -> {
+      if (s.equals("Failed")) {
+        sessionViewModel.writeControlCodeDeactivationToLauncher();
+      } else if (s.equals("Success")) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+        builder.setTitle("Successful Attack")
+                .setMessage("Successfully penetrated " +
+                        sessionViewModel.targetAccessPoint + ", using " +
+                        sessionViewModel.selectedArmament)
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
+      }
+      binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.INVISIBLE);
+      binding.buttonStartManualArma.setEnabled(true);
+
+    };
+    sessionViewModel.launcherExecutionResult.observe(getViewLifecycleOwner(),
+            launcherExecutionResultObserver);
+
+    // Receive updates for any error cause by user input
+    setupSerialInputErrorListener();
+    // Receive updates for any error while reading data from the serial output
+    setupSerialOutputErrorListener();
   }
 
   private void setupSerialInputErrorListener() {
@@ -79,13 +197,13 @@ public class ManualArmaFragment extends Fragment {
       }
       sessionViewModel.currentSerialInputError.setValue(null);
       Log.d("dev-log", "ManualArmaFragment.setupSerialInputErrorListener: " +
-              "Error on user input");
+              "Error on serial input: " + s);
       stopEventReadAndDisconnectFromDevice();
-      Toast.makeText(requireActivity(), "Error writing " + s, Toast.LENGTH_SHORT).show();
+      Toast.makeText(requireActivity(), "Error on serial input", Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "ManualArmaFragment.setupSerialInputErrorListener: " +
               "Popping fragments up to but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
-              R.id.action_autoArmaMainFragment_to_devicesFragment);
+              R.id.action_manualArmaFragment_to_devicesFragment);
     };
     sessionViewModel.currentSerialInputError.observe(getViewLifecycleOwner(),
             serialInputErrorObserver);
@@ -98,13 +216,13 @@ public class ManualArmaFragment extends Fragment {
       }
       sessionViewModel.currentSerialOutputError.setValue(null);
       Log.d("dev-log", "ManualArmaFragment.setupSerialOutputErrorListener: " +
-              "Error on serial output");
+              "Error on serial output: " + s);
       stopEventReadAndDisconnectFromDevice();
-      Toast.makeText(requireActivity(), "Error: " + s, Toast.LENGTH_SHORT).show();
+      Toast.makeText(requireActivity(), "Error on serial output ", Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "ManualArmaFragment.setupSerialOutputErrorListener: " +
               "Popping fragments up to but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
-              R.id.action_autoArmaMainFragment_to_devicesFragment);
+              R.id.action_manualArmaFragment_to_devicesFragment);
     };
     sessionViewModel.currentSerialOutputError.observe(
             getViewLifecycleOwner(), serialOutputErrorObserver);
@@ -142,8 +260,16 @@ public class ManualArmaFragment extends Fragment {
       Log.d("dev-log", "ManualArmaFragment.connectToDevice: " +
               "Popping all fragments but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
-              R.id.action_autoArmaMainFragment_to_devicesFragment);
+              R.id.action_manualArmaFragment_to_devicesFragment);
     }
+  }
+
+  @Override
+  public void onPause() {
+    Log.d("dev-log", "ManualArmaFragment.onPause: Fragment pausing");
+    stopEventReadAndDisconnectFromDevice();
+    super.onPause();
+    Log.d("dev-log", "ManualArmaFragment.onPause: Fragment paused");
   }
 
   private void stopEventReadAndDisconnectFromDevice() {
@@ -153,15 +279,5 @@ public class ManualArmaFragment extends Fragment {
     Log.d("dev-log", "ManualArmaFragment.stopEventReadAndDisconnectFromDevice: " +
             "Disconnecting from the device");
     sessionViewModel.disconnectFromDevice();
-  }
-
-  @Override
-  public void onPause() {
-    Log.d("dev-log", "ManualArmaFragment.onPause: Stopping event read");
-    sessionViewModel.stopEventDrivenReadFromDevice();
-    Log.d("dev-log", "ManualArmaFragment.onPause: Disconnecting from the device");
-    sessionViewModel.disconnectFromDevice();
-    super.onPause();
-    Log.d("dev-log", "ManualArmaFragment.onPause: Fragment paused");
   }
 }

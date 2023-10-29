@@ -6,38 +6,28 @@
     app:startDestination="@id/devicesFragment">
 
     <fragment
-        android:id="@+id/terminalMainFragment"
-        android:name="com.johndeweydev.awps.views.terminalfragment.TerminalMainFragment"
-        android:label="fragment_terminal_main"
-        tools:layout="@layout/fragment_terminal_main" >
-        <argument
-            android:name="terminalArgs"
-            app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />
-        <action
-            android:id="@+id/action_terminalMainFragment_to_armamentSelectionFragment"
-            app:destination="@id/armamentSelectionFragment" />
-        <action
-            android:id="@+id/action_terminalMainFragment_to_autoArmaMainFragment"
-            app:destination="@id/autoArmaMainFragment" />
-    </fragment>
-
-    <fragment
         android:id="@+id/devicesFragment"
         android:name="com.johndeweydev.awps.views.devicesfragment.DevicesFragment"
         android:label="fragment_devices"
         tools:layout="@layout/fragment_devices" >
         <action
             android:id="@+id/action_devicesFragment_to_terminalFragment"
-            app:destination="@id/terminalMainFragment" />
+            app:destination="@id/terminalFragment" />
     </fragment>
     <fragment
-        android:id="@+id/armamentSelectionFragment"
-        android:name="com.johndeweydev.awps.views.ArmamentSelectionFragment"
-        android:label="fragment_armament_selection"
-        tools:layout="@layout/fragment_armament_selection" >
+        android:id="@+id/terminalFragment"
+        android:name="com.johndeweydev.awps.views.terminalfragment.TerminalFragment"
+        android:label="TerminalFragment"
+        tools:layout="@layout/fragment_terminal">
         <action
-            android:id="@+id/action_armamentSelectionFragment_to_manualArmaFragment"
+            android:id="@+id/action_terminalFragment_to_manualArmaFragment"
             app:destination="@id/manualArmaFragment" />
+        <action
+            android:id="@+id/action_terminalFragment_to_autoArmaMainFragment"
+            app:destination="@id/autoArmaMainFragment" />
+        <argument
+            android:name="terminalArgs"
+            app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />
     </fragment>
     <fragment
         android:id="@+id/autoArmaMainFragment"
@@ -65,4 +55,5 @@
             android:name="manualArmaArgs"
             app:argType="com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs" />
     </fragment>
+
 </navigation>
