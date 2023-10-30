@@ -19,10 +19,9 @@ import java.util.Objects;
 
 public class SessionRepository {
 
-  private final StringBuilder queueData = new StringBuilder();
   private SessionRepositoryEvent sessionRepositoryEvent;
-
-  LauncherEvent launcherEvent = new LauncherEvent() {
+  private final StringBuilder queueData = new StringBuilder();
+  private final LauncherEvent launcherEvent = new LauncherEvent() {
     @Override
     public void onLauncherOutput(String data) {
       char[] dataChar = data.toCharArray();
@@ -38,21 +37,26 @@ public class SessionRepository {
 
     @Override
     public void onLauncherOutputError(String error) {
-      Log.d("dev-log", "SessionRepository.onLauncherOutputError: Serial -> " + error);
       sessionRepositoryEvent.onRepositoryOutputError(error);
     }
 
     @Override
     public void onLauncherInputError(String input) {
-      Log.d("dev-log", "SessionRepository.onLauncherInputError: Serial -> " + input);
       sessionRepositoryEvent.onRepositoryInputError(input);
     }
   };
 
   public void setEventHandler(SessionRepositoryEvent sessionRepositoryEvent) {
     this.sessionRepositoryEvent = sessionRepositoryEvent;
+    Log.d("dev-log", "SessionRepository.setEventHandler: Session repository event " +
+            "callback set");
+  }
+
+  public void setLauncherEventHandler() {
     LauncherSingleton.getInstance().getLauncher().setLauncherSerialDataEvent(
             launcherEvent);
+    Log.d("dev-log", "SessionRepository.setLauncherEventHandler: Launcher event callback " +
+            "set in the context of session repository");
   }
 
   private void processFormattedOutput() {

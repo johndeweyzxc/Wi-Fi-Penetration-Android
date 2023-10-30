@@ -15,10 +15,9 @@ import java.util.Locale;
 
 public class TerminalRepository {
 
-  private final StringBuilder queueData = new StringBuilder();
   private TerminalRepositoryEvent terminalRepositoryEvent;
-
-  LauncherEvent launcherEvent = new LauncherEvent() {
+  private final StringBuilder queueData = new StringBuilder();
+  private final LauncherEvent launcherEvent = new LauncherEvent() {
     @Override
     public void onLauncherOutput(String data) {
       char[] dataChar = data.toCharArray();
@@ -61,11 +60,15 @@ public class TerminalRepository {
           TerminalRepositoryEvent terminalRepositoryEvent
   ) {
     this.terminalRepositoryEvent = terminalRepositoryEvent;
-    Log.d("dev-log", "TerminalRepository.setEventHandler: Setting event " +
-            "handlers in launcher");
+    Log.d("dev-log", "TerminalRepository.setEventHandler: Terminal repository event " +
+            "callback set");
+  }
+
+  public void setLauncherEventHandler() {
     LauncherSingleton.getInstance().getLauncher().setLauncherSerialDataEvent(
-            launcherEvent
-    );
+            launcherEvent);
+    Log.d("dev-log", "TerminalRepository.setLauncherEventHandler: Launcher event callback " +
+            "set in the context of terminal repository");
   }
 
   private String createStringTime() {

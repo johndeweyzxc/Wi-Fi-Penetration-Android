@@ -1,7 +1,6 @@
 package com.johndeweydev.awps.launcher;
 
 import android.hardware.usb.UsbManager;
-import android.util.Log;
 
 public class LauncherSingleton {
 
@@ -11,7 +10,6 @@ public class LauncherSingleton {
 
   public LauncherSingleton() {
     launcher = new Launcher();
-    Log.d("dev-log", "LauncherSingleton: Created new instance of UsbSerialMain");
   }
 
   public static synchronized LauncherSingleton getInstance() {

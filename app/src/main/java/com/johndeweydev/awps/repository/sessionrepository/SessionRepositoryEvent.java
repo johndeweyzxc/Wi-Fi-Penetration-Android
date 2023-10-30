@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import com.johndeweydev.awps.data.MicFirstMessageData;
 import com.johndeweydev.awps.data.MicSecondMessageData;
 import com.johndeweydev.awps.data.PmkidFirstMessageData;
-import com.johndeweydev.awps.repository.RepositorySerialDataEvent;
+import com.johndeweydev.awps.repository.RepositorySerialEvent;
 
 /**
  * Interface for events occurred in the session repository, it handles formatted launcher serial
@@ -15,7 +15,7 @@ import com.johndeweydev.awps.repository.RepositorySerialDataEvent;
  * @author John Dewey (johndewey02003@gmail.com)
  *
  * */
-public interface SessionRepositoryEvent extends RepositorySerialDataEvent {
+public interface SessionRepositoryEvent extends RepositorySerialEvent {
 
   /**
    * A control code of armament status is issued

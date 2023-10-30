@@ -38,6 +38,10 @@ public class Launcher {
   private SerialInputOutputManager serialInputOutputManager;
   private LauncherEvent launcherEvent;
 
+  public Launcher() {
+    Log.d("dev-log", "Launcher: Created new instance of Launcher");
+  }
+
   public void setLauncherSerialDataEvent(
           LauncherEvent launcherEvent
   ) {
@@ -65,6 +69,8 @@ public class Launcher {
       return driverAndDeviceStageStatus;
     }
     if(!permissionStatus) {
+      Log.d("dev-log", "Launcher.initiateConnectionToDevice: Caller does not have " +
+              "permission to access the device");
       return NO_USB_PERMISSION;
     }
     LauncherStages connectionStageStatus = connectToDevice(baudRate, dataBits, stopBits,
@@ -113,22 +119,24 @@ public class Launcher {
     }
 
     if(usbDevice == null) {
-      Log.w("dev-log", "Launcher.setDriverOfDevice: Device not found");
+      Log.w("dev-log", "Launcher.initializeDriverAndDevice: Device not found");
       return DEVICE_NOT_FOUND;
     }
 
     usbSerialDriver = UsbSerialProber.getDefaultProber().probeDevice(usbDevice);
     if(usbSerialDriver == null) {
+      Log.d("dev-log", "Launcher.initializeDriverAndDevice: Driver not found " +
+              "for device, using custom prober");
       usbSerialDriver = getCustomProber().probeDevice(usbDevice);
     }
 
     if(usbSerialDriver == null) {
-      Log.w("dev-log", "Launcher.setDriverOfDevice: Driver not found for device");
+      Log.w("dev-log", "Launcher.initializeDriverAndDevice: Driver not found for device");
       return DRIVER_NOT_FOUND;
     }
 
     if(usbSerialDriver.getPorts().size() < portNum) {
-      Log.w("dev-log", "UsbSerialMain.setDriverOfDevice: Port not found for driver");
+      Log.w("dev-log", "Launcher.initializeDriverAndDevice: Port not found for driver");
       return PORT_NOT_FOUND;
     }
     return DRIVER_SET;
@@ -186,7 +194,7 @@ public class Launcher {
       serialInputOutputManager.stop();
       serialInputOutputManager = null;
       eventDrivenReadIsTurnedOn = false;
-      Log.d("dev-log", "UsbSerialMain.stopReading: Stopped event driven read");
+      Log.d("dev-log", "Launcher.stopReading: Stopped event driven read");
     }
   }
 
@@ -200,9 +208,8 @@ public class Launcher {
     for(UsbDevice device : usbManager.getDeviceList().values()) {
       UsbSerialDriver driver = usbDefaultProber.probeDevice(device);
       if (driver == null) {
-        Log.w("dev-log", "UsbSerialMain.discoverDevices: Driver not found " +
-                "for device, using custom prober"
-        );
+        Log.d("dev-log", "Launcher.discoverDevices: Driver not found " +
+                "for device, using custom prober");
         driver = usbCustomProber.probeDevice(device);
       }
 
@@ -211,6 +218,9 @@ public class Launcher {
         for (int port = 0; port < totalPorts; port++) {
           usbDeviceDataList.add(new UsbDeviceData(device, port, driver));
         }
+      } else {
+        Log.w("dev-log", "Launcher.discoverDevices: Used usb custom prober but driver " +
+                "still not found");
       }
     }
 
@@ -222,7 +232,7 @@ public class Launcher {
     try {
       usbSerialPort.write(data, WRITE_WAIT_MILLIS);
     } catch (Exception e) {
-      Log.e("dev-log", "UsbSerialMain.writeData: An error has occurred "
+      Log.e("dev-log", "Launcher.writeData: An error has occurred "
               + e.getMessage());
       launcherEvent.onLauncherInputError(str);
     }

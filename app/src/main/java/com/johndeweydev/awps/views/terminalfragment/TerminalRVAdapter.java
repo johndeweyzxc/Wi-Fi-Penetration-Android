@@ -1,6 +1,5 @@
 package com.johndeweydev.awps.views.terminalfragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,6 @@ public class TerminalRVAdapter extends
   }
 
   public void appendNewTerminalLog(LauncherOutputData launcherOutputData) {
-    Log.d("dev-log", "TerminalRVAdapter.appendNewTerminalLog: " + launcherOutputData.getOutput());
     terminalLog.add(launcherOutputData);
     this.notifyItemInserted(terminalLog.size() - 1);
   }

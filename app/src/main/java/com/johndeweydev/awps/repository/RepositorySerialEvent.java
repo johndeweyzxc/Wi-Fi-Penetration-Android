@@ -8,7 +8,7 @@ import com.johndeweydev.awps.data.LauncherOutputData;
  * @author John Dewey (johndewey02003@gmail.com)
  *
  * */
-public interface RepositorySerialDataEvent {
+public interface RepositorySerialEvent {
 
   /**
    * Received raw launcher serial data

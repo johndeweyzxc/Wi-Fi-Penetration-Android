@@ -156,6 +156,7 @@ public class TerminalFragment extends Fragment {
     Log.d("dev-log", "TerminalFragment.onResume: Fragment resumed");
     Log.d("dev-log", "TerminalFragment.onResume: Connecting to device");
     connectToDevice();
+    terminalViewModel.setLauncherEventHandler();
   }
 
   private void connectToDevice() {
@@ -169,13 +170,12 @@ public class TerminalFragment extends Fragment {
       Log.d("dev-log",
               "TerminalFragment.connectToDevice: Starting event read");
       terminalViewModel.startEventDrivenReadFromDevice();
-    } else if (result.equals("Failed to connect")) {
-
-      Log.d("dev-log", "TerminalFragment.connectToDevice: " +
-              "Failed to connect to the device");
-      stopEventReadAndDisconnectFromDevice();
+    } else {
+      Log.d("dev-log", "TerminalFragment.connectToDevice: " + result);
       Toast.makeText(requireActivity(), "Failed to connect to the device", Toast.LENGTH_SHORT)
               .show();
+      stopEventReadAndDisconnectFromDevice();
+
       Log.d("dev-log", "TerminalFragment.connectToDevice: " +
               "Popping this fragment off the back stack");
       Navigation.findNavController(binding.getRoot()).popBackStack();
@@ -189,6 +189,12 @@ public class TerminalFragment extends Fragment {
 
     super.onPause();
     Log.d("dev-log", "TerminalFragment.onPause: Fragment paused");
+  }
+
+  @Override
+  public void onDestroyView() {
+    binding = null;
+    super.onDestroyView();
   }
 
   private void stopEventReadAndDisconnectFromDevice() {

@@ -52,9 +52,13 @@ public class TerminalViewModel extends ViewModel {
     }
   };
   public TerminalViewModel(TerminalRepository terminalRepository) {
-    Log.d("dev-log", "TerminalViewModel: Setting event handler in terminal repository");
+    Log.d("dev-log", "TerminalViewModel: Created new instance of TerminalViewModel");
     this.terminalRepository = terminalRepository;
     terminalRepository.setEventHandler(terminalRepositoryEvent);
+  }
+
+  public void setLauncherEventHandler() {
+    terminalRepository.setLauncherEventHandler();
   }
 
   public int checkAvailableUsbDevices() {

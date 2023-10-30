@@ -18,11 +18,7 @@ import java.util.ArrayList;
 public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.DevicesAdapterViewHolder> {
 
   private final ArrayList<UsbDeviceData> deviceModelList = new ArrayList<>();
-  private final RVAdapterCallback rvAdapterCallback;
-
-  public interface RVAdapterCallback {
-    void onDeviceClick(TerminalArgs terminalArgs);
-  }
+  private final DevicesRvAdapterEvent devicesRvAdapterEvent;
 
   public static class DevicesAdapterViewHolder extends RecyclerView.ViewHolder {
     public TextView textViewDeviceNameValueDeviceListItem;
@@ -41,8 +37,8 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     }
   }
 
-   public DevicesRVAdapter(RVAdapterCallback rvAdapterCallback) {
-    this.rvAdapterCallback = rvAdapterCallback;
+   public DevicesRVAdapter(DevicesRvAdapterEvent devicesRvAdapterEvent) {
+    this.devicesRvAdapterEvent = devicesRvAdapterEvent;
    }
 
   @NonNull
@@ -63,14 +59,9 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
 
     holder.materialCardViewDeviceListItem.setOnClickListener(v -> {
 
-      // TODO: Refactor and simplify this code
-
       TerminalArgs terminalArgs = new TerminalArgs(
-              currentItem.usbDevice.getDeviceId(),
-              currentItem.devicePort,
-              19200
-      );
-      rvAdapterCallback.onDeviceClick(terminalArgs);
+              currentItem.usbDevice.getDeviceId(), currentItem.devicePort, 19200);
+      devicesRvAdapterEvent.onDeviceClick(terminalArgs);
     });
   }
 

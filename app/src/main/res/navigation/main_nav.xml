@@ -9,7 +9,7 @@
         android:id="@+id/devicesFragment"
         android:name="com.johndeweydev.awps.views.devicesfragment.DevicesFragment"
         android:label="fragment_devices"
-        tools:layout="@layout/fragment_devices" >
+        tools:layout="@layout/fragment_devices">
         <action
             android:id="@+id/action_devicesFragment_to_terminalFragment"
             app:destination="@id/terminalFragment" />

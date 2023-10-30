@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
     LauncherSingleton.setUsbManager(usbManager);
 
-    // Initialize the view model to be use for terminal serial input/output
     TerminalRepository terminalRepository = new TerminalRepository();
     TerminalViewModelFactory terminalViewModelFactory = new TerminalViewModelFactory(
             terminalRepository);
@@ -40,10 +39,8 @@ public class MainActivity extends AppCompatActivity {
             this, R.id.fragmentActivityMain);
     navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
       String destLabel = (String) destination.getLabel();
-      String logText = "MainActivity.fragmentChangeListener: " +
-              "Fragment destination changed to " + destLabel;
-
-      Log.d("dev-log", logText);
+      Log.d("dev-log", "MainActivity.fragmentChangeListener: Current fragment is "
+              + destLabel);
       countFragmentOnTheStack();
     });
   }
@@ -53,10 +50,7 @@ public class MainActivity extends AppCompatActivity {
             .findFragmentById(R.id.fragmentActivityMain);
     assert navHostFragment != null;
     int backStackEntryCount = navHostFragment.getChildFragmentManager().getBackStackEntryCount();
-
-    String logText = "MainActivity.countFragmentOnTheStack: " +
-            "Current fragment back stack count is -> " + backStackEntryCount;
-
-    Log.i("dev-log", logText);
+    Log.i("dev-log", "MainActivity.countFragmentOnTheStack: " +
+            backStackEntryCount + " fragment in the stack");
   }
 }

@@ -40,13 +40,13 @@ public class SessionViewModel extends ViewModel {
   SessionRepositoryEvent sessionRepositoryEvent = new SessionRepositoryEvent() {
 
     @Override
-    public void onRepositoryOutputRaw(LauncherOutputData launcherOutputData) {
+    public void onRepositoryOutputRaw(LauncherOutputData launcherOutputData) {}
+
+    @Override
+    public void onRepositoryOutputFormatted(LauncherOutputData launcherOutputData) {
       Log.d("dev-log", "SessionViewModel.onRepositoryOutputRaw: Serial -> " +
               launcherOutputData.getOutput());
     }
-
-    @Override
-    public void onRepositoryOutputFormatted(LauncherOutputData launcherOutputData) {}
 
     @Override
     public void onRepositoryOutputError(String error) {
@@ -246,9 +246,13 @@ public class SessionViewModel extends ViewModel {
   };
 
   public SessionViewModel(SessionRepository sessionRepository) {
-    Log.d("dev-log", "SessionViewModel: Setting event handler in session repository");
+    Log.d("dev-log", "SessionViewModel: Created new instance of SessionViewModel");
     this.sessionRepository = sessionRepository;
     sessionRepository.setEventHandler(sessionRepositoryEvent);
+  }
+
+  public void setLauncherEventHandler() {
+    sessionRepository.setLauncherEventHandler();
   }
 
   public String connectToDevice(

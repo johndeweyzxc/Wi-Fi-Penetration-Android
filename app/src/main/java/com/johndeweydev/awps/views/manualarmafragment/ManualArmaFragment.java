@@ -234,6 +234,7 @@ public class ManualArmaFragment extends Fragment {
     Log.d("dev-log", "ManualArmaFragment.onResume: Fragment resumed");
     Log.d("dev-log", "ManualArmaFragment.onResume: Connecting to device");
     connectToDevice();
+    sessionViewModel.setLauncherEventHandler();
   }
 
   private void connectToDevice() {
@@ -251,12 +252,12 @@ public class ManualArmaFragment extends Fragment {
       Log.d("dev-log",
               "ManualArmaFragment.connectToDevice: Starting event read");
       sessionViewModel.startEventDrivenReadFromDevice();
-    } else if (result.equals("Failed to connect")) {
-
-      Log.d("dev-log", "ManualFragment.connectToDevice: Failed to connect to the device");
-      stopEventReadAndDisconnectFromDevice();
+    } else {
+      Log.d("dev-log", "ManualArmaFragment.connectToDevice: " + result);
       Toast.makeText(requireActivity(), "Failed to connect to the device", Toast.LENGTH_SHORT)
               .show();
+      stopEventReadAndDisconnectFromDevice();
+
       Log.d("dev-log", "ManualArmaFragment.connectToDevice: " +
               "Popping all fragments but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
@@ -270,6 +271,12 @@ public class ManualArmaFragment extends Fragment {
     stopEventReadAndDisconnectFromDevice();
     super.onPause();
     Log.d("dev-log", "ManualArmaFragment.onPause: Fragment paused");
+  }
+
+  @Override
+  public void onDestroyView() {
+    binding = null;
+    super.onDestroyView();
   }
 
   private void stopEventReadAndDisconnectFromDevice() {
