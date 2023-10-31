@@ -14,8 +14,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.databinding.FragmentAutoArmaBinding;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 
@@ -113,8 +113,10 @@ public class AutoArmaFragment extends Fragment {
   private void connectToDevice() {
     int deviceId = autoArmaArgs.getDeviceId();
     int portNum = autoArmaArgs.getPortNum();
-    String result = sessionViewModel.connectToDevice(
-            19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum);
+    DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
+            19200, 8, 1, "PARITY_NONE", deviceId, portNum
+    );
+    String result = sessionViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("Successfully connected") || result.equals("Already connected")) {
 

@@ -1,21 +1,20 @@
-package com.johndeweydev.awps.repository.sessionrepository;
+package com.johndeweydev.awps.models.repo.serial.sessionreposerial;
 
 import androidx.annotation.Nullable;
 
 import com.johndeweydev.awps.data.MicFirstMessageData;
 import com.johndeweydev.awps.data.MicSecondMessageData;
 import com.johndeweydev.awps.data.PmkidFirstMessageData;
-import com.johndeweydev.awps.repository.RepositorySerialEvent;
+import com.johndeweydev.awps.models.repo.serial.DefaultRepoSerialEvent;
 
 /**
- * Interface for events occurred in the session repository, it handles formatted launcher serial
- * data. This are event callbacks that are executed when a certain type of launcher serial data
- * is received.
+ * Interface for events occurred in the session repository, it process formatted launcher serial
+ * data. Then callbacks are called based on the certain type of data received
  *
  * @author John Dewey (johndewey02003@gmail.com)
  *
  * */
-public interface SessionRepositoryEvent extends RepositorySerialEvent {
+public interface SessionRepoSerialEvent extends DefaultRepoSerialEvent {
 
   /**
    * A control code of armament status is issued

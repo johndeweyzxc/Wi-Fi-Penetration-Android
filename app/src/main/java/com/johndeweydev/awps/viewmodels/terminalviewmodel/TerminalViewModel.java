@@ -5,14 +5,16 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.data.LauncherOutputData;
-import com.johndeweydev.awps.repository.terminalrepository.TerminalRepository;
+import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 import com.johndeweydev.awps.data.UsbDeviceData;
-import com.johndeweydev.awps.repository.terminalrepository.TerminalRepositoryEvent;
+import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerialEvent;
+import com.johndeweydev.awps.viewmodels.DefaultViewModelUsbSerial;
 
 import java.util.ArrayList;
 
-public class TerminalViewModel extends ViewModel {
+public class TerminalViewModel extends ViewModel implements DefaultViewModelUsbSerial {
 
   /**
    * Device id, port number and baud rate is set by terminal fragment as a backup source
@@ -22,14 +24,14 @@ public class TerminalViewModel extends ViewModel {
   public int portNumFromTerminalArgs;
   public int baudRateFromTerminalArgs;
 
-  public TerminalRepository terminalRepository;
+  public TerminalRepoSerial terminalRepoSerial;
   public MutableLiveData<ArrayList<UsbDeviceData>> devicesList = new MutableLiveData<>();
   public MutableLiveData<LauncherOutputData> currentSerialOutput = new MutableLiveData<>();
   public MutableLiveData<LauncherOutputData> currentSerialOutputRaw = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
 
-  TerminalRepositoryEvent terminalRepositoryEvent = new TerminalRepositoryEvent() {
+  TerminalRepoSerialEvent terminalRepoSerialEvent = new TerminalRepoSerialEvent() {
     @Override
     public void onRepositoryOutputRaw(LauncherOutputData launcherSerialOutputData) {
       Log.d("dev-log", "TerminalViewModel.onRepositoryOutputRaw: Serial -> " +
@@ -59,40 +61,44 @@ public class TerminalViewModel extends ViewModel {
       currentSerialInputError.postValue(input);
     }
   };
-  public TerminalViewModel(TerminalRepository terminalRepository) {
+  public TerminalViewModel(TerminalRepoSerial terminalRepoSerial) {
     Log.d("dev-log", "TerminalViewModel: Created new instance of TerminalViewModel");
-    this.terminalRepository = terminalRepository;
-    terminalRepository.setEventHandler(terminalRepositoryEvent);
+    this.terminalRepoSerial = terminalRepoSerial;
+    terminalRepoSerial.setEventHandler(terminalRepoSerialEvent);
   }
 
+  @Override
   public void setLauncherEventHandler() {
-    terminalRepository.setLauncherEventHandler();
+    terminalRepoSerial.setLauncherEventHandler();
   }
 
-  public int checkAvailableUsbDevices() {
-    ArrayList<UsbDeviceData> devices = terminalRepository.discoverDevices();
-    devicesList.setValue(devices);
-    return devices.size();
+  @Override
+  public String connectToDevice(DeviceConnectionParamData deviceConnectionParamData) {
+    return terminalRepoSerial.connectToDevice(deviceConnectionParamData);
   }
 
-  public String connectToDevice(
-          int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
-    return terminalRepository.connect(baudRate, dataBits, stopBits, parity, deviceId, portNum);
-  }
-
+  @Override
   public void disconnectFromDevice() {
-    terminalRepository.disconnect();
+    terminalRepoSerial.disconnectFromDevice();
   }
 
+  @Override
   public void startEventDrivenReadFromDevice() {
-    terminalRepository.startReading();
+    terminalRepoSerial.startEventDrivenReadFromDevice();
   }
 
+  @Override
   public void stopEventDrivenReadFromDevice() {
-    terminalRepository.stopReading();
+    terminalRepoSerial.stopEventDrivenReadFromDevice();
   }
 
   public void writeDataToDevice(String data) {
-    terminalRepository.writeData(data);
+    terminalRepoSerial.writeDataToDevice(data);
+  }
+
+  public int getAvailableDevices() {
+    ArrayList<UsbDeviceData> devices = terminalRepoSerial.getAvailableDevices();
+    devicesList.setValue(devices);
+    return devices.size();
   }
 }

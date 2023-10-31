@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.launcher;
+package com.johndeweydev.awps.models.api.launcher;
 
 public enum LauncherStages {
   // Initialization stage

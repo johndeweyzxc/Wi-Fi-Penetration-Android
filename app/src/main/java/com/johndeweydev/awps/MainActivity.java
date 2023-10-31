@@ -13,8 +13,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.johndeweydev.awps.launcher.LauncherSingleton;
-import com.johndeweydev.awps.repository.terminalrepository.TerminalRepository;
+import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
+import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModelFactory;
 
@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
     UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
     LauncherSingleton.setUsbManager(usbManager);
 
-    TerminalRepository terminalRepository = new TerminalRepository();
+    TerminalRepoSerial terminalRepoSerial = new TerminalRepoSerial();
     TerminalViewModelFactory terminalViewModelFactory = new TerminalViewModelFactory(
-            terminalRepository);
+            terminalRepoSerial);
     new ViewModelProvider(this, terminalViewModelFactory).get(TerminalViewModel.class);
 
     OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {

@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.data.LauncherOutputData;
 import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
@@ -178,8 +178,10 @@ public class TerminalFragment extends Fragment {
   private void connectToDevice() {
     int deviceId = terminalArgs.getDeviceId();
     int portNum = terminalArgs.getPortNum();
-    String result = terminalViewModel.connectToDevice(
-            19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum);
+    DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
+            19200, 8, 1, "PARITY_NONE", deviceId, portNum
+    );
+    String result = terminalViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("Successfully connected") || result.equals("Already connected")) {
 

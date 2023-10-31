@@ -21,12 +21,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.BuildConfig;
 import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.data.UsbDeviceData;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
-import com.johndeweydev.awps.launcher.LauncherSingleton;
+import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
@@ -143,9 +143,10 @@ public class DevicesFragment extends Fragment {
 
     Log.d("dev-log",
             "DevicesFragment.isUsbDevicePermissionGranted: Connecting to the device");
-    String result = terminalViewModel.connectToDevice(
-            19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum
+    DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
+            19200, 8, 1, "PARITY_NONE", deviceId, portNum
     );
+    String result = terminalViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("No usb permission")) {
 
@@ -191,7 +192,7 @@ public class DevicesFragment extends Fragment {
   }
 
   private void findUsbDevices() {
-    int size = terminalViewModel.checkAvailableUsbDevices();
+    int size = terminalViewModel.getAvailableDevices();
     if (size == 0) {
       binding.textViewNoConnectedDevices.setVisibility(View.VISIBLE);
       Log.d("dev-log", "DevicesFragment.findUsbDevices: No devices connected");

@@ -1,21 +1,22 @@
-package com.johndeweydev.awps.repository.terminalrepository;
+package com.johndeweydev.awps.models.repo.serial.terminalreposerial;
 
 import android.util.Log;
 
-import com.johndeweydev.awps.launcher.LauncherStages;
-import com.johndeweydev.awps.launcher.LauncherEvent;
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.api.launcher.LauncherStages;
+import com.johndeweydev.awps.models.api.launcher.LauncherEvent;
 import com.johndeweydev.awps.data.LauncherOutputData;
 import com.johndeweydev.awps.data.UsbDeviceData;
-import com.johndeweydev.awps.launcher.LauncherSingleton;
+import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class TerminalRepository {
+public class TerminalRepoSerial {
 
-  private TerminalRepositoryEvent terminalRepositoryEvent;
+  private TerminalRepoSerialEvent terminalRepoSerialEvent;
   private final StringBuilder queueData = new StringBuilder();
   private final LauncherEvent launcherEvent = new LauncherEvent() {
     @Override
@@ -40,32 +41,32 @@ public class TerminalRepository {
       char firstChar = strData.charAt(0);
       char lastChar = strData.charAt(strData.length() - 2);
       if (firstChar == '{' && lastChar == '}') {
-        terminalRepositoryEvent.onRepositoryOutputFormatted(launcherOutputData);
+        terminalRepoSerialEvent.onRepositoryOutputFormatted(launcherOutputData);
       } else {
-        terminalRepositoryEvent.onRepositoryOutputRaw(launcherOutputData);
+        terminalRepoSerialEvent.onRepositoryOutputRaw(launcherOutputData);
       }
     }
 
     @Override
     public void onLauncherOutputError(String error) {
-      terminalRepositoryEvent.onRepositoryOutputError(error);
+      terminalRepoSerialEvent.onRepositoryOutputError(error);
     }
     @Override
     public void onLauncherInputError(String input) {
-      terminalRepositoryEvent.onRepositoryInputError(input);
+      terminalRepoSerialEvent.onRepositoryInputError(input);
     }
   };
 
   public void setEventHandler(
-          TerminalRepositoryEvent terminalRepositoryEvent
+          TerminalRepoSerialEvent terminalRepoSerialEvent
   ) {
-    this.terminalRepositoryEvent = terminalRepositoryEvent;
+    this.terminalRepoSerialEvent = terminalRepoSerialEvent;
     Log.d("dev-log", "TerminalRepository.setEventHandler: Terminal repository event " +
             "callback set");
   }
 
   public void setLauncherEventHandler() {
-    LauncherSingleton.getInstance().getLauncher().setLauncherSerialDataEvent(
+    LauncherSingleton.getInstance().getLauncher().setLauncherEventHandler(
             launcherEvent);
     Log.d("dev-log", "TerminalRepository.setLauncherEventHandler: Launcher event callback " +
             "set in the context of terminal repository");
@@ -77,15 +78,13 @@ public class TerminalRepository {
     return dateFormat.format(calendar.getTime());
   }
 
-  public ArrayList<UsbDeviceData> discoverDevices() {
-    return LauncherSingleton.getInstance().getLauncher().discoverDevices();
+  public ArrayList<UsbDeviceData> getAvailableDevices() {
+    return LauncherSingleton.getInstance().getLauncher().getAvailableDevices();
   }
 
-  public String connect(
-          int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
-    LauncherStages status = LauncherSingleton.getInstance().getLauncher().initiateConnectionToDevice(
-            baudRate, dataBits, stopBits, parity, deviceId, portNum
-    );
+  public String connectToDevice(DeviceConnectionParamData deviceConnectionParamData) {
+    LauncherStages status = LauncherSingleton.getInstance().getLauncher()
+            .connectToDevice(deviceConnectionParamData);
 
     switch (status) {
       case ALREADY_CONNECTED: return "Already connected";
@@ -100,19 +99,19 @@ public class TerminalRepository {
     }
   }
 
-  public void disconnect() {
-    LauncherSingleton.getInstance().getLauncher().disconnect();
+  public void disconnectFromDevice() {
+    LauncherSingleton.getInstance().getLauncher().disconnectFromDevice();
   }
 
-  public void startReading() {
-    LauncherSingleton.getInstance().getLauncher().startReading();
+  public void startEventDrivenReadFromDevice() {
+    LauncherSingleton.getInstance().getLauncher().startEventDrivenReadFromDevice();
   }
 
-  public void stopReading() {
-    LauncherSingleton.getInstance().getLauncher().stopReading();
+  public void stopEventDrivenReadFromDevice() {
+    LauncherSingleton.getInstance().getLauncher().stopEventDrivenReadFromDevice();
   }
 
-  public void writeData(String data) {
-    LauncherSingleton.getInstance().getLauncher().writeData(data);
+  public void writeDataToDevice(String data) {
+    LauncherSingleton.getInstance().getLauncher().writeDataToDevice(data);
   }
 }

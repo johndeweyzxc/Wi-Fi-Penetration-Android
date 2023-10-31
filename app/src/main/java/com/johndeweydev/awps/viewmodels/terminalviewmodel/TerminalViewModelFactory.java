@@ -4,20 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.johndeweydev.awps.repository.terminalrepository.TerminalRepository;
+import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 
 public class TerminalViewModelFactory implements ViewModelProvider.Factory {
 
-  private final TerminalRepository terminalRepository;
+  private final TerminalRepoSerial terminalRepoSerial;
 
-  public TerminalViewModelFactory(TerminalRepository terminalRepository) {
-    this.terminalRepository = terminalRepository;
+  public TerminalViewModelFactory(TerminalRepoSerial terminalRepoSerial) {
+    this.terminalRepoSerial = terminalRepoSerial;
   }
 
   @NonNull
   @Override
   @SuppressWarnings("unchecked")
   public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-    return (T) new TerminalViewModel(terminalRepository);
+    return (T) new TerminalViewModel(terminalRepoSerial);
   }
 }

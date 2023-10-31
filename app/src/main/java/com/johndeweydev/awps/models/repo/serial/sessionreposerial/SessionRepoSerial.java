@@ -1,14 +1,15 @@
-package com.johndeweydev.awps.repository.sessionrepository;
+package com.johndeweydev.awps.models.repo.serial.sessionreposerial;
 
 import android.util.Log;
 
-import com.johndeweydev.awps.launcher.LauncherStages;
-import com.johndeweydev.awps.launcher.LauncherEvent;
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.api.launcher.LauncherStages;
+import com.johndeweydev.awps.models.api.launcher.LauncherEvent;
 import com.johndeweydev.awps.data.LauncherOutputData;
 import com.johndeweydev.awps.data.MicFirstMessageData;
 import com.johndeweydev.awps.data.MicSecondMessageData;
 import com.johndeweydev.awps.data.PmkidFirstMessageData;
-import com.johndeweydev.awps.launcher.LauncherSingleton;
+import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class SessionRepository {
+public class SessionRepoSerial {
 
-  private SessionRepositoryEvent sessionRepositoryEvent;
+  private SessionRepoSerialEvent sessionRepoSerialEvent;
   private final StringBuilder queueData = new StringBuilder();
   private final LauncherEvent launcherEvent = new LauncherEvent() {
     @Override
@@ -37,23 +38,23 @@ public class SessionRepository {
 
     @Override
     public void onLauncherOutputError(String error) {
-      sessionRepositoryEvent.onRepositoryOutputError(error);
+      sessionRepoSerialEvent.onRepositoryOutputError(error);
     }
 
     @Override
     public void onLauncherInputError(String input) {
-      sessionRepositoryEvent.onRepositoryInputError(input);
+      sessionRepoSerialEvent.onRepositoryInputError(input);
     }
   };
 
-  public void setEventHandler(SessionRepositoryEvent sessionRepositoryEvent) {
-    this.sessionRepositoryEvent = sessionRepositoryEvent;
+  public void setEventHandler(SessionRepoSerialEvent sessionRepoSerialEvent) {
+    this.sessionRepoSerialEvent = sessionRepoSerialEvent;
     Log.d("dev-log", "SessionRepository.setEventHandler: Session repository event " +
             "callback set");
   }
 
   public void setLauncherEventHandler() {
-    LauncherSingleton.getInstance().getLauncher().setLauncherSerialDataEvent(
+    LauncherSingleton.getInstance().getLauncher().setLauncherEventHandler(
             launcherEvent);
     Log.d("dev-log", "SessionRepository.setLauncherEventHandler: Launcher event callback " +
             "set in the context of session repository");
@@ -68,7 +69,7 @@ public class SessionRepository {
     char firstChar = data.charAt(0);
     char lastChar = data.charAt(data.length() - 2);
     if (firstChar == '{' && lastChar == '}') {
-      sessionRepositoryEvent.onRepositoryOutputFormatted(launcherOutputData);
+      sessionRepoSerialEvent.onRepositoryOutputFormatted(launcherOutputData);
       data = data.replace("{", "").replace("}", "");
       String[] splitStrData = data.split(",");
 
@@ -95,7 +96,7 @@ public class SessionRepository {
 
     switch (strDataList.get(0)) {
       case "ESP_STARTED":
-        sessionRepositoryEvent.onRepositoryStarted();
+        sessionRepoSerialEvent.onRepositoryStarted();
         break;
       case "CMD_PARSER":
         cmdParserContext(strDataList);
@@ -147,11 +148,11 @@ public class SessionRepository {
 
     switch (strDataList.get(1)) {
       case "CURRENT_ARMA":
-        sessionRepositoryEvent.onRepositoryCommandParserCurrentArma(
+        sessionRepoSerialEvent.onRepositoryCommandParserCurrentArma(
                 namedArmament, formattedBssid);
         break;
       case "TARGET_ARMA_SET":
-        sessionRepositoryEvent.onRepositoryCommandParserTargetAndArmaSet(
+        sessionRepoSerialEvent.onRepositoryCommandParserTargetAndArmaSet(
                 namedArmament, formattedBssid);
         break;
     }
@@ -159,9 +160,9 @@ public class SessionRepository {
 
   private void armamentContext(ArrayList<String> strDataList) {
     if (Objects.equals(strDataList.get(1), "ACTIVATE")) {
-      sessionRepositoryEvent.onRepositoryArmamentActivation();
+      sessionRepoSerialEvent.onRepositoryArmamentActivation();
     } else if (Objects.equals(strDataList.get(1), "DEACTIVATE")) {
-      sessionRepositoryEvent.onRepositoryArmamentDeactivation();
+      sessionRepoSerialEvent.onRepositoryArmamentDeactivation();
     }
   }
 
@@ -169,30 +170,30 @@ public class SessionRepository {
     switch (strDataList.get(1)) {
       case "FOUND_APS":
         String numberOfAps = strDataList.get(2);
-        sessionRepositoryEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
+        sessionRepoSerialEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
         break;
       case "SCAN":
         processScannedAccessPointsAndNotifyViewModel(strDataList);
         break;
       case "FINISH_SCAN":
-        sessionRepositoryEvent.onRepositoryFinishScanning();
+        sessionRepoSerialEvent.onRepositoryFinishScanning();
         break;
       case "AP_NOT_FOUND":
-        sessionRepositoryEvent.onRepositoryAccessPointNotFound();
+        sessionRepoSerialEvent.onRepositoryAccessPointNotFound();
         break;
       case "LAUNCHING_SEQUENCE":
-        sessionRepositoryEvent.onRepositoryLaunchingSequence();
+        sessionRepoSerialEvent.onRepositoryLaunchingSequence();
         break;
       case "SNIFF_STARTED":
-        sessionRepositoryEvent.onRepositoryTaskCreated();
+        sessionRepoSerialEvent.onRepositoryTaskCreated();
         break;
       case "WRONG_KEY_TYPE":
         String keyType = strDataList.get(3);
-        sessionRepositoryEvent.onRepositoryPmkidWrongKeyType(keyType);
+        sessionRepoSerialEvent.onRepositoryPmkidWrongKeyType(keyType);
         break;
       case "SNIFF_STATUS":
         int status = Integer.parseInt(strDataList.get(2));
-        sessionRepositoryEvent.onRepositoryTaskStatus("PMKID", status);
+        sessionRepoSerialEvent.onRepositoryTaskStatus("PMKID", status);
         break;
       case "MSG_1":
         String bssid = strDataList.get(2);
@@ -202,18 +203,18 @@ public class SessionRepository {
         PmkidFirstMessageData pmkidFirstMessageData = new PmkidFirstMessageData(
                 bssid, client, pmkid
         );
-        sessionRepositoryEvent.onRepositoryEapolMessage(
+        sessionRepoSerialEvent.onRepositoryEapolMessage(
                 "PMKID", 1, pmkidFirstMessageData,
                 null, null);
         break;
       case "FINISHING_SEQUENCE":
-        sessionRepositoryEvent.onRepositoryFinishingSequence();
+        sessionRepoSerialEvent.onRepositoryFinishingSequence();
         break;
       case "SUCCESS":
-        sessionRepositoryEvent.onRepositorySuccess();
+        sessionRepoSerialEvent.onRepositorySuccess();
         break;
       case "FAILURE":
-        sessionRepositoryEvent.onRepositoryFailure(strDataList.get(2));
+        sessionRepoSerialEvent.onRepositoryFailure(strDataList.get(2));
         break;
     }
   }
@@ -222,26 +223,26 @@ public class SessionRepository {
     switch (strDataList.get(1)) {
       case "FOUND_APS":
         String numberOfAps = strDataList.get(2);
-        sessionRepositoryEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
+        sessionRepoSerialEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
         break;
       case "SCAN":
         processScannedAccessPointsAndNotifyViewModel(strDataList);
         break;
       case "FINISH_SCAN":
-        sessionRepositoryEvent.onRepositoryFinishScanning();
+        sessionRepoSerialEvent.onRepositoryFinishScanning();
         break;
       case "AP_NOT_FOUND":
-        sessionRepositoryEvent.onRepositoryAccessPointNotFound();
+        sessionRepoSerialEvent.onRepositoryAccessPointNotFound();
         break;
       case "LAUNCHING_SEQUENCE":
-        sessionRepositoryEvent.onRepositoryLaunchingSequence();
+        sessionRepoSerialEvent.onRepositoryLaunchingSequence();
         break;
       case "DEAUTH_STARTED":
-        sessionRepositoryEvent.onRepositoryTaskCreated();
+        sessionRepoSerialEvent.onRepositoryTaskCreated();
         break;
       case "INJECTED_DEAUTH":
         int status = Integer.parseInt(strDataList.get(2));
-        sessionRepositoryEvent.onRepositoryTaskStatus("MIC", status);
+        sessionRepoSerialEvent.onRepositoryTaskStatus("MIC", status);
         break;
       case "MSG_1":
         String bssid = strDataList.get(2);
@@ -249,7 +250,7 @@ public class SessionRepository {
         String anonce = strDataList.get(4);
 
         MicFirstMessageData micFirstMessageData = new MicFirstMessageData(bssid, client, anonce);
-        sessionRepositoryEvent.onRepositoryEapolMessage(
+        sessionRepoSerialEvent.onRepositoryEapolMessage(
                 "MIC", 1, null,
                 micFirstMessageData, null);
         break;
@@ -267,18 +268,18 @@ public class SessionRepository {
         MicSecondMessageData micSecondMessageData = new MicSecondMessageData(
                 clientM2, bssidM2, secondMessageInfo, replayCounter, snonce, mic, wpaKeyData
         );
-        sessionRepositoryEvent.onRepositoryEapolMessage(
+        sessionRepoSerialEvent.onRepositoryEapolMessage(
                 "MIC", 2, null, null,
                 micSecondMessageData);
         break;
       case "FINISHING SEQUENCE":
-        sessionRepositoryEvent.onRepositoryFinishingSequence();
+        sessionRepoSerialEvent.onRepositoryFinishingSequence();
         break;
       case "SUCCESS":
-        sessionRepositoryEvent.onRepositorySuccess();
+        sessionRepoSerialEvent.onRepositorySuccess();
         break;
       case "FAILURE":
-        sessionRepositoryEvent.onRepositoryFailure(strDataList.get(2));
+        sessionRepoSerialEvent.onRepositoryFailure(strDataList.get(2));
         break;
     }
   }
@@ -287,12 +288,12 @@ public class SessionRepository {
     if (Objects.equals(strDataList.get(1), "FOUND_APS")) {
 
       String numberOfAps = strDataList.get(2);
-      sessionRepositoryEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
+      sessionRepoSerialEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
     } else if (Objects.equals(strDataList.get(1), "SCAN")) {
 
       processScannedAccessPointsAndNotifyViewModel(strDataList);
     } else if (Objects.equals(strDataList.get(1), "FINISH_SCAN")) {
-      sessionRepositoryEvent.onRepositoryFinishScanning();
+      sessionRepoSerialEvent.onRepositoryFinishScanning();
     }
   }
 
@@ -300,30 +301,30 @@ public class SessionRepository {
     switch (strDataList.get(1)) {
       case "FOUND_APS":
         String numberOfAps = strDataList.get(2);
-        sessionRepositoryEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
+        sessionRepoSerialEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
         break;
       case "SCAN":
         processScannedAccessPointsAndNotifyViewModel(strDataList);
         break;
       case "AP_NOT_FOUND":
-        sessionRepositoryEvent.onRepositoryAccessPointNotFound();
+        sessionRepoSerialEvent.onRepositoryAccessPointNotFound();
         break;
       case "FINISH_SCAN":
-        sessionRepositoryEvent.onRepositoryFinishScanning();
+        sessionRepoSerialEvent.onRepositoryFinishScanning();
         break;
       case "LAUNCHING_SEQUENCE":
-        sessionRepositoryEvent.onRepositoryLaunchingSequence();
+        sessionRepoSerialEvent.onRepositoryLaunchingSequence();
         break;
       case "DEAUTH_STARTED":
-        sessionRepositoryEvent.onRepositoryTaskCreated();
+        sessionRepoSerialEvent.onRepositoryTaskCreated();
         break;
       case "INJECTED_DEAUTH":
         int numberOfInjectedDeauthentications = Integer.parseInt(strDataList.get(2));
-        sessionRepositoryEvent.onRepositoryTaskStatus("DEAUTH",
+        sessionRepoSerialEvent.onRepositoryTaskStatus("DEAUTH",
                 numberOfInjectedDeauthentications);
         break;
       case "STOPPED":
-        sessionRepositoryEvent.onRepositoryDeauthStop(strDataList.get(2));
+        sessionRepoSerialEvent.onRepositoryDeauthStop(strDataList.get(2));
         break;
     }
   }
@@ -335,14 +336,13 @@ public class SessionRepository {
     String ssid = strDataList.get(3);
     String rssi = strDataList.get(4);
     String channel = strDataList.get(5);
-    sessionRepositoryEvent.onRepositoryScannedAccessPoint(macAddress, ssid, rssi, channel);
+    sessionRepoSerialEvent.onRepositoryScannedAccessPoint(macAddress, ssid, rssi, channel);
   }
 
-  public String connect(
-          int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
-    LauncherStages status = LauncherSingleton.getInstance().getLauncher().initiateConnectionToDevice(
-            baudRate, dataBits, stopBits, parity, deviceId, portNum
-    );
+  public String connectToDevice(DeviceConnectionParamData deviceConnectionParamData) {
+    LauncherStages status = LauncherSingleton.getInstance().getLauncher()
+            .connectToDevice(deviceConnectionParamData);
+
     switch (status) {
       case ALREADY_CONNECTED: return "Already connected";
       case DEVICE_NOT_FOUND: return "Device not found";
@@ -356,19 +356,19 @@ public class SessionRepository {
     }
   }
 
-  public void disconnect() {
-    LauncherSingleton.getInstance().getLauncher().disconnect();
+  public void disconnectFromDevice() {
+    LauncherSingleton.getInstance().getLauncher().disconnectFromDevice();
   }
 
-  public void startReading() {
-    LauncherSingleton.getInstance().getLauncher().startReading();
+  public void startEventDrivenReadFromDevice() {
+    LauncherSingleton.getInstance().getLauncher().startEventDrivenReadFromDevice();
   }
 
-  public void stopReading() {
-    LauncherSingleton.getInstance().getLauncher().stopReading();
+  public void stopEventDrivenReadFromDevice() {
+    LauncherSingleton.getInstance().getLauncher().stopEventDrivenReadFromDevice();
   }
 
-  public void writeData(String data) {
-    LauncherSingleton.getInstance().getLauncher().writeData(data);
+  public void writeDataToDevice(String data) {
+    LauncherSingleton.getInstance().getLauncher().writeDataToDevice(data);
   }
 }

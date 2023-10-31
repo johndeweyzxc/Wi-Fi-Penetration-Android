@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.repository;
+package com.johndeweydev.awps.models.repo.serial;
 
 import com.johndeweydev.awps.data.LauncherOutputData;
 
@@ -8,7 +8,7 @@ import com.johndeweydev.awps.data.LauncherOutputData;
  * @author John Dewey (johndewey02003@gmail.com)
  *
  * */
-public interface RepositorySerialEvent {
+public interface DefaultRepoSerialEvent {
 
   /**
    * Received raw launcher serial data

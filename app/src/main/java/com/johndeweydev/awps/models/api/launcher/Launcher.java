@@ -1,14 +1,14 @@
-package com.johndeweydev.awps.launcher;
+package com.johndeweydev.awps.models.api.launcher;
 
-import static com.johndeweydev.awps.launcher.LauncherStages.ALREADY_CONNECTED;
-import static com.johndeweydev.awps.launcher.LauncherStages.DEVICE_NOT_FOUND;
-import static com.johndeweydev.awps.launcher.LauncherStages.DRIVER_NOT_FOUND;
-import static com.johndeweydev.awps.launcher.LauncherStages.DRIVER_SET;
-import static com.johndeweydev.awps.launcher.LauncherStages.FAILED_OPENING_DEVICE;
-import static com.johndeweydev.awps.launcher.LauncherStages.NO_USB_PERMISSION;
-import static com.johndeweydev.awps.launcher.LauncherStages.PORT_NOT_FOUND;
-import static com.johndeweydev.awps.launcher.LauncherStages.SUCCESSFULLY_CONNECTED;
-import static com.johndeweydev.awps.launcher.LauncherStages.UNSUPPORTED_PORT_PARAMETERS;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.ALREADY_CONNECTED;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.DEVICE_NOT_FOUND;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.DRIVER_NOT_FOUND;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.DRIVER_SET;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.FAILED_OPENING_DEVICE;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.NO_USB_PERMISSION;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.PORT_NOT_FOUND;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.SUCCESSFULLY_CONNECTED;
+import static com.johndeweydev.awps.models.api.launcher.LauncherStages.UNSUPPORTED_PORT_PARAMETERS;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -21,6 +21,7 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.data.UsbDeviceData;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class Launcher {
     Log.d("dev-log", "Launcher: Created new instance of Launcher");
   }
 
-  public void setLauncherSerialDataEvent(
+  public void setLauncherEventHandler(
           LauncherEvent launcherEvent
   ) {
     this.launcherEvent = launcherEvent;
@@ -52,15 +53,30 @@ public class Launcher {
     return usbSerialDriver;
   }
 
-  public LauncherStages initiateConnectionToDevice(
-          int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum) {
+  public LauncherStages connectToDevice(
+          DeviceConnectionParamData deviceConnectionParamData
+  ) {
+    int deviceId = deviceConnectionParamData.getDeviceId();
+    int portNum = deviceConnectionParamData.getPortNum();
+    int baudRate = deviceConnectionParamData.getBaudRate();
+    int dataBits = deviceConnectionParamData.getDataBits();
+    int stopBits = deviceConnectionParamData.getStopBits();
+    String strParity = deviceConnectionParamData.getParity();
+    int parity = UsbSerialPort.PARITY_NONE;
+
+    switch (strParity) {
+      case "PARITY_NONE": break;
+      case "PARITY_EVEN": parity = UsbSerialPort.PARITY_EVEN; break;
+      case "PARITY_ODD": parity = UsbSerialPort.PARITY_ODD; break;
+    }
+
     if (isConnectedToTheDevice) {
       Log.d("dev-log", "Launcher.initiateConnectionToDevice: " +
               "Already connected to the device");
       return ALREADY_CONNECTED;
     }
 
-    LauncherStages driverAndDeviceStageStatus = initializeDriverAndDevice(deviceId, portNum);
+    LauncherStages driverAndDeviceStageStatus = loadDriverAndDevice(deviceId, portNum);
     boolean permissionStatus;
     if (driverAndDeviceStageStatus.equals(DRIVER_SET)) {
       UsbManager usbManager = LauncherSingleton.getUsbManager();
@@ -73,7 +89,7 @@ public class Launcher {
               "permission to access the device");
       return NO_USB_PERMISSION;
     }
-    LauncherStages connectionStageStatus = connectToDevice(baudRate, dataBits, stopBits,
+    LauncherStages connectionStageStatus = openDeviceAndSetParameters(baudRate, dataBits, stopBits,
             parity, portNum);
     if (connectionStageStatus.equals(SUCCESSFULLY_CONNECTED)) {
       isConnectedToTheDevice = true;
@@ -85,7 +101,7 @@ public class Launcher {
     }
   }
 
-  private LauncherStages connectToDevice(
+  private LauncherStages openDeviceAndSetParameters(
           int baudRate, int dataBits, int stopBits, int parity, int portNum
   ) {
     UsbManager usbManager = LauncherSingleton.getUsbManager();
@@ -105,12 +121,12 @@ public class Launcher {
     } catch (Exception e) {
       Log.w("dev-log", "Launcher.connectToDevice: Connection failed, "
               + e.getMessage());
-      disconnect();
+      disconnectFromDevice();
       return FAILED_OPENING_DEVICE;
     }
   }
 
-  private LauncherStages initializeDriverAndDevice(int deviceId, int portNum) {
+  private LauncherStages loadDriverAndDevice(int deviceId, int portNum) {
     UsbManager usbManager = LauncherSingleton.getUsbManager();
     for (UsbDevice device: usbManager.getDeviceList().values()) {
       if (device.getDeviceId() == deviceId) {
@@ -151,7 +167,7 @@ public class Launcher {
     return new UsbSerialProber(customTable);
   }
 
-  public void disconnect() {
+  public void disconnectFromDevice() {
     try {
       if (isConnectedToTheDevice) {
         usbSerialPort.close();
@@ -179,7 +195,7 @@ public class Launcher {
     }
   };
 
-  public void startReading() {
+  public void startEventDrivenReadFromDevice() {
     if (!eventDrivenReadIsTurnedOn) {
       serialInputOutputManager = new SerialInputOutputManager(usbSerialPort, newDataListener);
       serialInputOutputManager.start();
@@ -188,7 +204,7 @@ public class Launcher {
     }
   }
 
-  public void stopReading() {
+  public void stopEventDrivenReadFromDevice() {
     if (eventDrivenReadIsTurnedOn) {
       serialInputOutputManager.setListener(null);
       serialInputOutputManager.stop();
@@ -198,7 +214,7 @@ public class Launcher {
     }
   }
 
-  public ArrayList<UsbDeviceData> discoverDevices() {
+  public ArrayList<UsbDeviceData> getAvailableDevices() {
     UsbManager usbManager = LauncherSingleton.getUsbManager();
     UsbSerialProber usbDefaultProber = UsbSerialProber.getDefaultProber();
     UsbSerialProber usbCustomProber = getCustomProber();
@@ -227,7 +243,7 @@ public class Launcher {
     return usbDeviceDataList;
   }
 
-  public void writeData(String str) {
+  public void writeDataToDevice(String str) {
     byte[] data = str.getBytes();
     try {
       usbSerialPort.write(data, WRITE_WAIT_MILLIS);

@@ -6,18 +6,20 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.data.LauncherOutputData;
-import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 import com.johndeweydev.awps.data.MicFirstMessageData;
 import com.johndeweydev.awps.data.MicSecondMessageData;
 import com.johndeweydev.awps.data.PmkidFirstMessageData;
-import com.johndeweydev.awps.repository.sessionrepository.SessionRepositoryEvent;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerialEvent;
+import com.johndeweydev.awps.viewmodels.DefaultViewModelUsbSerial;
 
-public class SessionViewModel extends ViewModel {
+public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSerial {
 
   public boolean automaticAttack = false;
   public String selectedArmament;
-  public SessionRepository sessionRepository;
+  public SessionRepoSerial sessionRepoSerial;
 
   public MutableLiveData<String> currentAttackLog = new MutableLiveData<>();
   private int attackLogNumber = 0;
@@ -37,7 +39,7 @@ public class SessionViewModel extends ViewModel {
   public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
 
-  SessionRepositoryEvent sessionRepositoryEvent = new SessionRepositoryEvent() {
+  SessionRepoSerialEvent sessionRepoSerialEvent = new SessionRepoSerialEvent() {
 
     @Override
     public void onRepositoryOutputRaw(LauncherOutputData launcherOutputData) {}
@@ -245,32 +247,35 @@ public class SessionViewModel extends ViewModel {
     }
   };
 
-  public SessionViewModel(SessionRepository sessionRepository) {
+  public SessionViewModel(SessionRepoSerial sessionRepoSerial) {
     Log.d("dev-log", "SessionViewModel: Created new instance of SessionViewModel");
-    this.sessionRepository = sessionRepository;
-    sessionRepository.setEventHandler(sessionRepositoryEvent);
+    this.sessionRepoSerial = sessionRepoSerial;
+    sessionRepoSerial.setEventHandler(sessionRepoSerialEvent);
   }
 
+  @Override
   public void setLauncherEventHandler() {
-    sessionRepository.setLauncherEventHandler();
+    sessionRepoSerial.setLauncherEventHandler();
   }
 
-  public String connectToDevice(
-          int baudRate, int dataBits, int stopBits, int parity, int deviceId, int portNum
-  ) {
-    return sessionRepository.connect(baudRate, dataBits, stopBits, parity, deviceId, portNum);
+  @Override
+  public String connectToDevice(DeviceConnectionParamData deviceConnectionParamData) {
+    return sessionRepoSerial.connectToDevice(deviceConnectionParamData);
   }
 
+  @Override
   public void disconnectFromDevice() {
-    sessionRepository.disconnect();
+    sessionRepoSerial.disconnectFromDevice();
   }
 
+  @Override
   public void startEventDrivenReadFromDevice() {
-    sessionRepository.startReading();
+    sessionRepoSerial.startEventDrivenReadFromDevice();
   }
 
+  @Override
   public void stopEventDrivenReadFromDevice() {
-    sessionRepository.stopReading();
+    sessionRepoSerial.stopEventDrivenReadFromDevice();
   }
 
   public void writeInstructionCodeToLauncher(String data) {
@@ -287,14 +292,14 @@ public class SessionViewModel extends ViewModel {
         break;
     }
     instructionCode += data;
-    sessionRepository.writeData(instructionCode);
+    sessionRepoSerial.writeDataToDevice(instructionCode);
   }
 
   public void writeControlCodeActivationToLauncher() {
-    sessionRepository.writeData("06");
+    sessionRepoSerial.writeDataToDevice("06");
   }
 
   public void writeControlCodeDeactivationToLauncher() {
-    sessionRepository.writeData("07");
+    sessionRepoSerial.writeDataToDevice("07");
   }
 }

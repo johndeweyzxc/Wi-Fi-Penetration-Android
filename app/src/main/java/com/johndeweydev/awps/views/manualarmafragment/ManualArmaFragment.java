@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.databinding.FragmentManualArmaBinding;
-import com.johndeweydev.awps.repository.sessionrepository.SessionRepository;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
 
@@ -37,9 +37,9 @@ public class ManualArmaFragment extends Fragment {
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    SessionRepository sessionRepository = new SessionRepository();
+    SessionRepoSerial sessionRepoSerial = new SessionRepoSerial();
     SessionViewModelFactory sessionViewModelFactory = new SessionViewModelFactory(
-            sessionRepository);
+            sessionRepoSerial);
     sessionViewModel = new ViewModelProvider(this, sessionViewModelFactory).get(
             SessionViewModel.class);
 
@@ -244,8 +244,10 @@ public class ManualArmaFragment extends Fragment {
 
     int deviceId = manualArmaArgs.getDeviceId();
     int portNum = manualArmaArgs.getPortNum();
-    String result = sessionViewModel.connectToDevice(
-            19200, 8, 1, UsbSerialPort.PARITY_NONE, deviceId, portNum);
+    DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
+            19200, 8, 1, "PARITY_NONE", deviceId, portNum
+    );
+    String result = sessionViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("Successfully connected") || result.equals("Already connected")) {
 
