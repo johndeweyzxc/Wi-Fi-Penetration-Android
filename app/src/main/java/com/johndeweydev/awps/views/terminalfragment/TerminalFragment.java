@@ -82,6 +82,23 @@ public class TerminalFragment extends Fragment {
     binding.materialToolBarTerminal.setNavigationOnClickListener(v ->
             binding.drawerLayoutTerminal.open()
     );
+    binding.materialToolBarTerminal.setOnMenuItemClickListener(menuItem -> {
+      String[] choices = new String[]{"Restart Launcher", "More Information"};
+
+      if (menuItem.getItemId() == R.id.moreOptionsTerminalTopRightDropDown) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+        builder.setTitle("Options")
+                .setItems(choices, (dialog, which) -> {
+                  if (which == 0) {
+                    terminalViewModel.writeControlCodeRestartLauncher();
+                    dialog.dismiss();
+                  } else if (which == 1) {
+                    // TODO: Show dialog that shows information about the state of the terminal
+                  }
+                }).show();
+      }
+      return false;
+    });
     binding.navigationViewTerminal.setNavigationItemSelectedListener(
             this::navItemSelected
     );

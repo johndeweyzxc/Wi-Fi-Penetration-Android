@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -70,12 +71,41 @@ public class ManualArmaFragment extends Fragment {
 
     sessionViewModel.automaticAttack = false;
     sessionViewModel.selectedArmament = manualArmaArgs.getSelectedArmament();
-    binding.textViewAttackConfigValueManualArma.setText(sessionViewModel.selectedArmament);
     binding.textInputEditTextMacAddressManualArma.requestFocus();
 
-    binding.materialToolBarManualArma.setOnClickListener(v ->
-            Navigation.findNavController(binding.getRoot()).popBackStack()
+    binding.materialToolBarManualArma.setOnClickListener(v -> {
+        NavController navController = Navigation.findNavController(binding.getRoot());
+        navController.navigate(R.id.action_manualArmaFragment_to_exitModalBottomSheetDialog);
+      }
     );
+
+    binding.materialToolBarManualArma.setOnMenuItemClickListener(menuItem -> {
+      String[] choices = new String[]{"Restart Launcher", "More Information"};
+
+      if (menuItem.getItemId() == R.id.moreOptionsManualArmaTopRightDropDown) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+        builder.setTitle("Options")
+                .setItems(choices, (dialog, which) -> {
+                  if (which == 0) {
+                    sessionViewModel.writeControlCodeRestartLauncher();
+                    dialog.dismiss();
+                  } else if (which == 1) {
+                    TextInputEditText targetMacInput = binding
+                            .textInputEditTextMacAddressManualArma;
+
+                    dialog.dismiss();
+                    if (targetMacInput.getText() != null) {
+                      showDialogInformation(sessionViewModel.selectedArmament,
+                              targetMacInput.getText().toString());
+                    } else {
+                      showDialogInformation(sessionViewModel.selectedArmament, "");
+                    }
+                  }
+
+                }).show();
+      }
+      return false;
+    });
 
     binding.buttonStartManualArma.setOnClickListener(v -> {
       View currentView = this.requireActivity().getCurrentFocus();
@@ -85,11 +115,24 @@ public class ManualArmaFragment extends Fragment {
     });
 
     binding.buttonCloseManualArma.setOnClickListener(v -> {
+      MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+      builder.setTitle("Exit Manual Attack");
+
       if (sessionViewModel.attackOnGoing) {
-        sessionViewModel.writeControlCodeDeactivationToLauncher();
-        sessionViewModel.attackOnGoing = false;
+        builder.setMessage("You have an ongoing attack, Do you really want to exit manual attack?");
+      } else {
+        builder.setMessage("Do you really want to exit manual attack? You will be navigated back" +
+                " to terminal");
       }
-      Navigation.findNavController(binding.getRoot()).popBackStack();
+      builder.setPositiveButton("EXIT", (dialog, which) -> {
+                if (sessionViewModel.attackOnGoing) {
+                  sessionViewModel.writeControlCodeDeactivationToLauncher();
+                  sessionViewModel.attackOnGoing = false;
+                }
+                Navigation.findNavController(binding.getRoot()).popBackStack();
+              });
+      builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+      builder.show();
     });
 
     ManualArmaRVAdapter manualArmaRVAdapter = setupRecyclerView();
@@ -103,6 +146,18 @@ public class ManualArmaFragment extends Fragment {
               sessionViewModel.writeInstructionCodeForScanningDevicesToLauncher();
             })
             .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
+  }
+
+  private void showDialogInformation(String attackType, String targetMacAddress) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+    builder.setTitle("Information");
+    if (targetMacAddress.isEmpty()) {
+      builder.setMessage("Using " + attackType + ", target is not specified");
+    } else {
+      builder.setMessage("Using " + attackType + ", target is " + targetMacAddress);
+    }
+    builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+    builder.show();
   }
 
   private void buttonPressedStartArma(View view) {

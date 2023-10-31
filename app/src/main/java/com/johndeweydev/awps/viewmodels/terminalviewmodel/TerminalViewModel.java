@@ -92,6 +92,9 @@ public class TerminalViewModel extends ViewModel implements DefaultViewModelUsbS
     terminalRepoSerial.stopEventDrivenReadFromDevice();
   }
 
+  public void writeControlCodeRestartLauncher() {
+    terminalRepoSerial.writeDataToDevice("08");
+  }
   public void writeDataToDevice(String data) {
     terminalRepoSerial.writeDataToDevice(data);
   }

@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:theme="@style/ToolBarTheme"
                 app:navigationIcon="@drawable/ic_menu_24"
+                app:menu="@menu/terminal_top_right_dropdown_menu"
                 app:title="Terminal"
                 app:titleTextColor="@color/white" />
 

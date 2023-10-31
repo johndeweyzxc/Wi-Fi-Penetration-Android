@@ -23,6 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:menu="@menu/manual_arma_top_right_dropdown_menu"
             app:title="Manual Attack"
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -37,46 +38,6 @@
         app:layout_constraintTop_toBottomOf="@+id/appBarLayoutManualArma" />
 
     <TextView
-        android:id="@+id/textViewAttackConfigManualArma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:fontFamily="@font/roboto_medium"
-        android:text="Attack Config"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutManualArma" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutAttackConfigManualArma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/bg_smooth_corner"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAttackConfigManualArma">
-
-        <TextView
-            android:id="@+id/textViewAttackConfigValueManualArma"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Config: PMKID Based Attack"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
         android:id="@+id/textViewSetTargetManualArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,13 +49,13 @@
         android:fontFamily="@font/roboto_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutAttackConfigManualArma" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutManualArma"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutTargetInputManualArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:counterMaxLength="12"
@@ -116,7 +77,6 @@
         android:id="@+id/textViewAttackLogManualArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:text="Attack Logs"
@@ -136,50 +96,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAttackLogManualArma" />
-
-    <TextView
-        android:id="@+id/textViewAccessPointsManualArma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:fontFamily="@font/roboto_medium"
-        android:text="Access Points"
-        android:textSize="18sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutAttackConfigManualArma" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutAccessPointsManualArma"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:visibility="gone"
-        android:background="@drawable/bg_smooth_corner"
-        android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonStartManualArma"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAccessPointsManualArma">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewAccessPointsManualArma"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/buttonCloseManualArma"

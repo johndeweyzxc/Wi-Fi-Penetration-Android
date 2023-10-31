@@ -22,7 +22,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_arrow_back_24"
-            app:menu="@menu/auto_arma_dashboard_top_right_menu"
+            app:menu="@menu/auto_arma_top_right_menu"
             app:title="Automatic Attack"
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
