@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.johndeweydev.awps.data.AccessPointData;
 import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.data.LauncherOutputData;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
@@ -14,6 +15,8 @@ import com.johndeweydev.awps.data.MicSecondMessageData;
 import com.johndeweydev.awps.data.PmkidFirstMessageData;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerialEvent;
 import com.johndeweydev.awps.viewmodels.DefaultViewModelUsbSerial;
+
+import java.util.ArrayList;
 
 public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSerial {
 
@@ -26,6 +29,12 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   public MutableLiveData<String> launcherStarted = new MutableLiveData<>();
   public MutableLiveData<String> launcherActivateConfirmation = new MutableLiveData<>();
   public String targetAccessPoint;
+
+  // Indicates if the user scanned an access point to look for potential targets in manual attack
+  public boolean userWantsToScanForAccessPoint = false;
+  public ArrayList<AccessPointData> accessPointDataList = new ArrayList<>();
+  public MutableLiveData<ArrayList<AccessPointData>> launcherFinishScanning =
+          new MutableLiveData<>();
   public MutableLiveData<String> launcherAccessPointNotFound = new MutableLiveData<>();
   public MutableLiveData<String> launcherMainTaskCreated = new MutableLiveData<>();
   public boolean attackOnGoing = false;
@@ -46,7 +55,7 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
 
     @Override
     public void onRepositoryOutputFormatted(LauncherOutputData launcherOutputData) {
-      Log.d("dev-log", "SessionViewModel.onRepositoryOutputRaw: Serial -> " +
+      Log.d("dev-log", "SessionViewModel.onRepositoryOutputFormatted: Serial -> " +
               launcherOutputData.getOutput());
     }
 
@@ -63,6 +72,13 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
     }
 
     @Override
+    public void onRepositoryStarted() {
+      launcherStarted.postValue("Launcher module started");
+      currentAttackLog.postValue("(" + attackLogNumber + ") " + "Module started");
+      attackLogNumber++;
+    }
+
+    @Override
     public void onRepositoryCommandParserCurrentArma(String armament, String targetBssid) {
       currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament + "" +
               ", targeting " + targetBssid);
@@ -71,19 +87,17 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
 
     @Override
     public void onRepositoryCommandParserTargetAndArmaSet(String armament, String targetBssid) {
-      targetAccessPoint = targetBssid;
-      currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament +
-              ", target set " + targetBssid);
-      attackLogNumber++;
-      launcherActivateConfirmation.postValue("Do you wish to activate the attack targeting "
-              + targetBssid + " using " + selectedArmament + "?");
-    }
-
-    @Override
-    public void onRepositoryStarted() {
-      launcherStarted.postValue("Launcher module started");
-      currentAttackLog.postValue("(" + attackLogNumber + ") " + "Module started");
-      attackLogNumber++;
+      if (userWantsToScanForAccessPoint) {
+        currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament);
+        launcherActivateConfirmation.postValue("Proceed to scan for nearby access points?");
+      } else {
+        targetAccessPoint = targetBssid;
+        currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament +
+                ", target set " + targetBssid);
+        attackLogNumber++;
+        launcherActivateConfirmation.postValue("Do you wish to activate the attack targeting "
+                + targetBssid + " using " + selectedArmament + "?");
+      }
     }
 
     @Override
@@ -106,14 +120,21 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
     }
 
     @Override
-    public void onRepositoryScannedAccessPoint(
-            String macAddress, String ssid, String rssi, String channel) {
+    public void onRepositoryScannedAccessPoint(AccessPointData accessPointData) {
+      if (userWantsToScanForAccessPoint) {
+        accessPointDataList.add(accessPointData);
+      }
+      String ssid = accessPointData.getSsid();
+      int channel = accessPointData.getChannel();
       currentAttackLog.postValue("(" + attackLogNumber + ") " + ssid + " at channel " + channel);
       attackLogNumber++;
     }
 
     @Override
     public void onRepositoryFinishScanning() {
+      if (userWantsToScanForAccessPoint) {
+        launcherFinishScanning.postValue(accessPointDataList);
+      }
       currentAttackLog.postValue("(" + attackLogNumber + ") " + "Done scanning access point");
       attackLogNumber++;
     }
@@ -301,5 +322,9 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
 
   public void writeControlCodeDeactivationToLauncher() {
     sessionRepoSerial.writeDataToDevice("07");
+  }
+
+  public void writeInstructionCodeForScanningDevicesToLauncher() {
+    sessionRepoSerial.writeDataToDevice("01");
   }
 }

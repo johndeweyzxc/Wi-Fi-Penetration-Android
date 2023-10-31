@@ -2,6 +2,7 @@ package com.johndeweydev.awps.models.repo.serial.sessionreposerial;
 
 import android.util.Log;
 
+import com.johndeweydev.awps.data.AccessPointData;
 import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.api.launcher.LauncherStages;
 import com.johndeweydev.awps.models.api.launcher.LauncherEvent;
@@ -285,15 +286,20 @@ public class SessionRepoSerial {
   }
 
   private void reconnaissanceContext(ArrayList<String> strDataList) {
-    if (Objects.equals(strDataList.get(1), "FOUND_APS")) {
 
-      String numberOfAps = strDataList.get(2);
-      sessionRepoSerialEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
-    } else if (Objects.equals(strDataList.get(1), "SCAN")) {
 
-      processScannedAccessPointsAndNotifyViewModel(strDataList);
-    } else if (Objects.equals(strDataList.get(1), "FINISH_SCAN")) {
-      sessionRepoSerialEvent.onRepositoryFinishScanning();
+    switch (strDataList.get(1)) {
+      case "FOUND_APS":
+        String numberOfAps = strDataList.get(2);
+        sessionRepoSerialEvent.onRepositoryNumberOfFoundAccessPoints(numberOfAps);
+        break;
+      case "SCAN":
+        processScannedAccessPointsAndNotifyViewModel(strDataList);
+        break;
+      case "FINISH_SCAN":
+        Log.d("dev-log", "SessionRepoSerial.reconnaissanceContext: Finish scanning");
+        sessionRepoSerialEvent.onRepositoryFinishScanning();
+        break;
     }
   }
 
@@ -336,7 +342,10 @@ public class SessionRepoSerial {
     String ssid = strDataList.get(3);
     String rssi = strDataList.get(4);
     String channel = strDataList.get(5);
-    sessionRepoSerialEvent.onRepositoryScannedAccessPoint(macAddress, ssid, rssi, channel);
+    AccessPointData accessPointData = new AccessPointData(
+            macAddress, ssid, Integer.parseInt(rssi), Integer.parseInt(channel)
+    );
+    sessionRepoSerialEvent.onRepositoryScannedAccessPoint(accessPointData);
   }
 
   public String connectToDevice(DeviceConnectionParamData deviceConnectionParamData) {

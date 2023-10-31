@@ -20,12 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.data.AccessPointData;
 import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.databinding.FragmentManualArmaBinding;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ManualArmaFragment extends Fragment {
@@ -69,6 +71,7 @@ public class ManualArmaFragment extends Fragment {
     sessionViewModel.automaticAttack = false;
     sessionViewModel.selectedArmament = manualArmaArgs.getSelectedArmament();
     binding.textViewAttackConfigValueManualArma.setText(sessionViewModel.selectedArmament);
+    binding.textInputEditTextMacAddressManualArma.requestFocus();
 
     binding.materialToolBarManualArma.setOnClickListener(v ->
             Navigation.findNavController(binding.getRoot()).popBackStack()
@@ -86,14 +89,20 @@ public class ManualArmaFragment extends Fragment {
         sessionViewModel.writeControlCodeDeactivationToLauncher();
         sessionViewModel.attackOnGoing = false;
       }
-
-      // TODO: Set the launcher event callback for terminal fragment
-
       Navigation.findNavController(binding.getRoot()).popBackStack();
     });
 
     ManualArmaRVAdapter manualArmaRVAdapter = setupRecyclerView();
     setupObservers(manualArmaRVAdapter);
+
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+    builder.setTitle("Scan Access Points")
+            .setMessage("Do you want to scan for nearby access points?")
+            .setPositiveButton("SCAN", (dialog, which) -> {
+              sessionViewModel.userWantsToScanForAccessPoint = true;
+              sessionViewModel.writeInstructionCodeForScanningDevicesToLauncher();
+            })
+            .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
   }
 
   private void buttonPressedStartArma(View view) {
@@ -124,6 +133,9 @@ public class ManualArmaFragment extends Fragment {
 
     // Everytime the launcher is started, always enable the 'start' and 'close' button
     final Observer<String> launcherStartedObserver = s -> {
+      if (s == null) {
+        return;
+      }
       binding.buttonStartManualArma.setEnabled(true);
       binding.buttonCloseManualArma.setEnabled(true);
     };
@@ -132,6 +144,9 @@ public class ManualArmaFragment extends Fragment {
     // Show a confirmation dialog on whether to activate the attack, this disables the 'close'
     // and 'start' button if the user activates the attack
     final Observer<String> armamentActivateConfirmationObserver = s -> {
+      if (s == null) {
+        return;
+      }
       MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
       builder.setTitle("Armament Activate")
               .setMessage(s)
@@ -147,8 +162,24 @@ public class ManualArmaFragment extends Fragment {
     sessionViewModel.launcherActivateConfirmation.observe(getViewLifecycleOwner(),
             armamentActivateConfirmationObserver);
 
+    // Shows a dialog where the user can select a target access point
+    final Observer<ArrayList<AccessPointData>> finishScanningObserver = targetList -> {
+      if (targetList == null) {
+        return;
+      }
+      showDialogForTargetSelection(targetList);
+      sessionViewModel.userWantsToScanForAccessPoint = false;
+      sessionViewModel.scannedAccessPoints.setValue(null);
+      sessionViewModel.launcherFinishScanning.setValue(null);
+    };
+    sessionViewModel.launcherFinishScanning.observe(getViewLifecycleOwner(),
+            finishScanningObserver);
+
     // Append logs to the recycler view
     final Observer<String> attackLogsObserver = s -> {
+      if (s == null) {
+        return;
+      }
       manualArmaRVAdapter.appendData(s);
       binding.recyclerViewAttackLogsManualArma.scrollToPosition(
               manualArmaRVAdapter.getItemCount() - 1);
@@ -158,6 +189,9 @@ public class ManualArmaFragment extends Fragment {
     // Allow the user to close or deactivate the currently running attack by
     // enabling the 'close' button so the user can click it
     final Observer<String> launcherMainTaskObserver = s -> {
+      if (s == null) {
+        return;
+      }
       binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.VISIBLE);
       binding.buttonCloseManualArma.setEnabled(true);
     };
@@ -167,6 +201,9 @@ public class ManualArmaFragment extends Fragment {
     // Send a deactivation request to the launcher which will make the launcher restart,
     // this also enables the 'start' button
     final Observer<String> launcherExecutionResultObserver = s -> {
+      if (s == null) {
+        return;
+      }
       if (s.equals("Failed")) {
         sessionViewModel.writeControlCodeDeactivationToLauncher();
       } else if (s.equals("Success")) {
@@ -188,6 +225,35 @@ public class ManualArmaFragment extends Fragment {
     setupSerialInputErrorListener();
     // Receive updates for any error while reading data from the serial output
     setupSerialOutputErrorListener();
+  }
+
+  private void showDialogForTargetSelection(ArrayList<AccessPointData> targetList) {
+    String[] choicesSsid = new String[targetList.size()];
+    String[] choicesMacAddress = new String[targetList.size()];
+
+    final int[] checkedItem = {-1};
+    for (int i = 0; i < targetList.size(); i++) {
+      choicesSsid[i] = targetList.get(i).getSsid();
+      choicesMacAddress[i] = targetList.get(i).getMacAddress();
+    }
+
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+    builder.setTitle("Select Target")
+            .setPositiveButton("SELECT", (dialog, which) -> {
+              if (checkedItem[0] == -1) {
+                return;
+              }
+              checkedItem[0] = -1;
+              dialog.dismiss();
+              binding.textInputEditTextMacAddressManualArma.requestFocus();
+            })
+            .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())
+            .setSingleChoiceItems(choicesSsid, checkedItem[0], (dialog, which) -> {
+              checkedItem[0] = which;
+              binding.textInputEditTextMacAddressManualArma.setText(choicesMacAddress[which]);
+              binding.buttonCloseManualArma.setEnabled(true);
+              binding.buttonStartManualArma.setEnabled(true);
+            }).show();
   }
 
   private void setupSerialInputErrorListener() {

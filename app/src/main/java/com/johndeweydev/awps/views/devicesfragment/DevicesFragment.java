@@ -129,6 +129,9 @@ public class DevicesFragment extends Fragment {
 
   private void setupObservers(DevicesRVAdapter devicesRVAdapter) {
     final Observer<ArrayList<UsbDeviceData>> deviceListObserver = deviceList -> {
+      if (deviceList == null) {
+        return;
+      }
       for (int i = 0; i < deviceList.size(); i++) {
         devicesRVAdapter.appendData(deviceList.get(i));
         devicesRVAdapter.notifyItemInserted(i);

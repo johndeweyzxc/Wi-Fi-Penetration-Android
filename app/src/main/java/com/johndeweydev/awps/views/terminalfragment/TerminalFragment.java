@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -89,6 +91,9 @@ public class TerminalFragment extends Fragment {
               R.layout.dialog_command_input, null);
       TextInputEditText textInputEditTextDialogCommandInput = dialogCommandInput.findViewById(
               R.id.textInputEditTextDialogCommandInput);
+
+      textInputEditTextDialogCommandInput.requestFocus();
+
       MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(
               requireContext())
               .setTitle("Command Instruction Input")
@@ -99,7 +104,12 @@ public class TerminalFragment extends Fragment {
                       textInputEditTextDialogCommandInput.getText()
                       ).toString()))
               .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
-      materialAlertDialogBuilder.create().show();
+
+      AlertDialog dialog = materialAlertDialogBuilder.create();
+      if (dialog.getWindow() != null) {
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+      }
+      dialog.show();
     });
 
     TerminalRVAdapter terminalRVAdapter = setupRecyclerView();
@@ -119,6 +129,9 @@ public class TerminalFragment extends Fragment {
 
     // If triggered, it will append new terminal logs to the recycler view
     final Observer<LauncherOutputData> currentSerialOutputObserver = s -> {
+      if (s == null) {
+        return;
+      }
       terminalRVAdapter.appendNewTerminalLog(s);
       binding.recyclerViewLogsTerminal.scrollToPosition(terminalRVAdapter.getItemCount() - 1);
     };

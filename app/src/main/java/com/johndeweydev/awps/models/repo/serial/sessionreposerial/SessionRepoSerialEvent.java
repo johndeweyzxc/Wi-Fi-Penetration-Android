@@ -2,6 +2,7 @@ package com.johndeweydev.awps.models.repo.serial.sessionreposerial;
 
 import androidx.annotation.Nullable;
 
+import com.johndeweydev.awps.data.AccessPointData;
 import com.johndeweydev.awps.data.MicFirstMessageData;
 import com.johndeweydev.awps.data.MicSecondMessageData;
 import com.johndeweydev.awps.data.PmkidFirstMessageData;
@@ -17,6 +18,11 @@ import com.johndeweydev.awps.models.repo.serial.DefaultRepoSerialEvent;
 public interface SessionRepoSerialEvent extends DefaultRepoSerialEvent {
 
   /**
+   * The launcher is started after it resets
+   * */
+  void onRepositoryStarted();
+
+  /**
    * A control code of armament status is issued
    * @param armament the armament currently loaded
    * @param targetBssid the mac address or BSSID of the target access point
@@ -29,11 +35,6 @@ public interface SessionRepoSerialEvent extends DefaultRepoSerialEvent {
    * @param targetBssid the mac address or BSSID of the target access point
    * */
   void onRepositoryCommandParserTargetAndArmaSet(String armament, String targetBssid);
-
-  /**
-   * The launcher is started after it resets
-   * */
-  void onRepositoryStarted();
 
   /**
    * The instruction code supplied by the user is activated
@@ -53,12 +54,11 @@ public interface SessionRepoSerialEvent extends DefaultRepoSerialEvent {
 
   /**
    * The information about the found access point
-   * @param macAddress the mac address of the access point without colon
-   * @param ssid Service Set Identifier or the name of the access point
-   * @param rssi Received Signal Strength Indicator or the strength of the signal of access point
-   * @param channel the channel used by the access point
+   * @param accessPointData the data about the access point which contains the mac address, Service
+   *                        Set Identifier, Received Signal Strength Indicator and the channel
+   *                        used by the access point
    * */
-  void onRepositoryScannedAccessPoint(String macAddress, String ssid, String rssi, String channel);
+  void onRepositoryScannedAccessPoint(AccessPointData accessPointData);
 
   /**
    * The launcher has finished scanning nearby access points
@@ -94,7 +94,7 @@ public interface SessionRepoSerialEvent extends DefaultRepoSerialEvent {
    * The status of the main task
    * @param attackType the type of attack which could be PMKID, MIC or Deauther
    * @param attackStatus the status of the attack in integer, this can be an elapsed time or the
-   * number of injected deauthentication frame
+   *                     number of injected deauthentication frame
    * */
   void onRepositoryTaskStatus(String attackType, int attackStatus);
 
