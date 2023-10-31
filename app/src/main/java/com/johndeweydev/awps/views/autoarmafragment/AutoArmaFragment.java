@@ -50,7 +50,7 @@ public class AutoArmaFragment extends Fragment {
     if (autoArmaArgs == null) {
       Log.d("dev-log", "AutoArmaFragment.onViewCreated: Auto arma args is null");
       Navigation.findNavController(binding.getRoot()).navigate(
-              R.id.action_autoArmaMainFragment_to_devicesFragment);
+              R.id.action_autoArmaFragment_to_devicesFragment);
       return;
     }
 
@@ -76,7 +76,7 @@ public class AutoArmaFragment extends Fragment {
       Log.d("dev-log", "AutoArmaFragment.setupSerialInputErrorListener: " +
               "Popping fragments up to but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
-              R.id.action_autoArmaMainFragment_to_devicesFragment);
+              R.id.action_autoArmaFragment_to_devicesFragment);
     };
     sessionViewModel.currentSerialInputError.observe(getViewLifecycleOwner(),
             serialInputErrorObserver);
@@ -95,7 +95,7 @@ public class AutoArmaFragment extends Fragment {
       Log.d("dev-log", "AutoArmaFragment.setupSerialOutputErrorListener: " +
               "Popping fragments up to but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
-              R.id.action_autoArmaMainFragment_to_devicesFragment);
+              R.id.action_autoArmaFragment_to_devicesFragment);
     };
     sessionViewModel.currentSerialOutputError.observe(
             getViewLifecycleOwner(), serialOutputErrorObserver);
@@ -131,7 +131,7 @@ public class AutoArmaFragment extends Fragment {
       Log.d("dev-log", "AutoArmaFragment.connectToDevice: " +
               "Popping fragments up to but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
-              R.id.action_autoArmaMainFragment_to_devicesFragment);
+              R.id.action_autoArmaFragment_to_devicesFragment);
     }
   }
 

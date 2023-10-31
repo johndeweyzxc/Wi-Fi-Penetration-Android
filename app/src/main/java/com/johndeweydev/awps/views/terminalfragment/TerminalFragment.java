@@ -46,8 +46,24 @@ public class TerminalFragment extends Fragment {
     } else {
       Log.d("dev-log", "TerminalFragment.onCreateView: Initializing fragment args");
       TerminalFragmentArgs terminalFragmentArgs;
-      terminalFragmentArgs = TerminalFragmentArgs.fromBundle(getArguments());
-      terminalArgs = terminalFragmentArgs.getTerminalArgs();
+      if (getArguments().isEmpty()) {
+        Log.w("dev-log", "TerminalFragment.onCreateView: Terminal argument is missing, " +
+                "using data in the view model");
+        terminalArgs = new TerminalArgs(
+                terminalViewModel.deviceIdFromTerminalArgs,
+                terminalViewModel.portNumFromTerminalArgs,
+                terminalViewModel.baudRateFromTerminalArgs
+        );
+      } else {
+        Log.d("dev-log", "TerminalFragment.onCreateView: Getting terminal argument " +
+                "from bundle");
+        terminalFragmentArgs = TerminalFragmentArgs.fromBundle(getArguments());
+        terminalArgs = terminalFragmentArgs.getTerminalArgs();
+
+        terminalViewModel.deviceIdFromTerminalArgs = terminalArgs.getDeviceId();
+        terminalViewModel.portNumFromTerminalArgs = terminalArgs.getPortNum();
+        terminalViewModel.baudRateFromTerminalArgs = terminalArgs.getBaudRate();
+      }
     }
     return binding.getRoot();
   }
@@ -268,8 +284,8 @@ public class TerminalFragment extends Fragment {
             terminalArgs.getBaudRate(),
             selectedArmament);
 
-    TerminalFragmentDirections.ActionTerminalFragmentToAutoArmaMainFragment action;
-    action = TerminalFragmentDirections.actionTerminalFragmentToAutoArmaMainFragment(
+    TerminalFragmentDirections.ActionTerminalFragmentToAutoArmaFragment action;
+    action = TerminalFragmentDirections.actionTerminalFragmentToAutoArmaFragment(
             autoArmaArgs);
     Navigation.findNavController(binding.getRoot()).navigate(action);
   }

@@ -14,6 +14,14 @@ import java.util.ArrayList;
 
 public class TerminalViewModel extends ViewModel {
 
+  /**
+   * Device id, port number and baud rate is set by terminal fragment as a backup source
+   * in case getArgument is empty when terminal fragment goes to onCreateView state
+   * */
+  public int deviceIdFromTerminalArgs;
+  public int portNumFromTerminalArgs;
+  public int baudRateFromTerminalArgs;
+
   public TerminalRepository terminalRepository;
   public MutableLiveData<ArrayList<UsbDeviceData>> devicesList = new MutableLiveData<>();
   public MutableLiveData<LauncherOutputData> currentSerialOutput = new MutableLiveData<>();

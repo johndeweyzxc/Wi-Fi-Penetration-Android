@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/devicesFragment"
         android:name="com.johndeweydev.awps.views.devicesfragment.DevicesFragment"
-        android:label="fragment_devices"
+        android:label="devices_fragment"
         tools:layout="@layout/fragment_devices">
         <action
             android:id="@+id/action_devicesFragment_to_terminalFragment"
@@ -17,36 +17,39 @@
     <fragment
         android:id="@+id/terminalFragment"
         android:name="com.johndeweydev.awps.views.terminalfragment.TerminalFragment"
-        android:label="TerminalFragment"
+        android:label="terminal_fragment"
         tools:layout="@layout/fragment_terminal">
         <action
             android:id="@+id/action_terminalFragment_to_manualArmaFragment"
             app:destination="@id/manualArmaFragment" />
         <action
-            android:id="@+id/action_terminalFragment_to_autoArmaMainFragment"
-            app:destination="@id/autoArmaMainFragment" />
+            android:id="@+id/action_terminalFragment_to_autoArmaFragment"
+            app:destination="@id/autoArmaFragment" />
         <argument
             android:name="terminalArgs"
             app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />
     </fragment>
     <fragment
-        android:id="@+id/autoArmaMainFragment"
+        android:id="@+id/autoArmaFragment"
         android:name="com.johndeweydev.awps.views.autoarmafragment.AutoArmaFragment"
-        android:label="fragment_auto_arma_main"
+        android:label="auto_arma_fragment"
         tools:layout="@layout/fragment_auto_arma" >
         <argument
             android:name="autoArmaArgs"
             app:argType="com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs" />
         <action
-            android:id="@+id/action_autoArmaMainFragment_to_devicesFragment"
+            android:id="@+id/action_autoArmaFragment_to_devicesFragment"
             app:destination="@id/devicesFragment"
             app:popUpTo="@id/devicesFragment"
             app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_autoArmaFragment_to_exitModalBottomSheetDialog"
+            app:destination="@id/exitModalBottomSheetDialog" />
     </fragment>
     <fragment
         android:id="@+id/manualArmaFragment"
         android:name="com.johndeweydev.awps.views.manualarmafragment.ManualArmaFragment"
-        android:label="fragment_manual_arma"
+        android:label="manual_arma_fragment"
         tools:layout="@layout/fragment_manual_arma" >
         <action
             android:id="@+id/action_manualArmaFragment_to_devicesFragment"
@@ -54,6 +57,25 @@
         <argument
             android:name="manualArmaArgs"
             app:argType="com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs" />
+        <action
+            android:id="@+id/action_manualArmaFragment_to_exitModalBottomSheetDialog"
+            app:destination="@id/exitModalBottomSheetDialog" />
     </fragment>
+    <dialog
+        android:id="@+id/exitModalBottomSheetDialog"
+        android:name="com.johndeweydev.awps.views.exitmodelbottomsheetdialog.ExitModalBottomSheetDialog"
+        android:label="exit_model_bottom_sheet_dialog"
+        tools:layout="@layout/dialog_sheet_bottom_modal_exit">
+        <action
+            android:id="@+id/action_exitModalBottomSheetDialog_to_terminalFragment"
+            app:destination="@id/terminalFragment"
+            app:popUpTo="@id/terminalFragment"
+            app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_exitModalBottomSheetDialog_to_devicesFragment"
+            app:destination="@id/devicesFragment"
+            app:popUpTo="@id/devicesFragment"
+            app:popUpToInclusive="false"/>
+    </dialog>
 
 </navigation>
