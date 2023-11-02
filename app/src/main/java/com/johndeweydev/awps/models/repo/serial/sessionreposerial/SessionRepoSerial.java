@@ -192,6 +192,12 @@ public class SessionRepoSerial {
         String keyType = strDataList.get(3);
         sessionRepoSerialEvent.onRepositoryPmkidWrongKeyType(keyType);
         break;
+      case "WRONG_OUI":
+        sessionRepoSerialEvent.onRepositoryPmkidWrongOui(strDataList.get(2));
+        break;
+      case "WRONG_KDE":
+        sessionRepoSerialEvent.onRepositoryPmkidWrongKde(strDataList.get(2));
+        break;
       case "SNIFF_STATUS":
         int status = Integer.parseInt(strDataList.get(2));
         sessionRepoSerialEvent.onRepositoryTaskStatus("PMKID", status);
@@ -273,6 +279,9 @@ public class SessionRepoSerial {
                 "MIC", 2, null, null,
                 micSecondMessageData);
         break;
+      case "IV_RSC_ID":
+        sessionRepoSerialEvent.onRepositoryMicIvRscIdNotSetToZero(strDataList.get(1));
+        break;
       case "FINISHING SEQUENCE":
         sessionRepoSerialEvent.onRepositoryFinishingSequence();
         break;
@@ -340,10 +349,19 @@ public class SessionRepoSerial {
   ) {
     String macAddress = strDataList.get(2);
     String ssid = strDataList.get(3);
+    StringBuilder asciiSsid = new StringBuilder();
+
+    // Decodes the SSID from hexadecimal string to ascii characters
+    for (int i = 0; i < ssid.length(); i += 2) {
+      String hex = ssid.substring(i, i + 2);
+      int decimal = Integer.parseInt(hex, 16);
+      asciiSsid.append((char) decimal);
+    }
+
     String rssi = strDataList.get(4);
     String channel = strDataList.get(5);
     AccessPointData accessPointData = new AccessPointData(
-            macAddress, ssid, Integer.parseInt(rssi), Integer.parseInt(channel)
+            macAddress, asciiSsid.toString(), Integer.parseInt(rssi), Integer.parseInt(channel)
     );
     sessionRepoSerialEvent.onRepositoryScannedAccessPoint(accessPointData);
   }

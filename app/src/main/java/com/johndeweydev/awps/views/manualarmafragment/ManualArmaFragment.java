@@ -2,6 +2,8 @@ package com.johndeweydev.awps.views.manualarmafragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,9 @@ import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory
 
 import java.util.ArrayList;
 import java.util.Objects;
+
+// TODO: Allow the ability to deactivate the armament when the main task is created
+// TODO: Ask user if he/she wants to do another attack after the previous attack finishes
 
 public class ManualArmaFragment extends Fragment {
 
@@ -71,7 +76,23 @@ public class ManualArmaFragment extends Fragment {
 
     sessionViewModel.automaticAttack = false;
     sessionViewModel.selectedArmament = manualArmaArgs.getSelectedArmament();
-    binding.textInputEditTextMacAddressManualArma.requestFocus();
+    TextInputEditText macAddressInput = binding.textInputEditTextMacAddressManualArma;
+    macAddressInput.requestFocus();
+
+    if (Objects.requireNonNull(macAddressInput.getText()).length() != 12) {
+      macAddressInput.setEnabled(false);
+    }
+
+    macAddressInput.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        binding.buttonStartManualArma.setEnabled(count == 12);
+      }
+      @Override
+      public void afterTextChanged(Editable s) {}
+    });
 
     binding.materialToolBarManualArma.setOnClickListener(v -> {
         NavController navController = Navigation.findNavController(binding.getRoot());
@@ -80,7 +101,7 @@ public class ManualArmaFragment extends Fragment {
     );
 
     binding.materialToolBarManualArma.setOnMenuItemClickListener(menuItem -> {
-      String[] choices = new String[]{"Restart Launcher", "More Information"};
+      String[] choices = new String[]{"Restart Launcher", "More Information", "Scan Access Points"};
 
       if (menuItem.getItemId() == R.id.moreOptionsManualArmaTopRightDropDown) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
@@ -90,18 +111,16 @@ public class ManualArmaFragment extends Fragment {
                     sessionViewModel.writeControlCodeRestartLauncher();
                     dialog.dismiss();
                   } else if (which == 1) {
-                    TextInputEditText targetMacInput = binding
-                            .textInputEditTextMacAddressManualArma;
-
                     dialog.dismiss();
-                    if (targetMacInput.getText() != null) {
+                    if (macAddressInput.getText() != null) {
                       showDialogInformation(sessionViewModel.selectedArmament,
-                              targetMacInput.getText().toString());
+                              macAddressInput.getText().toString());
                     } else {
                       showDialogInformation(sessionViewModel.selectedArmament, "");
                     }
+                  } else if (which == 2) {
+                    showDialogScanAccessPoints();
                   }
-
                 }).show();
       }
       return false;
@@ -138,6 +157,10 @@ public class ManualArmaFragment extends Fragment {
     ManualArmaRVAdapter manualArmaRVAdapter = setupRecyclerView();
     setupObservers(manualArmaRVAdapter);
 
+    showDialogScanAccessPoints();
+  }
+
+  private void showDialogScanAccessPoints() {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
     builder.setTitle("Scan Access Points")
             .setMessage("Do you want to scan for nearby access points?")
@@ -219,7 +242,7 @@ public class ManualArmaFragment extends Fragment {
 
     // Shows a dialog where the user can select a target access point
     final Observer<ArrayList<AccessPointData>> finishScanningObserver = targetList -> {
-      if (targetList == null) {
+      if (targetList == null || targetList.isEmpty()) {
         return;
       }
       showDialogForTargetSelection(targetList);
@@ -300,6 +323,8 @@ public class ManualArmaFragment extends Fragment {
               }
               checkedItem[0] = -1;
               dialog.dismiss();
+              sessionViewModel.accessPointDataList.clear();
+              binding.textInputEditTextMacAddressManualArma.setEnabled(true);
               binding.textInputEditTextMacAddressManualArma.requestFocus();
             })
             .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())

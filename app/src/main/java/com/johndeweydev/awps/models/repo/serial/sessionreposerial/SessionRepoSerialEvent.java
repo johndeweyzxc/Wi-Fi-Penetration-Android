@@ -91,6 +91,25 @@ public interface SessionRepoSerialEvent extends DefaultRepoSerialEvent {
   void onRepositoryPmkidWrongKeyType(String keyType);
 
   /**
+   * Got wrong PMKID key data OUI, the launcher is programmed that the correct OUI is 0x000fac
+   * @param oui the OUI that is found to be wrong
+   * */
+  void onRepositoryPmkidWrongOui(String oui);
+
+  /**
+   * Got wrong PMKID key data type KDE, the launcher is programmed that the correct KDE is 4
+   * @param kde the KDE that is found to be wrong
+   * */
+  void onRepositoryPmkidWrongKde(String kde);
+
+  /**
+   * The value of IV or RSC or ID in the authentication data of the second message of 4 way
+   * handshake is not set to all zero, normally it should be set to all zero
+   * @param ivRscId outputs which of the three attribute IV, RSC and ID is not set to zero
+   * */
+  void onRepositoryMicIvRscIdNotSetToZero(String ivRscId);
+
+  /**
    * The status of the main task
    * @param attackType the type of attack which could be PMKID, MIC or Deauther
    * @param attackStatus the status of the attack in integer, this can be an elapsed time or the

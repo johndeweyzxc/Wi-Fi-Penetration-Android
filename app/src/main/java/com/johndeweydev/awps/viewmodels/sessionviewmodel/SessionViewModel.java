@@ -173,6 +173,27 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
     }
 
     @Override
+    public void onRepositoryPmkidWrongOui(String oui) {
+      currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID key data OUI, "
+              + oui);
+      attackLogNumber++;
+    }
+
+    @Override
+    public void onRepositoryPmkidWrongKde(String kde) {
+      currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID KDE, " +
+              kde);
+      attackLogNumber++;
+    }
+
+    @Override
+    public void onRepositoryMicIvRscIdNotSetToZero(String ivRscId) {
+      currentAttackLog.postValue("(" + attackLogNumber + ") " + "The IV or RSC or ID is not set " +
+              "to all zero, " + ivRscId);
+      attackLogNumber++;
+    }
+
+    @Override
     public void onRepositoryTaskStatus(String attackType, int attackStatus) {
       currentAttackLog.postValue("(" + attackLogNumber + ") " + attackType + ", status is " +
               attackStatus);
