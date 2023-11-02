@@ -4,6 +4,7 @@
     <item
         android:id="@+id/moreOptionsManualArmaTopRightDropDown"
         android:title="More Options"
-        android:icon="@drawable/ic_more_menu_24"
-        app:showAsAction="ifRoom"/>
+        android:icon="@drawable/ic_btn_more_menu_24"
+        app:showAsAction="ifRoom"
+        android:iconTint="@color/ButtonIconColor"/>
 </menu>

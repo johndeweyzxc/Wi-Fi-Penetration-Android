@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="ButtonIconColor">@color/md_theme_dark_onPrimary</color>
+    <color name="IconColor">@color/md_theme_dark_tertiary</color>
+    <color name="BorderColor">@color/md_theme_dark_secondary</color>
 </resources>

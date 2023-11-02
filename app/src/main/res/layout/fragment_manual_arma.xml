@@ -22,10 +22,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_arrow_back_24"
-            app:menu="@menu/manual_arma_top_right_dropdown_menu"
-            app:title="Manual Attack"
-            app:titleTextColor="@color/white" />
+            app:navigationIcon="@drawable/ic_btn_arrow_back_24"
+            app:menu="@menu/manual_arma_top_right_dialog_menu"
+            app:title="Manual Attack" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -34,7 +33,6 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="invisible"
-        app:indicatorColor="@color/primaryRed"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayoutManualArma" />
 
     <TextView
@@ -106,7 +104,7 @@
         android:layout_marginBottom="10dp"
         android:text="Close"
         app:cornerRadius="15dp"
-        app:icon="@drawable/ic_close_session_24"
+        app:icon="@drawable/ic_btn_close_session_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonStartManualArma"
@@ -123,7 +121,7 @@
         android:maxLines="1"
         android:text="Start"
         app:cornerRadius="15dp"
-        app:icon="@drawable/ic_start_24"
+        app:icon="@drawable/ic_btn_start_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

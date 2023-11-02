@@ -24,10 +24,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:theme="@style/ToolBarTheme"
-                app:navigationIcon="@drawable/ic_menu_24"
-                app:menu="@menu/terminal_top_right_dropdown_menu"
-                app:title="Terminal"
-                app:titleTextColor="@color/white" />
+                app:navigationIcon="@drawable/ic_btn_menu_24"
+                app:menu="@menu/terminal_top_right_dialog_menu"
+                app:title="Terminal" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -53,7 +52,7 @@
             android:maxLines="1"
             android:text="Create Command"
             app:cornerRadius="15dp"
-            app:icon="@drawable/ic_create_24"
+            app:icon="@drawable/ic_btn_create_24"
             app:iconGravity="textStart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

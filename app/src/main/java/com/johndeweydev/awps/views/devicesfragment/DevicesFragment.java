@@ -38,7 +38,7 @@ public class DevicesFragment extends Fragment {
   private FragmentDevicesBinding binding;
   private TerminalViewModel terminalViewModel;
   private TerminalArgs terminalArgs = null;
-  private final BroadcastReceiver usbBroadcastReceiver;
+  private BroadcastReceiver usbBroadcastReceiver;
   private boolean usbBroadcastReceiverRegistered = false;
   private boolean usbDevicePermissionGranted = false;
 
@@ -238,6 +238,7 @@ public class DevicesFragment extends Fragment {
 
   @Override
   public void onDestroyView() {
+    usbBroadcastReceiver = null;
     binding = null;
     super.onDestroyView();
   }

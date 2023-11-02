@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/refreshMenuTopAppBarDevice"
-        android:icon="@drawable/ic_refresh_24"
-        android:title="Refresh"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/settingsMenuNavItemDevices"
+        android:title="Settings" />
+    <item
+        android:id="@+id/infoMenuNavItemsDevices"
+        android:title="Info"/>
 </menu>

@@ -21,10 +21,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:navigationIcon="@drawable/ic_btn_arrow_back_24"
             app:menu="@menu/auto_arma_top_right_menu"
-            app:title="Automatic Attack"
-            app:titleTextColor="@color/white" />
+            app:title="Automatic Attack" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -179,7 +178,8 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_ap_scanned_24"
+            android:src="@drawable/ic_icn_ap_scanned_24"
+            android:theme="@style/ImageIconTheme"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -201,7 +201,8 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_nearby_ap_24"
+            android:src="@drawable/ic_icn_nearby_ap_24"
+            android:theme="@style/ImageIconTheme"
             app:layout_constraintEnd_toEndOf="@+id/imageViewApScannedAutoArma"
             app:layout_constraintStart_toStartOf="@+id/imageViewApScannedAutoArma"
             app:layout_constraintTop_toBottomOf="@+id/imageViewApScannedAutoArma" />
@@ -224,7 +225,8 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_failed_attempts_24"
+            android:src="@drawable/ic_icn_failed_attempts_24"
+            android:theme="@style/ImageIconTheme"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewNearbyApAutoArma" />
 
@@ -244,7 +246,8 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_pmkid_mic_24"
+            android:src="@drawable/ic_icn_pmkid_mic_24"
+            android:theme="@style/ImageIconTheme"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewFailedAttacksAutoArma" />
 
@@ -326,7 +329,7 @@
         android:layout_marginBottom="10dp"
         android:text="Close"
         app:cornerRadius="15dp"
-        app:icon="@drawable/ic_close_session_24"
+        app:icon="@drawable/ic_btn_close_session_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonStopStartAutoArma"
@@ -341,7 +344,7 @@
         android:layout_marginBottom="10dp"
         android:text="Start"
         app:cornerRadius="15dp"
-        app:icon="@drawable/ic_start_24"
+        app:icon="@drawable/ic_btn_start_24"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
