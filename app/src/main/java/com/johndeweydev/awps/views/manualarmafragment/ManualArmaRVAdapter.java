@@ -50,4 +50,10 @@ public class ManualArmaRVAdapter extends
     attackLogList.add(attackLog);
     this.notifyItemInserted(attackLogList.size() - 1);
   }
+
+  public void clearLogs() {
+    int size = attackLogList.size();
+    attackLogList.clear();
+    this.notifyItemRangeRemoved(0, size);
+  }
 }

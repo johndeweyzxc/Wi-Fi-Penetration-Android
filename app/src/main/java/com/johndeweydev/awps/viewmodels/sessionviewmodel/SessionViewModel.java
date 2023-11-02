@@ -349,6 +349,10 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
     sessionRepoSerial.writeDataToDevice("08");
   }
 
+  public void writeControlCodeStopRunningAttack() {
+    sessionRepoSerial.writeDataToDevice("07");
+  }
+
   public void writeInstructionCodeForScanningDevicesToLauncher() {
     sessionRepoSerial.writeDataToDevice("01");
   }

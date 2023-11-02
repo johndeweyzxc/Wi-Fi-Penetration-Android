@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -32,9 +33,6 @@ import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory
 
 import java.util.ArrayList;
 import java.util.Objects;
-
-// TODO: Allow the ability to deactivate the armament when the main task is created
-// TODO: Ask user if he/she wants to do another attack after the previous attack finishes
 
 public class ManualArmaFragment extends Fragment {
 
@@ -76,6 +74,24 @@ public class ManualArmaFragment extends Fragment {
 
     sessionViewModel.automaticAttack = false;
     sessionViewModel.selectedArmament = manualArmaArgs.getSelectedArmament();
+    initializeMacAddressInput();
+
+    binding.materialToolBarManualArma.setOnClickListener(v -> {
+        NavController navController = Navigation.findNavController(binding.getRoot());
+        navController.navigate(R.id.action_manualArmaFragment_to_exitModalBottomSheetDialog);
+      }
+    );
+    binding.materialToolBarManualArma.setOnMenuItemClickListener(this::showDialogMenuOptions);
+    binding.buttonStartManualArma.setOnClickListener(v -> buttonPressedStartArma());
+    binding.buttonCloseManualArma.setOnClickListener(v -> showDialogExit());
+
+    ManualArmaRVAdapter manualArmaRVAdapter = setupRecyclerView();
+    setupObservers(manualArmaRVAdapter);
+
+    showDialogScanAccessPoints();
+  }
+
+  private void initializeMacAddressInput() {
     TextInputEditText macAddressInput = binding.textInputEditTextMacAddressManualArma;
     macAddressInput.requestFocus();
 
@@ -93,71 +109,83 @@ public class ManualArmaFragment extends Fragment {
       @Override
       public void afterTextChanged(Editable s) {}
     });
+  }
 
-    binding.materialToolBarManualArma.setOnClickListener(v -> {
-        NavController navController = Navigation.findNavController(binding.getRoot());
-        navController.navigate(R.id.action_manualArmaFragment_to_exitModalBottomSheetDialog);
-      }
-    );
+  private boolean showDialogMenuOptions(MenuItem menuItem) {
+    TextInputEditText macAddressInput = binding.textInputEditTextMacAddressManualArma;
 
-    binding.materialToolBarManualArma.setOnMenuItemClickListener(menuItem -> {
-      String[] choices = new String[]{"Restart Launcher", "More Information", "Scan Access Points"};
+    String[] choices = new String[]{
+            "Find Target Access Points",
+            "Stop Attack",
+            "Restart Launcher",
+            "Clear Attack Logs",
+            "More Information"
+    };
 
-      if (menuItem.getItemId() == R.id.moreOptionsManualArmaTopRightDropDown) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-        builder.setTitle("Options")
-                .setItems(choices, (dialog, which) -> {
-                  if (which == 0) {
-                    sessionViewModel.writeControlCodeRestartLauncher();
-                    dialog.dismiss();
-                  } else if (which == 1) {
-                    dialog.dismiss();
-                    if (macAddressInput.getText() != null) {
-                      showDialogInformation(sessionViewModel.selectedArmament,
-                              macAddressInput.getText().toString());
-                    } else {
-                      showDialogInformation(sessionViewModel.selectedArmament, "");
-                    }
-                  } else if (which == 2) {
-                    showDialogScanAccessPoints();
-                  }
-                }).show();
-      }
-      return false;
-    });
-
-    binding.buttonStartManualArma.setOnClickListener(v -> {
-      View currentView = this.requireActivity().getCurrentFocus();
-      if (currentView != null) {
-        buttonPressedStartArma(currentView);
-      }
-    });
-
-    binding.buttonCloseManualArma.setOnClickListener(v -> {
+    if (menuItem.getItemId() == R.id.moreOptionsManualArmaTopRightDropDown) {
       MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-      builder.setTitle("Exit Manual Attack");
+      builder.setTitle("Options");
+      builder.setItems(choices, (dialog, which) -> {
+        switch (which) {
+          case 0:
+            showDialogScanAccessPoints();
+            break;
+          case 1:
+            if (sessionViewModel.attackOnGoing) {
+              sessionViewModel.writeControlCodeStopRunningAttack();
+            } else {
+              Toast.makeText(getActivity(), "No ongoing attack", Toast.LENGTH_LONG).show();
+            }
+            break;
+          case 2:
+            sessionViewModel.writeControlCodeRestartLauncher();
+            break;
+          case 3:
+            // Clears the content in the recycler view of attack logs
+            ManualArmaRVAdapter adapter = (ManualArmaRVAdapter)
+                    binding.recyclerViewAttackLogsManualArma.getAdapter();
+            if (adapter != null) {
+              adapter.clearLogs();
+            } else {
+              Toast.makeText(requireActivity(), "Attack logs adapter is not set",
+                      Toast.LENGTH_LONG).show();
+            }
+            break;
+          case 4:
+            dialog.dismiss();
+            if (macAddressInput.getText() != null) {
+              showDialogInformation(sessionViewModel.selectedArmament,
+                      macAddressInput.getText().toString());
+            } else {
+              showDialogInformation(sessionViewModel.selectedArmament, "");
+            }
+            break;
+        }
+      }).show();
+      return true;
+    }
+    return false;
+  }
 
+  private void showDialogExit() {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+    builder.setTitle("Exit Manual Attack");
+
+    if (sessionViewModel.attackOnGoing) {
+      builder.setMessage("You have an ongoing attack, Do you really want to exit manual attack?");
+    } else {
+      builder.setMessage("Do you really want to exit manual attack? You will be navigated back" +
+              " to terminal");
+    }
+    builder.setPositiveButton("EXIT", (dialog, which) -> {
       if (sessionViewModel.attackOnGoing) {
-        builder.setMessage("You have an ongoing attack, Do you really want to exit manual attack?");
-      } else {
-        builder.setMessage("Do you really want to exit manual attack? You will be navigated back" +
-                " to terminal");
+        sessionViewModel.writeControlCodeDeactivationToLauncher();
+        sessionViewModel.attackOnGoing = false;
       }
-      builder.setPositiveButton("EXIT", (dialog, which) -> {
-                if (sessionViewModel.attackOnGoing) {
-                  sessionViewModel.writeControlCodeDeactivationToLauncher();
-                  sessionViewModel.attackOnGoing = false;
-                }
-                Navigation.findNavController(binding.getRoot()).popBackStack();
-              });
-      builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
-      builder.show();
+      Navigation.findNavController(binding.getRoot()).popBackStack();
     });
-
-    ManualArmaRVAdapter manualArmaRVAdapter = setupRecyclerView();
-    setupObservers(manualArmaRVAdapter);
-
-    showDialogScanAccessPoints();
+    builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+    builder.show();
   }
 
   private void showDialogScanAccessPoints() {
@@ -183,10 +211,15 @@ public class ManualArmaFragment extends Fragment {
     builder.show();
   }
 
-  private void buttonPressedStartArma(View view) {
+  private void buttonPressedStartArma() {
+    View currentView = this.requireActivity().getCurrentFocus();
+    if (currentView == null) {
+      return;
+    }
+
     InputMethodManager inputMethodManager = (InputMethodManager) requireActivity()
             .getSystemService(Context.INPUT_METHOD_SERVICE);
-    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    inputMethodManager.hideSoftInputFromWindow(currentView.getWindowToken(), 0);
 
     TextInputEditText macAddressInput = binding.textInputEditTextMacAddressManualArma;
     if (macAddressInput.getText() == null || macAddressInput.getText().toString().isEmpty()) {
@@ -216,6 +249,7 @@ public class ManualArmaFragment extends Fragment {
       }
       binding.buttonStartManualArma.setEnabled(true);
       binding.buttonCloseManualArma.setEnabled(true);
+      binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.INVISIBLE);
     };
     sessionViewModel.launcherStarted.observe(getViewLifecycleOwner(), launcherStartedObserver);
 
@@ -282,16 +316,7 @@ public class ManualArmaFragment extends Fragment {
       if (s == null) {
         return;
       }
-      if (s.equals("Failed")) {
-        sessionViewModel.writeControlCodeDeactivationToLauncher();
-      } else if (s.equals("Success")) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-        builder.setTitle("Successful Attack")
-                .setMessage("Successfully penetrated " +
-                        sessionViewModel.targetAccessPoint + ", using " +
-                        sessionViewModel.selectedArmament)
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
-      }
+      showDialogResult(s);
       binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.INVISIBLE);
       binding.buttonStartManualArma.setEnabled(true);
 
@@ -303,6 +328,28 @@ public class ManualArmaFragment extends Fragment {
     setupSerialInputErrorListener();
     // Receive updates for any error while reading data from the serial output
     setupSerialOutputErrorListener();
+  }
+
+  public void showDialogResult(String result) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+    if (result.equals("Failed")) {
+      Toast.makeText(requireActivity(), "Failed to penetrate " +
+              sessionViewModel.targetAccessPoint, Toast.LENGTH_LONG).show();
+      sessionViewModel.writeControlCodeDeactivationToLauncher();
+    } else if (result.equals("Success")) {
+
+
+      builder.setTitle("Successful Attack");
+      builder.setMessage("Successfully penetrated " +
+              sessionViewModel.targetAccessPoint + ", using " +
+              sessionViewModel.selectedArmament +
+              ". Do you want to find another target?");
+
+      builder.setPositiveButton("NEW TARGET", (dialog, which) -> showDialogScanAccessPoints());
+      builder.setNeutralButton("MORE INFO", (dialog, which) -> {
+        // TODO: Show the attack result information via dialog
+      }).show();
+    }
   }
 
   private void showDialogForTargetSelection(ArrayList<AccessPointData> targetList) {
