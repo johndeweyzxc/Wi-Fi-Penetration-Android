@@ -5,16 +5,15 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.data.DeviceConnectionParamData;
-import com.johndeweydev.awps.data.LauncherOutputData;
+import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.data.LauncherOutputData;
 import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
-import com.johndeweydev.awps.data.UsbDeviceData;
-import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerialEvent;
-import com.johndeweydev.awps.viewmodels.DefaultViewModelUsbSerial;
+import com.johndeweydev.awps.models.data.UsbDeviceData;
+import com.johndeweydev.awps.viewmodels.ViewModelIOControl;
 
 import java.util.ArrayList;
 
-public class TerminalViewModel extends ViewModel implements DefaultViewModelUsbSerial {
+public class TerminalViewModel extends ViewModel implements ViewModelIOControl {
 
   /**
    * Device id, port number and baud rate is set by terminal fragment as a backup source
@@ -31,9 +30,9 @@ public class TerminalViewModel extends ViewModel implements DefaultViewModelUsbS
   public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
 
-  TerminalRepoSerialEvent terminalRepoSerialEvent = new TerminalRepoSerialEvent() {
+  TerminalViewModelEvent terminalRepoSerialEvent = new TerminalViewModelEvent() {
     @Override
-    public void onRepositoryOutputRaw(LauncherOutputData launcherSerialOutputData) {
+    public void onLauncherOutputRaw(LauncherOutputData launcherSerialOutputData) {
       Log.d("dev-log", "TerminalViewModel.onRepositoryOutputRaw: Serial -> " +
               launcherSerialOutputData.getOutput());
 
@@ -42,7 +41,7 @@ public class TerminalViewModel extends ViewModel implements DefaultViewModelUsbS
       currentSerialOutputRaw.postValue(launcherSerialOutputData);
     }
     @Override
-    public void onRepositoryOutputFormatted(LauncherOutputData launcherSerialOutputData) {
+    public void onLauncherOutputFormatted(LauncherOutputData launcherSerialOutputData) {
       Log.d("dev-log", "TerminalViewModel.onRepositoryOutputFormatted: Serial -> " +
               launcherSerialOutputData.getOutput());
 
@@ -51,12 +50,12 @@ public class TerminalViewModel extends ViewModel implements DefaultViewModelUsbS
       currentSerialOutput.postValue(launcherSerialOutputData);
     }
     @Override
-    public void onRepositoryOutputError(String error) {
+    public void onLauncherOutputError(String error) {
       Log.d("dev-log", "TerminalViewModel.onRepositoryOutputError: Serial -> " + error);
       currentSerialOutputError.postValue(error);
     }
     @Override
-    public void onRepositoryInputError(String input) {
+    public void onLauncherInputError(String input) {
       Log.d("dev-log", "TerminalViewModel.onRepositoryInputError: Serial -> " + input);
       currentSerialInputError.postValue(input);
     }

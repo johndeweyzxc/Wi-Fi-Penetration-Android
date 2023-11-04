@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.data.AccessPointData;
-import com.johndeweydev.awps.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.data.AccessPointData;
+import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.databinding.FragmentManualArmaBinding;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
@@ -134,23 +134,21 @@ public class ManualArmaFragment extends Fragment {
       builder.setTitle("Options");
       builder.setItems(choices, (dialog, which) -> {
         switch (which) {
-          case 0:
+          case 0 ->
             // Find Targets
-            showDialogScanAccessPoints();
-            break;
-          case 1:
+                  showDialogScanAccessPoints();
+          case 1 -> {
             // Stop Attack
             if (sessionViewModel.attackOnGoing) {
               sessionViewModel.writeControlCodeStopRunningAttack();
             } else {
               Toast.makeText(getActivity(), "No ongoing attack", Toast.LENGTH_LONG).show();
             }
-            break;
-          case 2:
+          }
+          case 2 ->
             // Restart Launcher
-            sessionViewModel.writeControlCodeRestartLauncher();
-            break;
-          case 3:
+                  sessionViewModel.writeControlCodeRestartLauncher();
+          case 3 -> {
             // Clear Attack Logs
             // Clears the content in the recycler view of attack logs
             ManualArmaRVAdapter adapter = (ManualArmaRVAdapter)
@@ -161,13 +159,12 @@ public class ManualArmaFragment extends Fragment {
               Toast.makeText(requireActivity(), "Attack logs adapter is not set",
                       Toast.LENGTH_LONG).show();
             }
-            break;
-          case 4:
+          }
+          case 4 ->
             // Database
-            Navigation.findNavController(binding.getRoot()).navigate(
-                    R.id.action_manualArmaFragment_to_hashesFragment);
-            break;
-          case 5:
+                  Navigation.findNavController(binding.getRoot()).navigate(
+                          R.id.action_manualArmaFragment_to_hashesFragment);
+          case 5 -> {
             // More Information
             dialog.dismiss();
             if (macAddressInput.getText() != null) {
@@ -176,7 +173,7 @@ public class ManualArmaFragment extends Fragment {
             } else {
               showDialogInformation(sessionViewModel.selectedArmament, "");
             }
-            break;
+          }
         }
       }).show();
       return true;
@@ -400,8 +397,8 @@ public class ManualArmaFragment extends Fragment {
 
     final int[] checkedItem = {-1};
     for (int i = 0; i < targetList.size(); i++) {
-      choicesSsid[i] = targetList.get(i).getSsid();
-      choicesMacAddress[i] = targetList.get(i).getMacAddress();
+      choicesSsid[i] = targetList.get(i).ssid();
+      choicesMacAddress[i] = targetList.get(i).macAddress();
     }
 
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());

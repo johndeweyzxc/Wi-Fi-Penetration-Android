@@ -1,36 +1,36 @@
-package com.johndeweydev.awps.models.repo.serial;
+package com.johndeweydev.awps.viewmodels;
 
-import com.johndeweydev.awps.data.LauncherOutputData;
+import com.johndeweydev.awps.models.data.LauncherOutputData;
 
 /**
- * Interface for events occurred in the terminal repository and session repository
+ * Callbacks when a serial data is received from the launcher, the launcher is a usb serial device
  *
  * @author John Dewey (johndewey02003@gmail.com)
  *
  * */
-public interface DefaultRepoSerialEvent {
+public interface ViewModelIOEvent {
 
   /**
    * Received raw launcher serial data
    * @param launcherOutputData contains the time in string and the launcher serial data in string
    * */
-  void onRepositoryOutputRaw(LauncherOutputData launcherOutputData);
+  void onLauncherOutputRaw(LauncherOutputData launcherOutputData);
 
   /**
    * Received launcher serial data that is formatted
    * @param launcherOutputData contains the time in string and the launcher serial data in string
    * */
-  void onRepositoryOutputFormatted(LauncherOutputData launcherOutputData);
+  void onLauncherOutputFormatted(LauncherOutputData launcherOutputData);
 
   /**
    * An error occurred on the launcher
    * @param error the error message
    * */
-  void onRepositoryOutputError(String error);
+  void onLauncherOutputError(String error);
 
   /**
    * An input to the launcher serial causes an error
    * @param input the input in string that causes the error
    * */
-  void onRepositoryInputError(String input);
+  void onLauncherInputError(String input);
 }

@@ -1,14 +1,14 @@
 package com.johndeweydev.awps.viewmodels;
 
-import com.johndeweydev.awps.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 
 /**
- * Interface for the view to communicate with the usb serial device
+ * Interface to control the launcher or usb serial device
  *
  * @author John Dewey (johndewey02003@gmail.com)
  *
  * */
-public interface DefaultViewModelUsbSerial {
+public interface ViewModelIOControl {
 
   /**
    * Sets the repository serial event callback in the launcher

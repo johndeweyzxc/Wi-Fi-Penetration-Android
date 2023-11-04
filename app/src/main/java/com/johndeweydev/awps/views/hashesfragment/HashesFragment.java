@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.data.HashInfoEntity;
+import com.johndeweydev.awps.models.data.HashInfoEntity;
 import com.johndeweydev.awps.databinding.FragmentHashesBinding;
 import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
 
@@ -73,9 +73,8 @@ public class HashesFragment extends Fragment {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
     builder.setTitle("Exit Database")
             .setMessage("You pressed the back button, do you want to leave the database?")
-            .setPositiveButton("YES", (dialog, which) -> {
-              Navigation.findNavController(binding.getRoot()).popBackStack();
-            })
+            .setPositiveButton("YES", (dialog, which) -> Navigation.findNavController(
+                    binding.getRoot()).popBackStack())
             .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
   }
 
@@ -90,9 +89,7 @@ public class HashesFragment extends Fragment {
               hashInfoViewModel.deleteAllHashInfo();
               hashesRvAdapter.removeAllHashInformation();
             })
-            .setNegativeButton("CANCEL", (dialog, which) -> {
-              dialog.dismiss();
-            }).show();
+            .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
   }
 
   @Override

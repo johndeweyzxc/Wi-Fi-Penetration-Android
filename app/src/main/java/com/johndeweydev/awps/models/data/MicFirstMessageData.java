@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.data;
+package com.johndeweydev.awps.models.data;
 
 public class MicFirstMessageData {
   private String bssid;
@@ -13,10 +13,6 @@ public class MicFirstMessageData {
 
   public String getBssid() {
     return bssid;
-  }
-
-  public String getClient() {
-    return client;
   }
 
   public String getAnonce() {

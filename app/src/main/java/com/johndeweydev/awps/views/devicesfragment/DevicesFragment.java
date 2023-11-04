@@ -23,8 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.johndeweydev.awps.BuildConfig;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.data.DeviceConnectionParamData;
-import com.johndeweydev.awps.data.UsbDeviceData;
+import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.data.UsbDeviceData;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
 import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;

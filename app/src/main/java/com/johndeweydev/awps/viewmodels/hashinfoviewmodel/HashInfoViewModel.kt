@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.johndeweydev.awps.data.HashInfoEntity
+import com.johndeweydev.awps.models.data.HashInfoEntity
 import com.johndeweydev.awps.models.api.hashinfo.HashInfoSingleton
 import com.johndeweydev.awps.models.repo.database.HashInfoRepoDatabase
 import kotlinx.coroutines.Dispatchers

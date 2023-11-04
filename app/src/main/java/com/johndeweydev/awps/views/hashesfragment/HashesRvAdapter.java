@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.data.HashInfoEntity;
+import com.johndeweydev.awps.models.data.HashInfoEntity;
 import com.johndeweydev.awps.views.hashinfomodalbottomsheetdialog.HashInfoModalBottomArgs;
 
 import java.util.ArrayList;

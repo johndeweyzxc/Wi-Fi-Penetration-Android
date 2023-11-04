@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.databinding.FragmentAutoArmaBinding;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 

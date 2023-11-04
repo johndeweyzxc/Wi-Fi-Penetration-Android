@@ -6,23 +6,22 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.johndeweydev.awps.data.AccessPointData;
-import com.johndeweydev.awps.data.DeviceConnectionParamData;
-import com.johndeweydev.awps.data.HashInfoEntity;
-import com.johndeweydev.awps.data.LauncherOutputData;
+import com.johndeweydev.awps.models.data.AccessPointData;
+import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.models.data.HashInfoEntity;
+import com.johndeweydev.awps.models.data.LauncherOutputData;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
-import com.johndeweydev.awps.data.MicFirstMessageData;
-import com.johndeweydev.awps.data.MicSecondMessageData;
-import com.johndeweydev.awps.data.PmkidFirstMessageData;
-import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerialEvent;
-import com.johndeweydev.awps.viewmodels.DefaultViewModelUsbSerial;
+import com.johndeweydev.awps.models.data.MicFirstMessageData;
+import com.johndeweydev.awps.models.data.MicSecondMessageData;
+import com.johndeweydev.awps.models.data.PmkidFirstMessageData;
+import com.johndeweydev.awps.viewmodels.ViewModelIOControl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSerial,
-        SessionRepoSerialEvent {
+public class SessionViewModel extends ViewModel implements ViewModelIOControl,
+        SessionViewModelEvent {
 
   public boolean automaticAttack = false;
   public String selectedArmament;
@@ -103,15 +102,9 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   public void writeInstructionCodeToLauncher(String data) {
     String instructionCode = "";
     switch (selectedArmament) {
-      case "PMKID Based Attack":
-        instructionCode += "02";
-        break;
-      case "MIC Based Attack":
-        instructionCode += "03";
-        break;
-      case "Deauther":
-        instructionCode += "04";
-        break;
+      case "PMKID Based Attack" -> instructionCode += "02";
+      case "MIC Based Attack" -> instructionCode += "03";
+      case "Deauther" -> instructionCode += "04";
     }
     instructionCode += data;
     sessionRepoSerial.writeDataToDevice(instructionCode);
@@ -143,42 +136,42 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryOutputRaw(LauncherOutputData launcherOutputData) {}
+  public void onLauncherOutputRaw(LauncherOutputData launcherOutputData) {}
 
   @Override
-  public void onRepositoryOutputFormatted(LauncherOutputData launcherOutputData) {
+  public void onLauncherOutputFormatted(LauncherOutputData launcherOutputData) {
     Log.d("dev-log", "SessionViewModel.onRepositoryOutputFormatted: Serial -> " +
             launcherOutputData.getOutput());
   }
 
   @Override
-  public void onRepositoryOutputError(String error) {
+  public void onLauncherOutputError(String error) {
     Log.d("dev-log", "SessionViewModel.onRepositoryOutputError: Serial -> " + error);
     currentSerialOutputError.postValue(error);
   }
 
   @Override
-  public void onRepositoryInputError(String input) {
+  public void onLauncherInputError(String input) {
     Log.d("dev-log", "SessionViewModel.onRepositoryInputError: Serial -> " + input);
     currentSerialInputError.postValue(input);
   }
 
   @Override
-  public void onRepositoryStarted() {
+  public void onLauncherStarted() {
     launcherStarted.postValue("Launcher module started");
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Module started");
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryCommandParserCurrentArma(String armament, String targetBssid) {
+  public void onLauncherArmamentStatus(String armament, String targetBssid) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament + "" +
             ", targeting " + targetBssid);
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryCommandParserTargetAndArmaSet(String armament, String targetBssid) {
+  public void onLauncherInstructionIssued(String armament, String targetBssid) {
     if (userWantsToScanForAccessPoint) {
       currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament);
       launcherActivateConfirmation.postValue("Proceed to scan for nearby access points?");
@@ -193,37 +186,37 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryArmamentActivation() {
+  public void onLauncherArmamentActivation() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Armament activate!");
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryArmamentDeactivation() {
+  public void onLauncherArmamentDeactivation() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Armament deactivate!");
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryNumberOfFoundAccessPoints(String numberOfAps) {
+  public void onLauncherNumberOfFoundAccessPoints(String numberOfAps) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Found " + numberOfAps +
             " access points");
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryScannedAccessPoint(AccessPointData accessPointData) {
+  public void onLauncherFoundAccessPoint(AccessPointData accessPointData) {
     if (userWantsToScanForAccessPoint) {
       accessPointDataList.add(accessPointData);
     }
-    String ssid = accessPointData.getSsid();
-    int channel = accessPointData.getChannel();
+    String ssid = accessPointData.ssid();
+    int channel = accessPointData.channel();
     currentAttackLog.postValue("(" + attackLogNumber + ") " + ssid + " at channel " + channel);
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryFinishScanning() {
+  public void onLauncherFinishScan() {
     if (userWantsToScanForAccessPoint) {
       launcherFinishScanning.postValue(accessPointDataList);
     }
@@ -232,7 +225,7 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryAccessPointNotFound() {
+  public void onLauncherTargetAccessPointNotFound() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "The target " +
             targetAccessPoint + " is not found");
     attackLogNumber++;
@@ -240,14 +233,14 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryLaunchingSequence() {
+  public void onLauncherLaunchingSequence() {
     currentAttackLog.postValue("(" + attackLogNumber + ") "  + selectedArmament +
             " launching sequence");
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryTaskCreated() {
+  public void onLauncherMainTaskCreated() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Main task created");
     attackLogNumber++;
     launcherMainTaskCreated.postValue(selectedArmament + " main task created");
@@ -255,42 +248,42 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryPmkidWrongKeyType(String keyType) {
+  public void onLauncherPmkidWrongKeyType(String keyType) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID key type, "
             + keyType);
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryPmkidWrongOui(String oui) {
+  public void onLauncherPmkidWrongOui(String oui) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID key data OUI, "
             + oui);
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryPmkidWrongKde(String kde) {
+  public void onLauncherPmkidWrongKde(String kde) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID KDE, " +
             kde);
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryMicIvRscIdNotSetToZero(String ivRscId) {
+  public void onLauncherMicIvRscIdNotSetToZero(String ivRscId) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "The IV or RSC or ID is not set " +
             "to all zero, " + ivRscId);
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryTaskStatus(String attackType, int attackStatus) {
+  public void onLauncherMainTaskCurrentStatus(String attackType, int attackStatus) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + attackType + ", status is " +
             attackStatus);
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositoryEapolMessage(
+  public void onLauncherReceivedEapolMessage(
           String attackType,
           int messageNumber,
           @Nullable PmkidFirstMessageData pmkidFirstMessageData,
@@ -351,14 +344,14 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryFinishingSequence() {
+  public void onLauncherFinishingSequence() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " +  selectedArmament +
             " finishing sequence");
     attackLogNumber++;
   }
 
   @Override
-  public void onRepositorySuccess() {
+  public void onLauncherSuccess() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + selectedArmament +
             " successfully executed");
     attackLogNumber++;
@@ -368,7 +361,7 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryFailure(String targetBssid) {
+  public void onLauncherFailure(String targetBssid) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " +  selectedArmament + " failed");
     attackLogNumber++;
     launcherExecutionResult.postValue("Failed");
@@ -377,7 +370,7 @@ public class SessionViewModel extends ViewModel implements DefaultViewModelUsbSe
   }
 
   @Override
-  public void onRepositoryDeauthStop(String targetBssid) {
+  public void onLauncherMainTaskInDeautherStopped(String targetBssid) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "In " + selectedArmament +
             " deauthentication task stopped");
     attackLogNumber++;

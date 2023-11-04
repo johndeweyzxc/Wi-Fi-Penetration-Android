@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.data;
+package com.johndeweydev.awps.models.data;
 
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;

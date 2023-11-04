@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.data;
+package com.johndeweydev.awps.models.data;
 
 import android.hardware.usb.UsbDevice;
 

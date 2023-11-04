@@ -1,28 +1,29 @@
-package com.johndeweydev.awps.models.api.launcher;
+package com.johndeweydev.awps.models.repo.serial;
 
 /**
- * Interface for any events occurred in the usb serial
+ * Callbacks for input and output from the usb serial device as well as callbacks when an error
+ * occurred
  *
  * @author John Dewey (johndewey02003@gmail.com)
  *
  * */
-public interface LauncherEvent {
+public interface RepoIOEvent {
 
   /**
    * A serial output is received
    * @param data the data in string outputted by the serial
    * */
-  void onLauncherOutput(String data);
+  void onUsbSerialOutput(String data);
 
   /**
    * An error occurred in the serial
    * @param error the error message
    * */
-  void onLauncherOutputError(String error);
+  void onUsbSerialOutputError(String error);
 
   /**
    * A user input causes serial error
    * @param input the string input that causes the error
    * */
-  void onLauncherInputError(String input);
+  void onUsbSerialInputError(String input);
 }

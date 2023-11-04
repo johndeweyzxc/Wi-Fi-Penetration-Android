@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.data.LauncherOutputData;
+import com.johndeweydev.awps.models.data.LauncherOutputData;
 
 import java.util.ArrayList;
 

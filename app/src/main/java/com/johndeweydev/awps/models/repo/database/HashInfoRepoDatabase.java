@@ -1,6 +1,6 @@
 package com.johndeweydev.awps.models.repo.database;
 
-import com.johndeweydev.awps.data.HashInfoEntity;
+import com.johndeweydev.awps.models.data.HashInfoEntity;
 import com.johndeweydev.awps.models.api.hashinfo.HashInfoDao;
 
 import java.util.List;

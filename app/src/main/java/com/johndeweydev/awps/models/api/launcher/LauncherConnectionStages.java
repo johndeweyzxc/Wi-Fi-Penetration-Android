@@ -1,19 +1,28 @@
 package com.johndeweydev.awps.models.api.launcher;
 
-public enum LauncherStages {
-  // Initialization stage
+public enum LauncherConnectionStages {
+  /**
+   * INITIALIZATION STAGE
+   * */
   ALREADY_CONNECTED,
 
-  // Driver and device stage
+  /**
+   * DRIVER AND DEVICE DISCOVERY STAGE
+   * */
   DEVICE_NOT_FOUND,
   DRIVER_NOT_FOUND,
   PORT_NOT_FOUND,
   DRIVER_SET,
 
-  // Permission stage
+  /**
+   * PERMISSION STAGE
+   * */
   NO_USB_PERMISSION,
 
-  // Connection stage
+
+  /**
+   * OPENING STAGE
+   * */
   SUCCESSFULLY_CONNECTED,
   UNSUPPORTED_PORT_PARAMETERS,
   FAILED_OPENING_DEVICE
