@@ -11,8 +11,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.room.Room;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.johndeweydev.awps.models.api.hashinfo.HashInfoDatabase;
+import com.johndeweydev.awps.models.api.hashinfo.HashInfoSingleton;
 import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
             terminalRepoSerial);
     new ViewModelProvider(this, terminalViewModelFactory).get(TerminalViewModel.class);
 
+    // When the user presses the back button on their device, it will ask user if it really wants
+    // to exit on its current screen
     OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
       @Override
       public void handleOnBackPressed() {
@@ -50,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
           case "auto_arma_fragment":
             showExitDialogInAutoArmaFragment();
             break;
+          case "hashes_fragment":
+            showExitDialogInHashesFragment();
+            break;
         }
       }
     };
@@ -57,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
 
     setContentView(R.layout.activity_main);
     fragmentChangeListener();
+
+    HashInfoSingleton hashInfoSingleton = HashInfoSingleton.getInstance();
+    HashInfoDatabase hashInfoDatabase = Room.databaseBuilder(getApplicationContext(),
+            HashInfoDatabase.class, "awps_database").build();
+    hashInfoSingleton.setHashInfoDatabase(hashInfoDatabase);
+
   }
 
   private void fragmentChangeListener() {
@@ -104,6 +118,18 @@ public class MainActivity extends AppCompatActivity {
     NavController navController = Navigation.findNavController(
             this, R.id.fragmentActivityMain);
     navController.navigate(R.id.action_manualArmaFragment_to_exitModalBottomSheetDialog);
+  }
+
+  private void showExitDialogInHashesFragment() {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+    builder.setTitle("Exit Database")
+            .setMessage("You pressed the back button, do you want to leave the database?")
+            .setPositiveButton("YES", (dialog, which) -> {
+              NavController navController = Navigation.findNavController(
+                      this, R.id.fragmentActivityMain);
+              navController.popBackStack();
+            })
+            .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
   }
 
   private void showExitDialogInAutoArmaFragment() {

@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.views.exitmodelbottomsheetdialog;
+package com.johndeweydev.awps.views.exitmodalbottomsheetdialog;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

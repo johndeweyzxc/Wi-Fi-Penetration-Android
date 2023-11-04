@@ -92,7 +92,13 @@ public class DevicesFragment extends Fragment {
       return false;
     });
     binding.navigationViewTerminalMain.setNavigationItemSelectedListener(menuItem -> {
-      if (menuItem.getItemId() == R.id.settingsMenuNavItemDevices) {
+      if (menuItem.getItemId() == R.id.databaseMenuNavItemDevices) {
+
+        binding.drawerLayoutDevices.close();
+        Navigation.findNavController(binding.getRoot()).navigate(
+                R.id.action_devicesFragment_to_hashesFragment);
+        return true;
+      } else if (menuItem.getItemId() == R.id.settingsMenuNavItemDevices) {
         binding.drawerLayoutDevices.close();
 
         // TODO: Navigate to settings fragment

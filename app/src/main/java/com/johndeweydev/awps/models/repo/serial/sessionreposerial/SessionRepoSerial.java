@@ -57,8 +57,8 @@ public class SessionRepoSerial {
   public void setLauncherEventHandler() {
     LauncherSingleton.getInstance().getLauncher().setLauncherEventHandler(
             launcherEvent);
-    Log.d("dev-log", "SessionRepository.setLauncherEventHandler: Launcher event callback " +
-            "set in the context of session repository");
+    Log.d("dev-log", "SessionRepository.setLauncherEventHandler: Launcher event " +
+            "callback set in the context of session repository");
   }
 
   private void processFormattedOutput() {

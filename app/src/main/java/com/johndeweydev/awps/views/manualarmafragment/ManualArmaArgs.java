@@ -27,10 +27,6 @@ public class ManualArmaArgs implements Parcelable {
     return portNum;
   }
 
-  public int getBaudRate() {
-    return baudRate;
-  }
-
   public String getSelectedArmament() {return selectedArmament;}
 
   protected ManualArmaArgs(Parcel in) {
@@ -41,7 +37,7 @@ public class ManualArmaArgs implements Parcelable {
   }
 
   public static final Creator<com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs>
-          CREATOR = new Creator<com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs>() {
+          CREATOR = new Creator<>() {
     @Override
     public com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs createFromParcel(Parcel in) {
       return new com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs(in);

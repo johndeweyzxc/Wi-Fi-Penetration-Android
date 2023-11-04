@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:strokeWidth="0dp"
+    android:id="@+id/materialCardViewHashesListItem">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/textViewApNameHashesItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name of the access point"
+            android:textSize="18sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewMacAddressHashesItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="12:34:56:78:90:AA"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewApNameHashesItem" />
+
+        <TextView
+            android:id="@+id/textViewHashDataHashesItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PMKID: 1234567890"
+            app:layout_constraintTop_toBottomOf="@id/textViewMacAddressHashesItem"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

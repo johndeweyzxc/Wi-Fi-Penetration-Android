@@ -255,7 +255,13 @@ public class TerminalFragment extends Fragment {
   }
 
   private boolean navItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.automaticAttackMain) {
+    if (item.getItemId() == R.id.databaseMenuNavItemTerminal) {
+
+      binding.drawerLayoutTerminal.close();
+      Navigation.findNavController(binding.getRoot()).navigate(
+              R.id.action_terminalFragment_to_hashesFragment);
+      return true;
+    } else if (item.getItemId() == R.id.automaticAttackMain) {
 
       binding.drawerLayoutTerminal.close();
       showAttackTypeDialogSelector(true);

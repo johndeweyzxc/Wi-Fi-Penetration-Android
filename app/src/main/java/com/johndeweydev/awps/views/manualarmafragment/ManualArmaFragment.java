@@ -28,6 +28,7 @@ import com.johndeweydev.awps.data.AccessPointData;
 import com.johndeweydev.awps.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.databinding.FragmentManualArmaBinding;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
+import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
 
@@ -39,6 +40,7 @@ public class ManualArmaFragment extends Fragment {
   private FragmentManualArmaBinding binding;
   private ManualArmaArgs manualArmaArgs = null;
   private SessionViewModel sessionViewModel;
+  private HashInfoViewModel hashInfoViewModel;
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -48,6 +50,7 @@ public class ManualArmaFragment extends Fragment {
             sessionRepoSerial);
     sessionViewModel = new ViewModelProvider(this, sessionViewModelFactory).get(
             SessionViewModel.class);
+    hashInfoViewModel = new ViewModelProvider(this).get(HashInfoViewModel.class);
 
     binding = FragmentManualArmaBinding.inflate(inflater, container, false);
 
@@ -82,6 +85,7 @@ public class ManualArmaFragment extends Fragment {
       }
     );
     binding.materialToolBarManualArma.setOnMenuItemClickListener(this::showDialogMenuOptions);
+    binding.buttonStartManualArma.setEnabled(false);
     binding.buttonStartManualArma.setOnClickListener(v -> buttonPressedStartArma());
     binding.buttonCloseManualArma.setOnClickListener(v -> showDialogExit());
 
@@ -107,7 +111,9 @@ public class ManualArmaFragment extends Fragment {
         binding.buttonStartManualArma.setEnabled(count == 12);
       }
       @Override
-      public void afterTextChanged(Editable s) {}
+      public void afterTextChanged(Editable s) {
+        binding.buttonStartManualArma.setEnabled(s.toString().length() == 12);
+      }
     });
   }
 
@@ -115,10 +121,11 @@ public class ManualArmaFragment extends Fragment {
     TextInputEditText macAddressInput = binding.textInputEditTextMacAddressManualArma;
 
     String[] choices = new String[]{
-            "Find Target Access Points",
+            "Find Targets",
             "Stop Attack",
             "Restart Launcher",
             "Clear Attack Logs",
+            "Database",
             "More Information"
     };
 
@@ -128,9 +135,11 @@ public class ManualArmaFragment extends Fragment {
       builder.setItems(choices, (dialog, which) -> {
         switch (which) {
           case 0:
+            // Find Targets
             showDialogScanAccessPoints();
             break;
           case 1:
+            // Stop Attack
             if (sessionViewModel.attackOnGoing) {
               sessionViewModel.writeControlCodeStopRunningAttack();
             } else {
@@ -138,9 +147,11 @@ public class ManualArmaFragment extends Fragment {
             }
             break;
           case 2:
+            // Restart Launcher
             sessionViewModel.writeControlCodeRestartLauncher();
             break;
           case 3:
+            // Clear Attack Logs
             // Clears the content in the recycler view of attack logs
             ManualArmaRVAdapter adapter = (ManualArmaRVAdapter)
                     binding.recyclerViewAttackLogsManualArma.getAdapter();
@@ -152,6 +163,12 @@ public class ManualArmaFragment extends Fragment {
             }
             break;
           case 4:
+            // Database
+            Navigation.findNavController(binding.getRoot()).navigate(
+                    R.id.action_manualArmaFragment_to_hashesFragment);
+            break;
+          case 5:
+            // More Information
             dialog.dismiss();
             if (macAddressInput.getText() != null) {
               showDialogInformation(sessionViewModel.selectedArmament,
@@ -241,24 +258,41 @@ public class ManualArmaFragment extends Fragment {
   }
 
   private void setupObservers(ManualArmaRVAdapter manualArmaRVAdapter) {
+    // Append logs to the recycler view
+    final Observer<String> attackLogsObserver = s -> {
+      if (s == null) {
+        return;
+      }
+      manualArmaRVAdapter.appendData(s);
+      binding.recyclerViewAttackLogsManualArma.scrollToPosition(
+              manualArmaRVAdapter.getItemCount() - 1);
+    };
+    sessionViewModel.currentAttackLog.observe(getViewLifecycleOwner(), attackLogsObserver);
+    // Receive updates for any error cause by user input
+    setupSerialInputErrorListener();
+    // Receive updates for any error while reading data from the serial output
+    setupSerialOutputErrorListener();
 
-    // Everytime the launcher is started, always enable the 'start' and 'close' button
+    // INITIALIZATION PHASE
     final Observer<String> launcherStartedObserver = s -> {
       if (s == null) {
         return;
       }
+      // Everytime the launcher is started, always enable the 'start' and 'close' button
       binding.buttonStartManualArma.setEnabled(true);
       binding.buttonCloseManualArma.setEnabled(true);
-      binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.INVISIBLE);
+      sessionViewModel.launcherActivateConfirmation.setValue(null);
     };
     sessionViewModel.launcherStarted.observe(getViewLifecycleOwner(), launcherStartedObserver);
 
-    // Show a confirmation dialog on whether to activate the attack, this disables the 'close'
-    // and 'start' button if the user activates the attack
+
     final Observer<String> armamentActivateConfirmationObserver = s -> {
       if (s == null) {
         return;
       }
+
+      // Show a confirmation dialog on whether to activate the attack, this disables the 'close'
+      // and 'start' button if the user activates the attack
       MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
       builder.setTitle("Armament Activate")
               .setMessage(s)
@@ -270,64 +304,65 @@ public class ManualArmaFragment extends Fragment {
               .setNegativeButton("CANCEL", (dialog, which) -> Objects.requireNonNull(
                       binding.textInputEditTextMacAddressManualArma.getText()
               ).clear()).show();
+      sessionViewModel.launcherActivateConfirmation.setValue(null);
     };
     sessionViewModel.launcherActivateConfirmation.observe(getViewLifecycleOwner(),
             armamentActivateConfirmationObserver);
 
-    // Shows a dialog where the user can select a target access point
+    // TARGET LOCKING PHASE
     final Observer<ArrayList<AccessPointData>> finishScanningObserver = targetList -> {
       if (targetList == null || targetList.isEmpty()) {
         return;
       }
+      // Shows a dialog where the user can select a target access point
       showDialogForTargetSelection(targetList);
       sessionViewModel.userWantsToScanForAccessPoint = false;
-      sessionViewModel.scannedAccessPoints.setValue(null);
       sessionViewModel.launcherFinishScanning.setValue(null);
     };
     sessionViewModel.launcherFinishScanning.observe(getViewLifecycleOwner(),
             finishScanningObserver);
 
-    // Append logs to the recycler view
-    final Observer<String> attackLogsObserver = s -> {
-      if (s == null) {
+    final Observer<String> accessPointNotFoundObserver = target -> {
+      if (target == null) {
         return;
       }
-      manualArmaRVAdapter.appendData(s);
-      binding.recyclerViewAttackLogsManualArma.scrollToPosition(
-              manualArmaRVAdapter.getItemCount() - 1);
-    };
-    sessionViewModel.currentAttackLog.observe(getViewLifecycleOwner(), attackLogsObserver);
 
-    // Allow the user to close or deactivate the currently running attack by
-    // enabling the 'close' button so the user can click it
+      MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+      builder.setTitle("Target Not Found");
+      builder.setMessage("The target access point with mac address of " + target + " is not " +
+              "found. Do you want to find another target?");
+      builder.setPositiveButton("NEW TARGET", (dialog, which) -> showDialogScanAccessPoints());
+      builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+      builder.show();
+      sessionViewModel.launcherAccessPointNotFound.setValue(null);
+    };
+    sessionViewModel.launcherAccessPointNotFound.observe(getViewLifecycleOwner(),
+            accessPointNotFoundObserver);
+
+    // EXECUTION PHASE
     final Observer<String> launcherMainTaskObserver = s -> {
       if (s == null) {
         return;
       }
-      binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.VISIBLE);
+      // Allow the user to close or deactivate the currently running attack by
+      // enabling the 'close' button so the user can click it
       binding.buttonCloseManualArma.setEnabled(true);
     };
     sessionViewModel.launcherMainTaskCreated.observe(getViewLifecycleOwner(),
             launcherMainTaskObserver);
 
-    // Send a deactivation request to the launcher which will make the launcher restart,
-    // this also enables the 'start' button
+
+    // POST EXECUTION PHASE
     final Observer<String> launcherExecutionResultObserver = s -> {
       if (s == null) {
         return;
       }
       showDialogResult(s);
-      binding.linearProgressIndicatorMainTaskIndicatorManualArma.setVisibility(View.INVISIBLE);
       binding.buttonStartManualArma.setEnabled(true);
 
     };
     sessionViewModel.launcherExecutionResult.observe(getViewLifecycleOwner(),
             launcherExecutionResultObserver);
-
-    // Receive updates for any error cause by user input
-    setupSerialInputErrorListener();
-    // Receive updates for any error while reading data from the serial output
-    setupSerialOutputErrorListener();
   }
 
   public void showDialogResult(String result) {
@@ -338,6 +373,11 @@ public class ManualArmaFragment extends Fragment {
       sessionViewModel.writeControlCodeDeactivationToLauncher();
     } else if (result.equals("Success")) {
 
+      // Save the information about the attack in the database
+      hashInfoViewModel.addNewHashInfo(sessionViewModel.launcherExecutionResultData);
+      sessionViewModel.launcherExecutionResultData = null;
+      sessionViewModel.launcherExecutionResult.setValue(null);
+      binding.textInputEditTextMacAddressManualArma.setText("");
 
       builder.setTitle("Successful Attack");
       builder.setMessage("Successfully penetrated " +
@@ -347,7 +387,9 @@ public class ManualArmaFragment extends Fragment {
 
       builder.setPositiveButton("NEW TARGET", (dialog, which) -> showDialogScanAccessPoints());
       builder.setNeutralButton("MORE INFO", (dialog, which) -> {
+
         // TODO: Show the attack result information via dialog
+
       }).show();
     }
   }
@@ -378,6 +420,7 @@ public class ManualArmaFragment extends Fragment {
             .setSingleChoiceItems(choicesSsid, checkedItem[0], (dialog, which) -> {
               checkedItem[0] = which;
               binding.textInputEditTextMacAddressManualArma.setText(choicesMacAddress[which]);
+              sessionViewModel.targetAccessPointSsid = choicesSsid[which];
               binding.buttonCloseManualArma.setEnabled(true);
               binding.buttonStartManualArma.setEnabled(true);
             }).show();

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_devicesFragment_to_terminalFragment"
             app:destination="@id/terminalFragment" />
+        <action
+            android:id="@+id/action_devicesFragment_to_hashesFragment"
+            app:destination="@id/hashesFragment" />
     </fragment>
     <fragment
         android:id="@+id/terminalFragment"
@@ -28,6 +31,9 @@
         <argument
             android:name="terminalArgs"
             app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />
+        <action
+            android:id="@+id/action_terminalFragment_to_hashesFragment"
+            app:destination="@id/hashesFragment" />
     </fragment>
     <fragment
         android:id="@+id/autoArmaFragment"
@@ -45,6 +51,9 @@
         <action
             android:id="@+id/action_autoArmaFragment_to_exitModalBottomSheetDialog"
             app:destination="@id/exitModalBottomSheetDialog" />
+        <action
+            android:id="@+id/action_autoArmaFragment_to_hashesFragment"
+            app:destination="@id/hashesFragment" />
     </fragment>
     <fragment
         android:id="@+id/manualArmaFragment"
@@ -60,10 +69,13 @@
         <action
             android:id="@+id/action_manualArmaFragment_to_exitModalBottomSheetDialog"
             app:destination="@id/exitModalBottomSheetDialog" />
+        <action
+            android:id="@+id/action_manualArmaFragment_to_hashesFragment"
+            app:destination="@id/hashesFragment" />
     </fragment>
     <dialog
         android:id="@+id/exitModalBottomSheetDialog"
-        android:name="com.johndeweydev.awps.views.exitmodelbottomsheetdialog.ExitModalBottomSheetDialog"
+        android:name="com.johndeweydev.awps.views.exitmodalbottomsheetdialog.ExitModalBottomSheetDialog"
         android:label="exit_model_bottom_sheet_dialog"
         tools:layout="@layout/dialog_sheet_bottom_modal_exit">
         <action
@@ -76,6 +88,24 @@
             app:destination="@id/devicesFragment"
             app:popUpTo="@id/devicesFragment"
             app:popUpToInclusive="false"/>
+    </dialog>
+    <fragment
+        android:id="@+id/hashesFragment"
+        android:name="com.johndeweydev.awps.views.hashesfragment.HashesFragment"
+        android:label="hashes_fragment"
+        tools:layout="@layout/fragment_hashes" >
+        <action
+            android:id="@+id/action_hashesFragment_to_hashInfoModalBottomSheetDialog"
+            app:destination="@id/hashInfoModalBottomSheetDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/hashInfoModalBottomSheetDialog"
+        android:name="com.johndeweydev.awps.views.hashinfomodalbottomsheetdialog.HashInfoModalBottomSheetDialog"
+        android:label="hash_info_modal_bottom_sheet_dialog"
+        tools:layout="@layout/dialog_sheet_bottom_modal_hash_info">
+        <argument
+            android:name="hashInfoModalBottomArgs"
+            app:argType="com.johndeweydev.awps.views.hashinfomodalbottomsheetdialog.HashInfoModalBottomArgs" />
     </dialog>
 
 </navigation>
