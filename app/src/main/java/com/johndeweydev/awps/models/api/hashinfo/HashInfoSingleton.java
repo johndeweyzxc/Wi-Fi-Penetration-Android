@@ -7,10 +7,6 @@ public class HashInfoSingleton {
   private HashInfoDatabase hashInfoDatabase;
   private static HashInfoSingleton instance;
 
-  public HashInfoSingleton() {
-    Log.w("dev-log", "HashInfoSingleton: Created new instance of HashInfoSingleton");
-  }
-
   public static synchronized HashInfoSingleton getInstance() {
     if (instance == null) {
       instance = new HashInfoSingleton();
@@ -26,6 +22,8 @@ public class HashInfoSingleton {
     if (hashInfoDatabase != null) {
       return hashInfoDatabase;
     } else {
+      // Before using this method it is required to first create a new instance of this singleton
+      // using getInstance then set the database using setHashInfoDatabase
       Log.e("dev-log", "HashInfoSingleton.getHashInfoDatabase: " +
               "Instance of HashInfoDatabase is not found in the singleton");
       return null;

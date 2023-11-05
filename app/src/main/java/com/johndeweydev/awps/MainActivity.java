@@ -43,21 +43,11 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void handleOnBackPressed() {
         switch (currentFragmentLabel) {
-          case "devices_fragment":
-            showExitDialogInDevicesFragment();
-            break;
-          case "terminal_fragment":
-            showExitDialogInTerminalFragment();
-            break;
-          case "manual_arma_fragment":
-            showExitDialogInManualArmaFragment();
-            break;
-          case "auto_arma_fragment":
-            showExitDialogInAutoArmaFragment();
-            break;
-          case "hashes_fragment":
-            showExitDialogInHashesFragment();
-            break;
+          case "devices_fragment" -> showExitDialogInDevicesFragment();
+          case "terminal_fragment" -> showExitDialogInTerminalFragment();
+          case "manual_arma_fragment" -> showExitDialogInManualArmaFragment();
+          case "auto_arma_fragment" -> showExitDialogInAutoArmaFragment();
+          case "hashes_fragment" -> showExitDialogInHashesFragment();
         }
       }
     };

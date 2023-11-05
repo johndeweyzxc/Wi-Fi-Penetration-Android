@@ -204,14 +204,12 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
       case "MSG_2" -> {
         String secondMessageInfo = strDataList.get(4) + strDataList.get(5) + strDataList.get(6) +
                 strDataList.get(7) + strDataList.get(8) + strDataList.get(9);
-        String clientM2 = strDataList.get(2);
-        String bssidM2 = strDataList.get(3);
         String replayCounter = strDataList.get(10);
         String snonce = strDataList.get(11);
         String mic = strDataList.get(12);
         String wpaKeyData = strDataList.get(13);
         MicSecondMessageData micSecondMessageData = new MicSecondMessageData(
-                clientM2, bssidM2, secondMessageInfo, replayCounter, snonce, mic, wpaKeyData
+                secondMessageInfo, replayCounter, snonce, mic, wpaKeyData
         );
         sessionViewModelEvent.onLauncherReceivedEapolMessage(
                 "MIC", 2, null, null,
@@ -233,10 +231,7 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
         sessionViewModelEvent.onLauncherNumberOfFoundAccessPoints(numberOfAps);
       }
       case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
-      case "FINISH_SCAN" -> {
-        Log.d("dev-log", "SessionRepoSerial.reconnaissanceContext: Finish scanning");
-        sessionViewModelEvent.onLauncherFinishScan();
-      }
+      case "FINISH_SCAN" -> sessionViewModelEvent.onLauncherFinishScan();
     }
   }
 

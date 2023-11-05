@@ -14,7 +14,7 @@ public interface ViewModelIOEvent {
    * Received raw launcher serial data
    * @param launcherOutputData contains the time in string and the launcher serial data in string
    * */
-  void onLauncherOutputRaw(LauncherOutputData launcherOutputData);
+  default void onLauncherOutputRaw(LauncherOutputData launcherOutputData) {}
 
   /**
    * Received launcher serial data that is formatted

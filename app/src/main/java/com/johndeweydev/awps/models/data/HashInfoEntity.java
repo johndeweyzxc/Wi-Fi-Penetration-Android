@@ -15,6 +15,7 @@ public class HashInfoEntity {
   public String bssid;
   @ColumnInfo(name = "client_mac_address")
   public String clientMacAddress;
+  // Either 'PMKID' or 'MIC'
   @ColumnInfo(name = "key_type")
   public String keyType;
   @ColumnInfo(name = "hash_data")

@@ -41,7 +41,7 @@ public class Launcher implements SerialInputOutputManager.Listener {
   private RepoIOEvent repoIOEvent;
 
   public Launcher() {
-    Log.d("dev-log", "Launcher: Created new instance of Launcher");
+    Log.w("dev-log", "Launcher: Created new instance of Launcher");
   }
 
   public void setLauncherEventHandler(

@@ -44,12 +44,20 @@ public class HashInfoModalBottomSheetDialog extends BottomSheetDialogFragment {
     super.onViewCreated(view, savedInstanceState);
 
     binding.textViewAccessPointNameSheetBottomModalHash.setText(hashInfoModalBottomArgs.getSsid());
+    binding.textViewBssidSheetBottomModalHash.setText(hashInfoModalBottomArgs.getBssid());
+
     binding.textViewClientMacAddressValueSheetBottomModalHash.setText(
-            hashInfoModalBottomArgs.getBssid());
-    binding.textViewKeyTypeSheetBottomModalHash.setText(hashInfoModalBottomArgs.getKeyType());
-    binding.textViewHashDataSheetBottomModalHash.setText(hashInfoModalBottomArgs.getHashData());
-    binding.textViewKeyDataSheetBottomModalHash.setText(hashInfoModalBottomArgs.getKeyData());
-    binding.textViewDateCapturedSheetBottomModalHash.setText(
-            hashInfoModalBottomArgs.getDateCaptured());
+            hashInfoModalBottomArgs.getClientMacAddress());
+
+    String keyType = "KEY TYPE: " + hashInfoModalBottomArgs.getKeyType();
+    String keyHash = "KEY HASH: " + hashInfoModalBottomArgs.getHashData();
+    String keyData = "KEY DATA: " + hashInfoModalBottomArgs.getKeyData();
+
+    binding.textViewKeyTypeSheetBottomModalHash.setText(keyType);
+    binding.textViewHashDataSheetBottomModalHash.setText(keyHash);
+    binding.textViewKeyDataSheetBottomModalHash.setText(keyData);
+
+    String dateCaptured = "Date captured: " + hashInfoModalBottomArgs.getDateCaptured();
+    binding.textViewDateCapturedSheetBottomModalHash.setText(dateCaptured);
   }
 }

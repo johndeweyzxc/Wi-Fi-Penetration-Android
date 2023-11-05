@@ -35,7 +35,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   public MutableLiveData<String> currentAttackLog = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialInputError = new MutableLiveData<>();
   public MutableLiveData<String> currentSerialOutputError = new MutableLiveData<>();
-  private int attackLogNumber = 0;
+  public int attackLogNumber = 0;
 
   /**
    * INITIALIZATION PHASE
@@ -136,23 +136,20 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherOutputRaw(LauncherOutputData launcherOutputData) {}
-
-  @Override
   public void onLauncherOutputFormatted(LauncherOutputData launcherOutputData) {
-    Log.d("dev-log", "SessionViewModel.onRepositoryOutputFormatted: Serial -> " +
+    Log.d("dev-log", "SessionViewModel.onLauncherOutputFormatted: Serial -> " +
             launcherOutputData.getOutput());
   }
 
   @Override
   public void onLauncherOutputError(String error) {
-    Log.d("dev-log", "SessionViewModel.onRepositoryOutputError: Serial -> " + error);
+    Log.d("dev-log", "SessionViewModel.onLauncherOutputError: Serial -> " + error);
     currentSerialOutputError.postValue(error);
   }
 
   @Override
   public void onLauncherInputError(String input) {
-    Log.d("dev-log", "SessionViewModel.onRepositoryInputError: Serial -> " + input);
+    Log.d("dev-log", "SessionViewModel.onLauncherInputError: Serial -> " + input);
     currentSerialInputError.postValue(input);
   }
 
@@ -292,19 +289,17 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   ) {
     if (attackType.equals("PMKID") && messageNumber == 1) {
       if (pmkidFirstMessageData == null) {
-        Log.d("dev-log", "SessionViewModel.onRepositoryEapolMessage: " +
+        Log.d("dev-log", "SessionViewModel.onLauncherReceivedEapolMessage: " +
                 "PMKID data is null");
         return;
       }
 
-      String result = "BSSID is " + pmkidFirstMessageData.bssid() + ", client is " +
-              pmkidFirstMessageData.client() + ", PMKID is " +
-              pmkidFirstMessageData.pmkid();
+      String result = "PMKID is " + pmkidFirstMessageData.pmkid();
 
       launcherExecutionResultData = new HashInfoEntity(
               targetAccessPointSsid, pmkidFirstMessageData.bssid(),
-              pmkidFirstMessageData.client(), "PMKID",
-              pmkidFirstMessageData.pmkid(), "None", createStringDateTime()
+              pmkidFirstMessageData.client(), "PMKID", pmkidFirstMessageData.pmkid(),
+              "None", createStringDateTime()
       );
 
       currentAttackLog.postValue("(" + attackLogNumber + ") " + result);
@@ -313,23 +308,33 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
 
       if (messageNumber == 1) {
         if (micFirstMessageData == null) {
-          Log.d("dev-log", "SessionViewModel.onRepositoryEapolMessage: " +
+          Log.d("dev-log", "SessionViewModel.onLauncherReceivedEapolMessage: " +
                   "MIC first message is null");
           return;
         }
 
-        String result = "Anonce is " + micFirstMessageData.getAnonce();
+        String result = "Anonce is " + micFirstMessageData.anonce();
+
+        launcherExecutionResultData = new HashInfoEntity(targetAccessPointSsid,
+                micFirstMessageData.bssid(), micFirstMessageData.clientMacAddress(),
+                "MIC", "None", micFirstMessageData.anonce(),
+                createStringDateTime());
+
         currentAttackLog.postValue("(" + attackLogNumber + ") " +
                 "Got anonce from first EAPOL message. " + result);
         attackLogNumber++;
       } else if (messageNumber == 2) {
         if (micSecondMessageData == null) {
-          Log.d("dev-log", "SessionViewModel.onRepositoryEapolMessage: " +
+          Log.d("dev-log", "SessionViewModel.onLauncherReceivedEapolMessage: " +
                   "MIC first message is null");
           return;
         }
 
         String result = "MIC is " + micSecondMessageData.getMic();
+
+        launcherExecutionResultData.hashData = micSecondMessageData.getMic();
+        launcherExecutionResultData.keyData += micSecondMessageData.getAllData();
+
         currentAttackLog.postValue("(" + attackLogNumber + ") " +
                 "Got EAPOL data from second message. " + result);
         attackLogNumber++;

@@ -372,6 +372,7 @@ public class ManualArmaFragment extends Fragment {
 
       // Save the information about the attack in the database
       hashInfoViewModel.addNewHashInfo(sessionViewModel.launcherExecutionResultData);
+
       sessionViewModel.launcherExecutionResultData = null;
       sessionViewModel.launcherExecutionResult.setValue(null);
       binding.textInputEditTextMacAddressManualArma.setText("");
