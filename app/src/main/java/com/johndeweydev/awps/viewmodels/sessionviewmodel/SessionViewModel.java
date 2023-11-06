@@ -44,7 +44,6 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
    * */
   public MutableLiveData<String> launcherStarted = new MutableLiveData<>();
   public MutableLiveData<String> launcherActivateConfirmation = new MutableLiveData<>();
-  public String targetAccessPoint;
   public String targetAccessPointSsid;
 
   /**
@@ -83,16 +82,13 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     sessionRepoSerial.writeDataToDevice("06");
   }
 
-  public void writeControlCodeDeactivationToLauncher() {
+  public void writeControlCodeDeactivationToLauncher(String reason) {
     sessionRepoSerial.writeDataToDevice("07");
   }
 
   public void writeControlCodeRestartLauncher() {
+    attackLogNumber = 0;
     sessionRepoSerial.writeDataToDevice("08");
-  }
-
-  public void writeControlCodeStopRunningAttack() {
-    sessionRepoSerial.writeDataToDevice("07");
   }
 
   public void writeInstructionCodeForScanningDevicesToLauncher() {
@@ -173,13 +169,12 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
       currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament);
       launcherActivateConfirmation.postValue("Proceed to scan for nearby access points?");
     } else {
-      targetAccessPoint = targetBssid;
       currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament +
               ", target set " + targetBssid);
-      attackLogNumber++;
       launcherActivateConfirmation.postValue("Do you wish to activate the attack targeting "
-              + targetBssid + " using " + selectedArmament + "?");
+              + targetAccessPointSsid + " using " + selectedArmament + "?");
     }
+    attackLogNumber++;
   }
 
   @Override
@@ -224,9 +219,9 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   @Override
   public void onLauncherTargetAccessPointNotFound() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "The target " +
-            targetAccessPoint + " is not found");
+            targetAccessPointSsid + " is not found");
     attackLogNumber++;
-    launcherAccessPointNotFound.postValue(targetAccessPoint);
+    launcherAccessPointNotFound.postValue(targetAccessPointSsid);
   }
 
   @Override

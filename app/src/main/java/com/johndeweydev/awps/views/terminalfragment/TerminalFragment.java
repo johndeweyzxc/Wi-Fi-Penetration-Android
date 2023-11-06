@@ -85,7 +85,7 @@ public class TerminalFragment extends Fragment {
     binding.materialToolBarTerminal.setOnMenuItemClickListener(menuItem -> {
       String[] choices = new String[]{"Restart Launcher", "More Information"};
 
-      if (menuItem.getItemId() == R.id.moreOptionsTerminalTopRightDropDown) {
+      if (menuItem.getItemId() == R.id.moreOptionsTerminalTopRightDialogMenu) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
         builder.setTitle("Options")
                 .setItems(choices, (dialog, which) -> {
@@ -143,8 +143,6 @@ public class TerminalFragment extends Fragment {
   }
 
   private void setupObservers(TerminalRVAdapter terminalRVAdapter) {
-
-    // If triggered, it will append new terminal logs to the recycler view
     final Observer<LauncherOutputData> currentSerialOutputObserver = s -> {
       if (s == null) {
         return;
@@ -261,23 +259,23 @@ public class TerminalFragment extends Fragment {
       Navigation.findNavController(binding.getRoot()).navigate(
               R.id.action_terminalFragment_to_hashesFragment);
       return true;
-    } else if (item.getItemId() == R.id.automaticAttackMain) {
+    } else if (item.getItemId() == R.id.automaticMenuNavItemTerminal) {
 
       binding.drawerLayoutTerminal.close();
       showAttackTypeDialogSelector(true);
       return true;
-    } else if (item.getItemId() == R.id.manualAttackMain) {
+    } else if (item.getItemId() == R.id.manualAttackMenuNavItemTerminal) {
 
       binding.drawerLayoutTerminal.close();
       showAttackTypeDialogSelector(false);
       return true;
-    } else if (item.getItemId() == R.id.settingsMenuNavItemTerminalMain) {
+    } else if (item.getItemId() == R.id.settingsMenuNavItemTerminal) {
       binding.drawerLayoutTerminal.close();
 
       // TODO: Navigate to settings
 
       return true;
-    } else if (item.getItemId() == R.id.infoMenuNavItemsTerminalMain) {
+    } else if (item.getItemId() == R.id.infoMenuNavItemsTerminal) {
       binding.drawerLayoutTerminal.close();
 
       // TODO: Navigate to info
@@ -288,13 +286,13 @@ public class TerminalFragment extends Fragment {
   }
 
   private void showAttackTypeDialogSelector(boolean automaticAttack) {
-    final String[] choices = new String[]{"PMKID Based Attack", "MIC Based Attack", "Deauther"};
+    final String[] choices = getResources().getStringArray(R.array.dialog_options_terminal);
 
     final int[] checkedItem = {-1};
 
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
     builder.setTitle("Select attack type")
-            .setPositiveButton("CONFIRM", (dialog, which) -> {
+            .setPositiveButton("SELECT", (dialog, which) -> {
               if (checkedItem[0] == -1) {
                 return;
               }

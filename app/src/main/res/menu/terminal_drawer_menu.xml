@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/databaseMenuNavItemTerminal"
-        android:title="Database" />
-    <!--
-    TODO: Refactor the names and ids
-    -->
-    <item
-        android:id="@+id/automaticAttackMain"
+        android:id="@+id/automaticMenuNavItemTerminal"
         android:title="Automatic Attack"/>
     <item
-        android:id="@+id/manualAttackMain"
+        android:id="@+id/manualAttackMenuNavItemTerminal"
         android:title="Manual Attack"/>
     <item
-        android:id="@+id/settingsMenuNavItemTerminalMain"
+        android:id="@+id/databaseMenuNavItemTerminal"
+        android:title="Database" />
+    <item
+        android:id="@+id/settingsMenuNavItemTerminal"
         android:title="Settings" />
     <item
-        android:id="@+id/infoMenuNavItemsTerminalMain"
+        android:id="@+id/infoMenuNavItemsTerminal"
         android:title="Info"/>
 </menu>
