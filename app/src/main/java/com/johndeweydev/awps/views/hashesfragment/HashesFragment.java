@@ -1,5 +1,6 @@
 package com.johndeweydev.awps.views.hashesfragment;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,23 +8,31 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.johndeweydev.awps.R;
-import com.johndeweydev.awps.models.data.HashInfoEntity;
 import com.johndeweydev.awps.databinding.FragmentHashesBinding;
+import com.johndeweydev.awps.models.data.HashInfoEntity;
 import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
 
 import java.util.ArrayList;
 
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
+
 public class HashesFragment extends Fragment {
 
   private FragmentHashesBinding binding;
+  private HashInfoViewModel hashInfoViewModel;
+  private HashInfoEntity deletedHashInfo;
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -36,8 +45,7 @@ public class HashesFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    HashInfoViewModel hashInfoViewModel = new ViewModelProvider(this)
-            .get(HashInfoViewModel.class);
+    hashInfoViewModel = new ViewModelProvider(this).get(HashInfoViewModel.class);
 
     HashesRvAdapterEvent hashesRvAdapterEvent = hashInfoModalBottomArgs -> {
       HashesFragmentDirections.ActionHashesFragmentToHashInfoModalBottomSheetDialog action;
@@ -50,6 +58,11 @@ public class HashesFragment extends Fragment {
     binding.recyclerViewHashInformationHashes.setAdapter(hashesRvAdapter);
     binding.recyclerViewHashInformationHashes.setLayoutManager(
             new LinearLayoutManager(requireContext()));
+
+
+    ItemTouchHelper.SimpleCallback recyclerViewSwipeCallback = recyclerViewSwipe(hashesRvAdapter);
+    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(recyclerViewSwipeCallback);
+    itemTouchHelper.attachToRecyclerView(binding.recyclerViewHashInformationHashes);
 
     binding.materialToolBarHashes.setOnMenuItemClickListener(item -> {
       if (item.getItemId() == R.id.deleteMenuNavItemHashes) {
@@ -68,6 +81,80 @@ public class HashesFragment extends Fragment {
 
     hashInfoViewModel.getAllHashInfo();
   }
+
+  private ItemTouchHelper.SimpleCallback recyclerViewSwipe(HashesRvAdapter hashesRvAdapter) {
+    return new ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT) {
+      @Override
+      public boolean onMove(
+              @NonNull RecyclerView recyclerView,
+              @NonNull RecyclerView.ViewHolder viewHolder,
+              @NonNull RecyclerView.ViewHolder target
+      ) {
+        return false;
+      }
+
+      @Override
+      public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+        // The current position of the swiped recycler view item
+        int position = viewHolder.getBindingAdapterPosition();
+
+        if (direction != ItemTouchHelper.LEFT) {
+          // User swiped right on the recycler view item
+          return;
+        }
+
+        // User swiped left on the recycler view item, this will partially delete the item in the
+        // view but the information is still in the database.
+        deletedHashInfo = hashesRvAdapter.removeHashInformation(position);
+        Snackbar snackbar = Snackbar.make(binding.recyclerViewHashInformationHashes,
+                "Deleted " + deletedHashInfo.ssid, Snackbar.LENGTH_LONG
+        ).setAction("Undo", v -> {
+          hashesRvAdapter.appendHashInformation(deletedHashInfo, position);
+          deletedHashInfo = null;
+        });
+
+        Snackbar.Callback onShownAndDismissedCallback = new Snackbar.Callback() {
+          @Override
+          public void onShown(Snackbar sb) {
+            super.onShown(sb);
+          }
+          @Override
+          public void onDismissed(Snackbar transientBottomBar, int event) {
+            super.onDismissed(transientBottomBar, event);
+            if (deletedHashInfo == null) {
+              return;
+            }
+            // Deletes the hash info in the database
+            hashInfoViewModel.deleteHashInfo(deletedHashInfo);
+            deletedHashInfo = null;
+          }
+        };
+        snackbar.addCallback(onShownAndDismissedCallback);
+        snackbar.show();
+      }
+
+      @Override
+      public void onChildDraw(
+              @NonNull Canvas c,
+              @NonNull RecyclerView recyclerView,
+              @NonNull RecyclerView.ViewHolder viewHolder,
+              float dX, float dY, int actionState, boolean isCurrentlyActive
+      ) {
+
+        new RecyclerViewSwipeDecorator.Builder(
+                c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                .addSwipeLeftBackgroundColor(ContextCompat.getColor(
+                        requireActivity(), R.color.md_theme_light_primary
+                ))
+                .addSwipeLeftActionIcon(R.drawable.ic_btn_delete_24)
+                .create()
+                .decorate();
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+      }
+    };
+  }
+
 
   private void showExitConfirmationDialog() {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());

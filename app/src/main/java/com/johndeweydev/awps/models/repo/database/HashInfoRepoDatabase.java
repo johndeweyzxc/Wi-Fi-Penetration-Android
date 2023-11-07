@@ -24,4 +24,8 @@ public class HashInfoRepoDatabase {
   public void deleteAllHashInfo() {
     hashInfoDao.deleteAllHashInfo();
   }
+
+  public void deleteHashInfo(HashInfoEntity hashInfoEntity) {
+    hashInfoDao.deleteHashInfo(hashInfoEntity);
+  }
 }

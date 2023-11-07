@@ -1,6 +1,7 @@
 package com.johndeweydev.awps.models.api.hashinfo;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -18,4 +19,6 @@ public interface HashInfoDao {
   List<HashInfoEntity> getAllHashInfo();
   @Query("DELETE FROM hash_information")
   void deleteAllHashInfo();
+  @Delete
+  void deleteHashInfo(HashInfoEntity hashInfoEntity);
 }

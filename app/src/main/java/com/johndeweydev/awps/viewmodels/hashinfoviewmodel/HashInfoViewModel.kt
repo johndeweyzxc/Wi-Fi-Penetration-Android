@@ -76,4 +76,10 @@ class HashInfoViewModel : ViewModel() {
       hashInfoRepoDatabase.deleteAllHashInfo()
     }
   }
+
+  fun deleteHashInfo(hashInfoEntity: HashInfoEntity) {
+    viewModelScope.launch(Dispatchers.IO) {
+      hashInfoRepoDatabase.deleteHashInfo(hashInfoEntity)
+    }
+  }
 }

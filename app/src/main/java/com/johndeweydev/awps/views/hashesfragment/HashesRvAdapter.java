@@ -73,9 +73,20 @@ public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.Hashes
     this.notifyItemRangeInserted(0, hashInfoEntities.size());
   }
 
+  public void appendHashInformation(HashInfoEntity hashInfoEntity, int position) {
+    hashInfoEntityList.add(position, hashInfoEntity);
+    this.notifyItemInserted(position);
+  }
+
   public void removeAllHashInformation() {
     int size = hashInfoEntityList.size();
     hashInfoEntityList.clear();
     this.notifyItemRangeRemoved(0, size);
+  }
+
+  public HashInfoEntity removeHashInformation(int position) {
+    HashInfoEntity hashInfoEntity = hashInfoEntityList.remove(position);
+    this.notifyItemRemoved(position);
+    return hashInfoEntity;
   }
 }
