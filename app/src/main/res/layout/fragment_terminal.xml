@@ -25,7 +25,6 @@
                 android:layout_height="wrap_content"
                 android:theme="@style/ToolBarTheme"
                 app:navigationIcon="@drawable/ic_btn_menu_24"
-                app:menu="@menu/terminal_top_right_dialog_menu"
                 app:title="Terminal" />
 
         </com.google.android.material.appbar.AppBarLayout>

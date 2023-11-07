@@ -37,9 +37,6 @@ public class TerminalViewModel extends ViewModel implements ViewModelIOControl,
     terminalRepoSerial.setEventHandler(this);
   }
 
-  public void writeControlCodeRestartLauncher() {
-    terminalRepoSerial.writeDataToDevice("08");
-  }
   public void writeDataToDevice(String data) {
     terminalRepoSerial.writeDataToDevice(data);
   }

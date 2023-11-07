@@ -247,7 +247,7 @@ public class ManualArmaFragment extends Fragment {
     }
     builder.setPositiveButton("EXIT", (dialog, which) -> {
       if (sessionViewModel.attackOnGoing) {
-        sessionViewModel.writeControlCodeDeactivationToLauncher("Exit fragment");
+        sessionViewModel.writeControlCodeDeactivationToLauncher();
         sessionViewModel.attackOnGoing = false;
       }
       Navigation.findNavController(binding.getRoot()).popBackStack();
@@ -278,7 +278,8 @@ public class ManualArmaFragment extends Fragment {
 
       if (choices[which].equals(findTargets)) {
 
-        showDialogAskUserToScanAccessPoints();
+        sessionViewModel.userWantsToScanForAccessPoint = true;
+        sessionViewModel.writeInstructionCodeForScanningDevicesToLauncher();
       } else if (choices[which].equals(change_attack_type)) {
 
         showDialogAskUserToSelectAttackType();
@@ -350,17 +351,6 @@ public class ManualArmaFragment extends Fragment {
             ).clear()).show();
   }
 
-  private void showDialogAskUserToScanAccessPoints() {
-    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-    builder.setTitle("Scan Access Points")
-            .setMessage("Do you want to scan for nearby access points?")
-            .setPositiveButton("SCAN", (dialog, which) -> {
-              sessionViewModel.userWantsToScanForAccessPoint = true;
-              sessionViewModel.writeInstructionCodeForScanningDevicesToLauncher();
-            })
-            .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
-  }
-
   private void showDialogToUserAboutConfiguredAttack(String attackType, String targetMacAddress) {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
     builder.setTitle("Information");
@@ -378,8 +368,11 @@ public class ManualArmaFragment extends Fragment {
     builder.setTitle("Target Not Found");
     builder.setMessage("The target access point " + target + " is not found. Do you want to find " +
             "another target?");
-    builder.setPositiveButton("NEW TARGET", (dialog, which) ->
-            showDialogAskUserToScanAccessPoints());
+    builder.setPositiveButton("NEW TARGET", (dialog, which) -> {
+
+      sessionViewModel.userWantsToScanForAccessPoint = true;
+      sessionViewModel.writeInstructionCodeForScanningDevicesToLauncher();
+    });
     builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
     builder.show();
   }
@@ -389,7 +382,7 @@ public class ManualArmaFragment extends Fragment {
     builder.setTitle("Armament Deactivate");
     builder.setMessage("Do you want to stop or deactivate the currently running attack?");
     builder.setPositiveButton("DEACTIVATE", (dialog, which) ->
-            sessionViewModel.writeControlCodeDeactivationToLauncher("Failed attack"));
+            sessionViewModel.writeControlCodeDeactivationToLauncher());
     builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
   }
 
@@ -403,8 +396,11 @@ public class ManualArmaFragment extends Fragment {
       builderFailed.setMessage("Failed to penetrate " + sessionViewModel.targetAccessPointSsid +
               " using " + sessionViewModel.selectedArmament + " Do you want to SCAN for new target " +
               "or CHANGE the attack type?");
-      builderFailed.setPositiveButton("SCAN", (dialog, which) ->
-              showDialogAskUserToScanAccessPoints());
+      builderFailed.setPositiveButton("SCAN", (dialog, which) -> {
+
+        sessionViewModel.userWantsToScanForAccessPoint = true;
+        sessionViewModel.writeInstructionCodeForScanningDevicesToLauncher();
+      });
       builderFailed.setNeutralButton("CHANGE", (dialog, which) ->
               showDialogAskUserToSelectAttackType());
       builderFailed.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
@@ -425,8 +421,11 @@ public class ManualArmaFragment extends Fragment {
               sessionViewModel.selectedArmament +
               ". Do you want to find another target?");
 
-      builderSuccess.setPositiveButton("NEW TARGET", (dialog, which) ->
-              showDialogAskUserToScanAccessPoints());
+      builderSuccess.setPositiveButton("NEW TARGET", (dialog, which) -> {
+
+        sessionViewModel.userWantsToScanForAccessPoint = true;
+        sessionViewModel.writeInstructionCodeForScanningDevicesToLauncher();
+      });
       builderSuccess.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
     }
   }
@@ -551,6 +550,7 @@ public class ManualArmaFragment extends Fragment {
 
   @Override
   public void onDestroyView() {
+    sessionViewModel.attackLogNumber = 0;
     binding = null;
     super.onDestroyView();
   }

@@ -71,25 +71,25 @@ public class HashesFragment extends Fragment {
 
   private void showExitConfirmationDialog() {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-    builder.setTitle("Exit Database")
-            .setMessage("You pressed the back button, do you want to leave the database?")
-            .setPositiveButton("YES", (dialog, which) -> Navigation.findNavController(
-                    binding.getRoot()).popBackStack())
-            .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
+    builder.setTitle("Exit Database");
+    builder.setMessage("You pressed the back button, do you want to leave the database?");
+    builder.setPositiveButton("YES", (dialog, which) -> Navigation.findNavController(
+                    binding.getRoot()).popBackStack());
+    builder.setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
   }
 
   private void deleteConfirmationDialog(
           HashInfoViewModel hashInfoViewModel, HashesRvAdapter hashesRvAdapter) {
 
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-    builder.setTitle("Delete All Hashes")
-            .setMessage("Do you want to delete all hash information? " +
-                    "This action is irreversible")
-            .setPositiveButton("DELETE", (dialog, which) -> {
+    builder.setTitle("Delete All Hashes");
+    builder.setMessage("Do you want to delete all hash information? " +
+                    "This action is irreversible");
+    builder.setPositiveButton("DELETE", (dialog, which) -> {
               hashInfoViewModel.deleteAllHashInfo();
               hashesRvAdapter.removeAllHashInformation();
-            })
-            .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
+            });
+    builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
   }
 
   @Override

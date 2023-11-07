@@ -50,32 +50,9 @@ public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.Hashes
   @Override
   public void onBindViewHolder(@NonNull HashesAdapterViewHolder holder, int position) {
     HashInfoEntity currentHashInfo = hashInfoEntityList.get(position);
-    StringBuilder bssidFormatted = new StringBuilder();
-
-    // This formats the mac address (BSSID), e.g. "1234567890AB" will become "12:34:56:78:90:AB"
-    for (int i = 0; i < currentHashInfo.bssid.length(); i += 2) {
-      // Append two characters at a time
-      bssidFormatted.append(currentHashInfo.bssid.charAt(i));
-      bssidFormatted.append(currentHashInfo.bssid.charAt(i + 1));
-
-      // Append a colon if not at the end
-      if (i + 2 < currentHashInfo.bssid.length()) {
-        bssidFormatted.append(":");
-      }
-    }
-
     holder.textViewApNameHashesItem.setText(currentHashInfo.ssid);
-    holder.textViewMacAddressHashesItem.setText(bssidFormatted.toString());
-
-    StringBuilder hash = new StringBuilder();
-    if (currentHashInfo.keyType.equals("PMKID")) {
-      hash.append("PMKID: ");
-    } else if (currentHashInfo.keyType.equals("MIC")) {
-      hash.append("MIC: ");
-    }
-
-    hash.append(currentHashInfo.hashData);
-    holder.textViewHashDataHashesItem.setText(hash.toString());
+    holder.textViewMacAddressHashesItem.setText(currentHashInfo.bssid);
+    holder.textViewHashDataHashesItem.setText(currentHashInfo.hashData);
 
     holder.materialCardViewHashesListItem.setOnClickListener(v -> {
       HashInfoModalBottomArgs hashInfoModalBottomArgs = new HashInfoModalBottomArgs(

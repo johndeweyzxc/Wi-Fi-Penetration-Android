@@ -21,14 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.LauncherOutputData;
-import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
 import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs;
 import com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs;
-
-import java.util.Objects;
 
 public class TerminalFragment extends Fragment {
 
@@ -82,52 +80,10 @@ public class TerminalFragment extends Fragment {
     binding.materialToolBarTerminal.setNavigationOnClickListener(v ->
             binding.drawerLayoutTerminal.open()
     );
-    binding.materialToolBarTerminal.setOnMenuItemClickListener(menuItem -> {
-      String[] choices = new String[]{"Restart Launcher", "More Information"};
+    binding.navigationViewTerminal.setNavigationItemSelectedListener(this::navItemSelected);
 
-      if (menuItem.getItemId() == R.id.moreOptionsTerminalTopRightDialogMenu) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-        builder.setTitle("Options")
-                .setItems(choices, (dialog, which) -> {
-                  if (which == 0) {
-                    terminalViewModel.writeControlCodeRestartLauncher();
-                    dialog.dismiss();
-                  } else if (which == 1) {
-                    // TODO: Show dialog that shows information about the state of the terminal
-                  }
-                }).show();
-      }
-      return false;
-    });
-    binding.navigationViewTerminal.setNavigationItemSelectedListener(
-            this::navItemSelected
-    );
-
-    binding.buttonCreateCommandTerminal.setOnClickListener(v -> {
-      View dialogCommandInput = LayoutInflater.from(requireContext()).inflate(
-              R.layout.dialog_command_input, null);
-      TextInputEditText textInputEditTextDialogCommandInput = dialogCommandInput.findViewById(
-              R.id.textInputEditTextDialogCommandInput);
-
-      textInputEditTextDialogCommandInput.requestFocus();
-
-      MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(
-              requireContext())
-              .setTitle("Command Instruction Input")
-              .setMessage("Enter command instruction code that will be sent to the launcher module")
-              .setView(dialogCommandInput)
-              .setPositiveButton("SEND", (dialog, which) ->
-                      terminalViewModel.writeDataToDevice(Objects.requireNonNull(
-                      textInputEditTextDialogCommandInput.getText()
-                      ).toString()))
-              .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
-
-      AlertDialog dialog = materialAlertDialogBuilder.create();
-      if (dialog.getWindow() != null) {
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-      }
-      dialog.show();
-    });
+    binding.buttonCreateCommandTerminal.setOnClickListener(v ->
+            showDialogAskUserToEnterInstructionCode());
 
     TerminalRVAdapter terminalRVAdapter = setupRecyclerView();
     setupObservers(terminalRVAdapter);
@@ -140,6 +96,35 @@ public class TerminalFragment extends Fragment {
     binding.recyclerViewLogsTerminal.setAdapter(terminalRVAdapter);
     binding.recyclerViewLogsTerminal.setLayoutManager(layout);
     return terminalRVAdapter;
+  }
+
+  private void showDialogAskUserToEnterInstructionCode() {
+    View dialogCommandInput = LayoutInflater.from(requireContext()).inflate(
+            R.layout.dialog_command_input, null);
+    TextInputEditText textInputEditTextDialogCommandInput = dialogCommandInput.findViewById(
+            R.id.textInputEditTextDialogCommandInput);
+
+    textInputEditTextDialogCommandInput.requestFocus();
+
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+    builder.setTitle("Command Instruction Input");
+    builder.setMessage("Enter command instruction code that will be sent to the launcher module");
+    builder.setView(dialogCommandInput);
+    builder.setPositiveButton("SEND", (dialog, which) -> {
+      if (textInputEditTextDialogCommandInput.getText() == null) {
+        dialog.dismiss();
+      }
+
+      String instructionCode = textInputEditTextDialogCommandInput.getText().toString();
+      terminalViewModel.writeDataToDevice(instructionCode);
+    });
+    builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+
+    AlertDialog dialog = builder.create();
+    if (dialog.getWindow() != null) {
+      dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+    dialog.show();
   }
 
   private void setupObservers(TerminalRVAdapter terminalRVAdapter) {
@@ -270,16 +255,9 @@ public class TerminalFragment extends Fragment {
       showAttackTypeDialogSelector(false);
       return true;
     } else if (item.getItemId() == R.id.settingsMenuNavItemTerminal) {
+
       binding.drawerLayoutTerminal.close();
-
-      // TODO: Navigate to settings
-
-      return true;
-    } else if (item.getItemId() == R.id.infoMenuNavItemsTerminal) {
-      binding.drawerLayoutTerminal.close();
-
-      // TODO: Navigate to info
-
+      // Reserved navigation item option for future extensions
       return true;
     }
     return false;
@@ -291,23 +269,23 @@ public class TerminalFragment extends Fragment {
     final int[] checkedItem = {-1};
 
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-    builder.setTitle("Select attack type")
-            .setPositiveButton("SELECT", (dialog, which) -> {
-              if (checkedItem[0] == -1) {
-                return;
-              }
-              checkedItem[0] = -1;
-              if (automaticAttack) {
-                navigateToAutoArmaFragment();
-              } else {
-                navigateToManualArmaFragment();
-              }
-            })
-            .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())
-            .setSingleChoiceItems(choices, checkedItem[0], (dialog, which) -> {
-              checkedItem[0] = which;
-              selectedArmament = choices[which];
-            }).show();
+    builder.setTitle("Select attack type");
+    builder.setPositiveButton("SELECT", (dialog, which) -> {
+      if (checkedItem[0] == -1) {
+        return;
+      }
+      checkedItem[0] = -1;
+      if (automaticAttack) {
+        navigateToAutoArmaFragment();
+      } else {
+        navigateToManualArmaFragment();
+      }
+    });
+    builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+    builder.setSingleChoiceItems(choices, checkedItem[0], (dialog, which) -> {
+      checkedItem[0] = which;
+      selectedArmament = choices[which];
+    }).show();
   }
 
   private void navigateToAutoArmaFragment() {

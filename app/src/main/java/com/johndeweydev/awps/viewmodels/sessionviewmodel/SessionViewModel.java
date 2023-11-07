@@ -82,7 +82,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     sessionRepoSerial.writeDataToDevice("06");
   }
 
-  public void writeControlCodeDeactivationToLauncher(String reason) {
+  public void writeControlCodeDeactivationToLauncher() {
     sessionRepoSerial.writeDataToDevice("07");
   }
 

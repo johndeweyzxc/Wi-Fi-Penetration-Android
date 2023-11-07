@@ -12,7 +12,4 @@
     <item
         android:id="@+id/settingsMenuNavItemTerminal"
         android:title="Settings" />
-    <item
-        android:id="@+id/infoMenuNavItemsTerminal"
-        android:title="Info"/>
 </menu>
