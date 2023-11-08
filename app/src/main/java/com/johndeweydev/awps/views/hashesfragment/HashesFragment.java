@@ -2,6 +2,7 @@ package com.johndeweydev.awps.views.hashesfragment;
 
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentHashesBinding;
 import com.johndeweydev.awps.models.data.HashInfoEntity;
+import com.johndeweydev.awps.viewmodels.bridgeviewmodel.BridgeViewModel;
 import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
 
 import java.util.ArrayList;
@@ -32,7 +34,8 @@ public class HashesFragment extends Fragment {
 
   private FragmentHashesBinding binding;
   private HashInfoViewModel hashInfoViewModel;
-  private HashInfoEntity deletedHashInfo;
+  private BridgeViewModel bridgeViewModel;
+  private HashInfoEntity swipedHashInfo;
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -46,6 +49,7 @@ public class HashesFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     hashInfoViewModel = new ViewModelProvider(this).get(HashInfoViewModel.class);
+    bridgeViewModel = new ViewModelProvider(this).get(BridgeViewModel.class);
 
     HashesRvAdapterEvent hashesRvAdapterEvent = hashInfoModalBottomArgs -> {
       HashesFragmentDirections.ActionHashesFragmentToHashInfoModalBottomSheetDialog action;
@@ -84,7 +88,7 @@ public class HashesFragment extends Fragment {
 
   private ItemTouchHelper.SimpleCallback recyclerViewSwipe(HashesRvAdapter hashesRvAdapter) {
     return new ItemTouchHelper.SimpleCallback(0,
-            ItemTouchHelper.LEFT) {
+            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
       @Override
       public boolean onMove(
               @NonNull RecyclerView recyclerView,
@@ -99,22 +103,32 @@ public class HashesFragment extends Fragment {
         // The current position of the swiped recycler view item
         int position = viewHolder.getBindingAdapterPosition();
 
-        if (direction != ItemTouchHelper.LEFT) {
-          // User swiped right on the recycler view item
-          return;
+        if (direction == ItemTouchHelper.RIGHT) {
+          swipedRight(position);
+        } else if (direction == ItemTouchHelper.LEFT) {
+          swipedLeft(position);
         }
+      }
 
-        // User swiped left on the recycler view item, this will partially delete the item in the
-        // view but the information is still in the database.
-        deletedHashInfo = hashesRvAdapter.removeHashInformation(position);
-        Snackbar snackbar = Snackbar.make(binding.recyclerViewHashInformationHashes,
-                "Deleted " + deletedHashInfo.ssid, Snackbar.LENGTH_LONG
-        ).setAction("Undo", v -> {
-          hashesRvAdapter.appendHashInformation(deletedHashInfo, position);
-          deletedHashInfo = null;
+      private void swipedRight(int position) {
+        // User swiped right on the recycler view item, this will upload the item in the rest api
+        // server
+        swipedHashInfo = hashesRvAdapter.removeHashInformation(position);
+
+        Snackbar snackbarUpload = Snackbar.make(binding.recyclerViewHashInformationHashes,
+                "Uploaded " + swipedHashInfo.ssid, Snackbar.LENGTH_LONG);
+        snackbarUpload.setAction("Undo", v -> {
+          hashesRvAdapter.appendHashInformation(swipedHashInfo, position);
+          swipedHashInfo = null;
         });
 
-        Snackbar.Callback onShownAndDismissedCallback = new Snackbar.Callback() {
+        Snackbar.Callback callbackUpload = createCallBackForUploading();
+        snackbarUpload.addCallback(callbackUpload);
+        snackbarUpload.show();
+      }
+
+      private Snackbar.Callback createCallBackForUploading() {
+        return new Snackbar.Callback() {
           @Override
           public void onShown(Snackbar sb) {
             super.onShown(sb);
@@ -122,16 +136,60 @@ public class HashesFragment extends Fragment {
           @Override
           public void onDismissed(Snackbar transientBottomBar, int event) {
             super.onDismissed(transientBottomBar, event);
-            if (deletedHashInfo == null) {
+            if (swipedHashInfo == null) {
               return;
             }
+
+            Log.d("dev-log", "HashesFragment.createCallBackForUploading: " +
+                    "Uploading hash info to the rest api server");
+            bridgeViewModel.uploadHash(swipedHashInfo);
+
             // Deletes the hash info in the database
-            hashInfoViewModel.deleteHashInfo(deletedHashInfo);
-            deletedHashInfo = null;
+            Log.d("dev-log", "HashesFragment.createCallBackForUploading: " +
+                    "Deleting hash info in the database");
+            hashInfoViewModel.deleteHashInfo(swipedHashInfo);
+            swipedHashInfo = null;
           }
         };
-        snackbar.addCallback(onShownAndDismissedCallback);
-        snackbar.show();
+      }
+
+      private void swipedLeft(int position) {
+        // User swiped left on the recycler view item, this will partially delete the item in the
+        // view but the information is still in the database.
+        swipedHashInfo = hashesRvAdapter.removeHashInformation(position);
+
+        Snackbar snackbarDelete = Snackbar.make(binding.recyclerViewHashInformationHashes,
+                "Deleted " + swipedHashInfo.ssid, Snackbar.LENGTH_LONG);
+        snackbarDelete.setAction("Undo", v -> {
+          hashesRvAdapter.appendHashInformation(swipedHashInfo, position);
+          swipedHashInfo = null;
+        });
+
+        Snackbar.Callback callbackDelete = createSnackbarCallbackForDeleting();
+        snackbarDelete.addCallback(callbackDelete);
+        snackbarDelete.show();
+      }
+
+      private Snackbar.Callback createSnackbarCallbackForDeleting() {
+        return new Snackbar.Callback() {
+          @Override
+          public void onShown(Snackbar sb) {
+            super.onShown(sb);
+          }
+          @Override
+          public void onDismissed(Snackbar transientBottomBar, int event) {
+            super.onDismissed(transientBottomBar, event);
+            if (swipedHashInfo == null) {
+              return;
+            }
+
+            // Deletes the hash info in the database
+            Log.d("dev-log", "HashesFragment.createSnackbarCallbackForDeleting: " +
+                    "Deleting hash info in the database");
+            hashInfoViewModel.deleteHashInfo(swipedHashInfo);
+            swipedHashInfo = null;
+          }
+        };
       }
 
       @Override
@@ -144,8 +202,10 @@ public class HashesFragment extends Fragment {
 
         new RecyclerViewSwipeDecorator.Builder(
                 c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                .addSwipeRightBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.md_theme_light_primary))
+                .addSwipeRightActionIcon(R.drawable.ic_icn_upload_24)
                 .addSwipeLeftBackgroundColor(ContextCompat.getColor(
-                        requireActivity(), R.color.md_theme_light_primary
+                        requireActivity(), R.color.md_theme_light_secondary
                 ))
                 .addSwipeLeftActionIcon(R.drawable.ic_btn_delete_24)
                 .create()

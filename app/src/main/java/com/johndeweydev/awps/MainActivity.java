@@ -14,6 +14,8 @@ import androidx.navigation.Navigation;
 import androidx.room.Room;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.johndeweydev.awps.models.api.bridge.Bridge;
+import com.johndeweydev.awps.models.api.bridge.BridgeSingleton;
 import com.johndeweydev.awps.models.api.hashinfo.HashInfoDatabase;
 import com.johndeweydev.awps.models.api.hashinfo.HashInfoSingleton;
 import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
@@ -61,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
             HashInfoDatabase.class, "awps_database").build();
     hashInfoSingleton.setHashInfoDatabase(hashInfoDatabase);
 
+    BridgeSingleton bridgeSingleton = BridgeSingleton.getInstance();
+    bridgeSingleton.setBridge(new Bridge());
   }
 
   private void fragmentChangeListener() {
