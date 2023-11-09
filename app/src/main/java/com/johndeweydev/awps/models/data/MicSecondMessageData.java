@@ -1,26 +1,62 @@
 package com.johndeweydev.awps.models.data;
 
 public class MicSecondMessageData {
-  // Version, Type, Length and Key Description Type
-  public String messageInfo;
+
+  public String version;
+  public String type;
+  public String length;
+  public String keyDescriptionType;
+  public String keyInformation;
+  public String keyLength;
   public String replayCounter;
   public String snonce;
+  public String keyIv;
+  public String keyRsc;
+  public String keyId;
   public String mic;
-  public String wpaKeyData;
+  public String keyDataLength;
+  public String keyData;
 
-  public MicSecondMessageData(String messageInfo, String replayCounter, String snonce, String mic,
-          String wpaKeyData
+  public MicSecondMessageData(
+          String version, String type, String length, String keyDescriptionType,
+          String keyInformation, String keyLength, String replayCounter, String snonce,
+          String keyIv, String keyRsc, String keyId, String mic, String keyDataLength,
+          String keyData
   ) {
-    this.messageInfo = messageInfo;
+    this.version = version;
+    this.type = type;
+    this.length = length;
+    this.keyDescriptionType = keyDescriptionType;
+    this.keyInformation = keyInformation;
+    this.keyLength = keyLength;
+
     this.replayCounter = replayCounter;
     this.snonce = snonce;
+    this.keyIv = keyIv;
+    this.keyRsc = keyRsc;
+    this.keyId = keyId;
     this.mic = mic;
-    this.wpaKeyData = wpaKeyData;
+
+    this.keyDataLength = keyDataLength;
+    this.keyData = keyData;
   }
   public String getMic() {
     return mic;
   }
   public String getAllData() {
-    return "-" + messageInfo + "-" + replayCounter + "-" + snonce + "-" + wpaKeyData;
+    return version + "-" +
+            type + "-" +
+            length + "-" +
+            keyDescriptionType + "-" +
+            keyInformation + "-" +
+            keyLength + "-" +
+            replayCounter + "-" +
+            snonce + "-" +
+            keyIv + "-" +
+            keyRsc + "-" +
+            keyId + "-" +
+            mic + "-" +
+            keyDataLength + "-" +
+            keyData + "-";
   }
 }

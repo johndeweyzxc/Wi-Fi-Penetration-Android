@@ -261,13 +261,6 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherMicIvRscIdNotSetToZero(String ivRscId) {
-    currentAttackLog.postValue("(" + attackLogNumber + ") " + "The IV or RSC or ID is not set " +
-            "to all zero, " + ivRscId);
-    attackLogNumber++;
-  }
-
-  @Override
   public void onLauncherMainTaskCurrentStatus(String attackType, int attackStatus) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + attackType + ", status is " +
             attackStatus);
@@ -283,57 +276,81 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
           @Nullable MicSecondMessageData micSecondMessageData
   ) {
     if (attackType.equals("PMKID") && messageNumber == 1) {
-      if (pmkidFirstMessageData == null) {
+      handlePmkidEapolMessageEvent(pmkidFirstMessageData);
+    } else if (attackType.equals("MIC")) {
+      handleMicEapolMessageEvent(micFirstMessageData, micSecondMessageData, messageNumber);
+    }
+  }
+
+  private void handlePmkidEapolMessageEvent(PmkidFirstMessageData pmkidFirstMessageData) {
+    if (pmkidFirstMessageData == null) {
+      Log.d("dev-log", "SessionViewModel.handlePmkidEapolMessageEvent: " +
+              "PMKID data is null");
+      return;
+    }
+
+    String result = "PMKID is " + pmkidFirstMessageData.pmkid();
+
+    String ssid = targetAccessPointSsid;
+    String bssid = pmkidFirstMessageData.bssid();
+    String clientMacAddress = pmkidFirstMessageData.client();
+    String keyType = "PMKID";
+    String hashData = pmkidFirstMessageData.pmkid();
+    String anonce = "None";
+    String keyData = "None";
+    String dateCaptured = createStringDateTime();
+
+    launcherExecutionResultData = new HashInfoEntity(
+            ssid, bssid, clientMacAddress, keyType, hashData, anonce, keyData, dateCaptured);
+
+    currentAttackLog.postValue("(" + attackLogNumber + ") " + result);
+    attackLogNumber++;
+  }
+
+  private void handleMicEapolMessageEvent(
+          @Nullable MicFirstMessageData micFirstMessageData,
+          @Nullable MicSecondMessageData micSecondMessageData,
+          int messageNumber
+  ) {
+    if (messageNumber == 1) {
+      if (micFirstMessageData == null) {
         Log.d("dev-log", "SessionViewModel.onLauncherReceivedEapolMessage: " +
-                "PMKID data is null");
+                "MIC first message is null");
         return;
       }
 
-      String result = "PMKID is " + pmkidFirstMessageData.pmkid();
+      String result = "Anonce is " + micFirstMessageData.anonce();
+
+      String ssid = targetAccessPointSsid;
+      String bssid = micFirstMessageData.bssid();
+      String clientMacAddress = micFirstMessageData.clientMacAddress();
+      String keyType = "MIC";
+      String hashData = "None";
+      String anonce = micFirstMessageData.anonce();
+      String keyData = "None";
+      String dateCaptured = createStringDateTime();
 
       launcherExecutionResultData = new HashInfoEntity(
-              targetAccessPointSsid, pmkidFirstMessageData.bssid(),
-              pmkidFirstMessageData.client(), "PMKID", pmkidFirstMessageData.pmkid(),
-              "None", createStringDateTime()
-      );
+              ssid, bssid, clientMacAddress, keyType, hashData, anonce, keyData, dateCaptured);
 
-      currentAttackLog.postValue("(" + attackLogNumber + ") " + result);
+      currentAttackLog.postValue("(" + attackLogNumber + ") " +
+              "Got anonce from first EAPOL message. " + result);
       attackLogNumber++;
-    } else if (attackType.equals("MIC")) {
-
-      if (messageNumber == 1) {
-        if (micFirstMessageData == null) {
-          Log.d("dev-log", "SessionViewModel.onLauncherReceivedEapolMessage: " +
-                  "MIC first message is null");
-          return;
-        }
-
-        String result = "Anonce is " + micFirstMessageData.anonce();
-
-        launcherExecutionResultData = new HashInfoEntity(targetAccessPointSsid,
-                micFirstMessageData.bssid(), micFirstMessageData.clientMacAddress(),
-                "MIC", "None", micFirstMessageData.anonce(),
-                createStringDateTime());
-
-        currentAttackLog.postValue("(" + attackLogNumber + ") " +
-                "Got anonce from first EAPOL message. " + result);
-        attackLogNumber++;
-      } else if (messageNumber == 2) {
-        if (micSecondMessageData == null) {
-          Log.d("dev-log", "SessionViewModel.onLauncherReceivedEapolMessage: " +
-                  "MIC first message is null");
-          return;
-        }
-
-        String result = "MIC is " + micSecondMessageData.getMic();
-
-        launcherExecutionResultData.hashData = micSecondMessageData.getMic();
-        launcherExecutionResultData.keyData += micSecondMessageData.getAllData();
-
-        currentAttackLog.postValue("(" + attackLogNumber + ") " +
-                "Got EAPOL data from second message. " + result);
-        attackLogNumber++;
+    } else if (messageNumber == 2) {
+      if (micSecondMessageData == null) {
+        Log.d("dev-log", "SessionViewModel.onLauncherReceivedEapolMessage: " +
+                "MIC first message is null");
+        return;
       }
+
+      String result = "MIC is " + micSecondMessageData.getMic();
+
+      launcherExecutionResultData.hashData = micSecondMessageData.getMic();
+      launcherExecutionResultData.keyData = micSecondMessageData.getAllData();
+
+      currentAttackLog.postValue("(" + attackLogNumber + ") " +
+              "Got EAPOL data from second message. " + result);
+      attackLogNumber++;
     }
   }
 

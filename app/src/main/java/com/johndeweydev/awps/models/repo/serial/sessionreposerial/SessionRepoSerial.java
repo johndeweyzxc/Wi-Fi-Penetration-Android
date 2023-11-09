@@ -160,21 +160,21 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
         int status = Integer.parseInt(strDataList.get(2));
         sessionViewModelEvent.onLauncherMainTaskCurrentStatus("PMKID", status);
       }
-      case "MSG_1" -> {
-        String bssid = strDataList.get(2);
-        String client = strDataList.get(3);
-        String pmkid = strDataList.get(4);
-        PmkidFirstMessageData pmkidFirstMessageData = new PmkidFirstMessageData(
-                bssid, client, pmkid
-        );
-        sessionViewModelEvent.onLauncherReceivedEapolMessage(
-                "PMKID", 1, pmkidFirstMessageData,
-                null, null);
-      }
+      case "MSG_1" -> handlePmkidMessage1(strDataList);
       case "FINISHING_SEQUENCE" -> sessionViewModelEvent.onLauncherFinishingSequence();
       case "SUCCESS" -> sessionViewModelEvent.onLauncherSuccess();
       case "FAILURE" -> sessionViewModelEvent.onLauncherFailure(strDataList.get(2));
     }
+  }
+
+  private void handlePmkidMessage1(ArrayList<String> dataList) {
+    String bssid = dataList.get(2);
+    String client = dataList.get(3);
+    String pmkid = dataList.get(4);
+    PmkidFirstMessageData pmkidFirstMessageData = new PmkidFirstMessageData(bssid, client, pmkid);
+    sessionViewModelEvent.onLauncherReceivedEapolMessage(
+            "PMKID", 1, pmkidFirstMessageData,
+            null, null);
   }
 
   private void micContext(ArrayList<String> strDataList) {
@@ -192,35 +192,48 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
         int status = Integer.parseInt(strDataList.get(2));
         sessionViewModelEvent.onLauncherMainTaskCurrentStatus("MIC", status);
       }
-      case "MSG_1" -> {
-        String bssid = strDataList.get(2);
-        String client = strDataList.get(3);
-        String anonce = strDataList.get(4);
-        MicFirstMessageData micFirstMessageData = new MicFirstMessageData(bssid, client, anonce);
-        sessionViewModelEvent.onLauncherReceivedEapolMessage(
-                "MIC", 1, null,
-                micFirstMessageData, null);
-      }
-      case "MSG_2" -> {
-        String secondMessageInfo = strDataList.get(4) + strDataList.get(5) + strDataList.get(6) +
-                strDataList.get(7) + strDataList.get(8) + strDataList.get(9);
-        String replayCounter = strDataList.get(10);
-        String snonce = strDataList.get(11);
-        String mic = strDataList.get(12);
-        String wpaKeyData = strDataList.get(13);
-        MicSecondMessageData micSecondMessageData = new MicSecondMessageData(
-                secondMessageInfo, replayCounter, snonce, mic, wpaKeyData
-        );
-        sessionViewModelEvent.onLauncherReceivedEapolMessage(
-                "MIC", 2, null, null,
-                micSecondMessageData);
-      }
-      case "IV_RSC_ID" ->
-              sessionViewModelEvent.onLauncherMicIvRscIdNotSetToZero(strDataList.get(1));
+      case "MSG_1" -> handleMicMessage1(strDataList);
+      case "MSG_2" -> handleMicMessage2(strDataList);
       case "FINISHING SEQUENCE" -> sessionViewModelEvent.onLauncherFinishingSequence();
       case "SUCCESS" -> sessionViewModelEvent.onLauncherSuccess();
       case "FAILURE" -> sessionViewModelEvent.onLauncherFailure(strDataList.get(2));
     }
+  }
+
+  private void handleMicMessage1(ArrayList<String> dataList) {
+    String bssid = dataList.get(2);
+    String client = dataList.get(3);
+    String anonce = dataList.get(4);
+    MicFirstMessageData micFirstMessageData = new MicFirstMessageData(bssid, client, anonce);
+    sessionViewModelEvent.onLauncherReceivedEapolMessage(
+            "MIC", 1, null,
+            micFirstMessageData, null);
+  }
+
+  private void handleMicMessage2(ArrayList<String> dataList) {
+    String version = dataList.get(4);
+    String type = dataList.get(5);
+    String length = dataList.get(6);
+    String keyDescriptionType = dataList.get(7);
+    String keyInformation = dataList.get(8);
+    String keyLength = dataList.get(9);
+
+    String replayCounter = dataList.get(10);
+    String snonce = dataList.get(11);
+    String keyIv = dataList.get(12);
+    String keyRsc = dataList.get(13);
+    String keyId = dataList.get(14);
+    String mic = dataList.get(15);
+
+    String keyDataLength = dataList.get(16);
+    String keyData = dataList.get(17);
+
+    MicSecondMessageData micSecondMessageData = new MicSecondMessageData(
+            version, type, length, keyDescriptionType, keyInformation, keyLength,
+            replayCounter, snonce, keyIv, keyRsc, keyId, mic, keyDataLength, keyData);
+
+    sessionViewModelEvent.onLauncherReceivedEapolMessage("MIC", 2,
+            null, null, micSecondMessageData);
   }
 
   private void reconnaissanceContext(ArrayList<String> strDataList) {
