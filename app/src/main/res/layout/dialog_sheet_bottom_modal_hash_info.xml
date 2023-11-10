@@ -9,7 +9,7 @@
         android:id="@+id/textViewTargetSheetBottomModalHash"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="Target Access Point"
         android:textSize="18sp"
         android:fontFamily="@font/roboto_medium"
@@ -87,13 +87,22 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewKeyTypeSheetBottomModalHash" />
 
     <TextView
+        android:id="@+id/textViewAnonceSheetBottomModalHash"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Anonce: ABCDEF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewHashDataSheetBottomModalHash" />
+
+    <TextView
         android:id="@+id/textViewKeyDataSheetBottomModalHash"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Key Data: ABCDEF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewHashDataSheetBottomModalHash" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewAnonceSheetBottomModalHash" />
 
     <TextView
         android:id="@+id/textViewMetaDataSheetBottomModalHash"

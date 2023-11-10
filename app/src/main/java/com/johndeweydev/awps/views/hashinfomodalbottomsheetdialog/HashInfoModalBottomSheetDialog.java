@@ -51,6 +51,7 @@ public class HashInfoModalBottomSheetDialog extends BottomSheetDialogFragment {
 
     binding.textViewKeyTypeSheetBottomModalHash.setText(hashInfoModalBottomArgs.getKeyType());
     binding.textViewHashDataSheetBottomModalHash.setText(hashInfoModalBottomArgs.getHashData());
+    binding.textViewAnonceSheetBottomModalHash.setText(hashInfoModalBottomArgs.getaNonce());
     binding.textViewKeyDataSheetBottomModalHash.setText(hashInfoModalBottomArgs.getKeyData());
     binding.textViewDateCapturedSheetBottomModalHash.setText(
             hashInfoModalBottomArgs.getDateCaptured());

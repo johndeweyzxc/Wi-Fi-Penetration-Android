@@ -57,8 +57,8 @@ public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.Hashes
     holder.materialCardViewHashesListItem.setOnClickListener(v -> {
       HashInfoModalBottomArgs hashInfoModalBottomArgs = new HashInfoModalBottomArgs(
               currentHashInfo.ssid, currentHashInfo.bssid, currentHashInfo.clientMacAddress,
-              currentHashInfo.keyType, currentHashInfo.keyData, currentHashInfo.hashData,
-              currentHashInfo.dateCaptured);
+              currentHashInfo.keyType, currentHashInfo.keyData, currentHashInfo.aNonce,
+              currentHashInfo.hashData, currentHashInfo.dateCaptured);
       hashesRvAdapterEvent.onHashInfoClick(hashInfoModalBottomArgs);
     });
   }

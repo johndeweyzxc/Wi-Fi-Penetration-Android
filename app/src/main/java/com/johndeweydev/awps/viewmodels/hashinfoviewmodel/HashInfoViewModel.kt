@@ -43,6 +43,7 @@ class HashInfoViewModel : ViewModel() {
         hashInfoEntity.clientMacAddress = formatMacAddress(hashInfoEntity.clientMacAddress)
         hashInfoEntity.keyType = "Type: " + hashInfoEntity.keyType
         hashInfoEntity.hashData = "Hash: " + hashInfoEntity.hashData
+        hashInfoEntity.aNonce = "Anonce: " + hashInfoEntity.aNonce
         hashInfoEntity.keyData = "Data: " + hashInfoEntity.keyData
         hashInfoEntity.dateCaptured = "Date captured: " + hashInfoEntity.dateCaptured
         result[index] = hashInfoEntity

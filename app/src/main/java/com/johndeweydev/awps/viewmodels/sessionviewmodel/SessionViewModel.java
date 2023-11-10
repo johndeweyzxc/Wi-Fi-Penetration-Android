@@ -295,13 +295,13 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     String bssid = pmkidFirstMessageData.bssid();
     String clientMacAddress = pmkidFirstMessageData.client();
     String keyType = "PMKID";
+    String aNonce = "None";
     String hashData = pmkidFirstMessageData.pmkid();
-    String anonce = "None";
     String keyData = "None";
     String dateCaptured = createStringDateTime();
 
     launcherExecutionResultData = new HashInfoEntity(
-            ssid, bssid, clientMacAddress, keyType, hashData, anonce, keyData, dateCaptured);
+            ssid, bssid, clientMacAddress, keyType, aNonce, hashData, keyData, dateCaptured);
 
     currentAttackLog.postValue("(" + attackLogNumber + ") " + result);
     attackLogNumber++;
@@ -325,13 +325,13 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
       String bssid = micFirstMessageData.bssid();
       String clientMacAddress = micFirstMessageData.clientMacAddress();
       String keyType = "MIC";
-      String hashData = "None";
       String anonce = micFirstMessageData.anonce();
+      String hashData = "None";
       String keyData = "None";
       String dateCaptured = createStringDateTime();
 
       launcherExecutionResultData = new HashInfoEntity(
-              ssid, bssid, clientMacAddress, keyType, hashData, anonce, keyData, dateCaptured);
+              ssid, bssid, clientMacAddress, keyType, anonce, hashData, keyData, dateCaptured);
 
       currentAttackLog.postValue("(" + attackLogNumber + ") " +
               "Got anonce from first EAPOL message. " + result);

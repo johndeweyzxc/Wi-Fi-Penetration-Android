@@ -10,6 +10,7 @@ public class HashInfoModalBottomArgs implements Parcelable {
   private final String clientMacAddress;
   private final String keyType;
   private final String keyData;
+  private final String aNonce;
   private final String hashData;
   private final String dateCaptured;
 
@@ -19,6 +20,7 @@ public class HashInfoModalBottomArgs implements Parcelable {
           String clientMacAddress,
           String keyType,
           String keyData,
+          String aNonce,
           String hashData,
           String dateCaptured
   ) {
@@ -27,6 +29,7 @@ public class HashInfoModalBottomArgs implements Parcelable {
     this.clientMacAddress = clientMacAddress;
     this.keyType = keyType;
     this.keyData = keyData;
+    this.aNonce = aNonce;
     this.hashData = hashData;
     this.dateCaptured = dateCaptured;
   }
@@ -51,6 +54,10 @@ public class HashInfoModalBottomArgs implements Parcelable {
     return keyData;
   }
 
+  public String getaNonce() {
+    return aNonce;
+  }
+
   public String getHashData() {
     return hashData;
   }
@@ -65,6 +72,7 @@ public class HashInfoModalBottomArgs implements Parcelable {
     clientMacAddress = in.readString();
     keyType = in.readString();
     keyData = in.readString();
+    aNonce = in.readString();
     hashData = in.readString();
     dateCaptured = in.readString();
   }
@@ -93,6 +101,7 @@ public class HashInfoModalBottomArgs implements Parcelable {
     dest.writeString(clientMacAddress);
     dest.writeString(keyType);
     dest.writeString(keyData);
+    dest.writeString(aNonce);
     dest.writeString(hashData);
     dest.writeString(dateCaptured);
   }

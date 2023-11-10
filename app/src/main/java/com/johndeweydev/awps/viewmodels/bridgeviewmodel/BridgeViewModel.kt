@@ -39,6 +39,7 @@ class BridgeViewModel : ViewModel(), BridgeViewModelEvent {
     // This hash info entity comes from the recycler view item, so we need to remove
     // unnecessary characters
     val keyType = hashInfoEntity.keyType.replace("Type: ", "")
+    val aNonce = hashInfoEntity.aNonce.replace("Anonce: ", "")
     val hashData = hashInfoEntity.hashData.replace("Hash: ", "")
     val keyData = hashInfoEntity.keyData.replace("Data: ", "")
     val dateCaptured = hashInfoEntity.dateCaptured.replace("Date captured: ", "")
@@ -48,7 +49,7 @@ class BridgeViewModel : ViewModel(), BridgeViewModelEvent {
               hashInfoEntity.ssid,
               hashInfoEntity.bssid,
               hashInfoEntity.clientMacAddress,
-              keyType, hashData, keyData, dateCaptured
+              keyType, aNonce, hashData, keyData, dateCaptured
       )
 
       bridgeRepoNetwork.uploadHash(bridgeUploadRequestHttp)
