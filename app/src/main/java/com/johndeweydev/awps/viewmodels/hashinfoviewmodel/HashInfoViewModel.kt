@@ -45,6 +45,11 @@ class HashInfoViewModel : ViewModel() {
         hashInfoEntity.hashData = "Hash: " + hashInfoEntity.hashData
         hashInfoEntity.aNonce = "Anonce: " + hashInfoEntity.aNonce
         hashInfoEntity.keyData = "Data: " + hashInfoEntity.keyData
+
+        hashInfoEntity.latitude = "Latitude: " + hashInfoEntity.latitude
+        hashInfoEntity.longitude = "Longitude: " + hashInfoEntity.longitude
+        hashInfoEntity.address = "Address: " + hashInfoEntity.address
+
         hashInfoEntity.dateCaptured = "Date captured: " + hashInfoEntity.dateCaptured
         result[index] = hashInfoEntity
       }

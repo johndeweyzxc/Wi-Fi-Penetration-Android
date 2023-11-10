@@ -42,15 +42,19 @@ class BridgeViewModel : ViewModel(), BridgeViewModelEvent {
     val aNonce = hashInfoEntity.aNonce.replace("Anonce: ", "")
     val hashData = hashInfoEntity.hashData.replace("Hash: ", "")
     val keyData = hashInfoEntity.keyData.replace("Data: ", "")
+
+    val latitude = hashInfoEntity.latitude.replace("Latitude: ", "")
+    val longitude = hashInfoEntity.longitude.replace("Longitude: ", "")
+    val address = hashInfoEntity.address.replace("Address: ", "")
+
     val dateCaptured = hashInfoEntity.dateCaptured.replace("Date captured: ", "")
 
     viewModelScope.launch(Dispatchers.IO) {
       val bridgeUploadRequestHttp = BridgeUploadRequestHttp(
-              hashInfoEntity.ssid,
-              hashInfoEntity.bssid,
-              hashInfoEntity.clientMacAddress,
-              keyType, aNonce, hashData, keyData, dateCaptured
-      )
+              hashInfoEntity.ssid, hashInfoEntity.bssid, hashInfoEntity.clientMacAddress,
+              keyType, aNonce, hashData, keyData,
+              latitude, longitude, address,
+              dateCaptured)
 
       bridgeRepoNetwork.uploadHash(bridgeUploadRequestHttp)
     }

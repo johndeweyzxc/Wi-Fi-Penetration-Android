@@ -105,6 +105,45 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewAnonceSheetBottomModalHash" />
 
     <TextView
+        android:id="@+id/textViewLocationSheetBottomModalHash"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Location"
+        android:textSize="18sp"
+        android:fontFamily="@font/roboto_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewKeyDataSheetBottomModalHash" />
+
+    <TextView
+        android:id="@+id/textViewLatitudeSheetBottomModalHash"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Latitude: "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLocationSheetBottomModalHash" />
+
+    <TextView
+        android:id="@+id/textViewLongitudeSheetBottomModalHash"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Longitude: "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLatitudeSheetBottomModalHash" />
+
+    <TextView
+        android:id="@+id/textViewAddressSheetBottomModalHash"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Address: "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLongitudeSheetBottomModalHash" />
+
+    <TextView
         android:id="@+id/textViewMetaDataSheetBottomModalHash"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -114,7 +153,7 @@
         android:fontFamily="@font/roboto_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewKeyDataSheetBottomModalHash" />
+        app:layout_constraintTop_toBottomOf="@id/textViewAddressSheetBottomModalHash" />
 
     <TextView
         android:id="@+id/textViewDateCapturedSheetBottomModalHash"

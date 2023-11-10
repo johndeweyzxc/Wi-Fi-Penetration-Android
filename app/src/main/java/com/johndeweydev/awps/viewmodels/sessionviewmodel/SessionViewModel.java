@@ -300,8 +300,15 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     String keyData = "None";
     String dateCaptured = createStringDateTime();
 
+    // Set the default value for location, fragment will populate this data before saving it in
+    // the local database
+    String latitude = "0.0";
+    String longitude = "0.0";
+    String address = "None";
+
     launcherExecutionResultData = new HashInfoEntity(
-            ssid, bssid, clientMacAddress, keyType, aNonce, hashData, keyData, dateCaptured);
+            ssid, bssid, clientMacAddress, keyType, aNonce, hashData, keyData, dateCaptured,
+            latitude, longitude, address);
 
     currentAttackLog.postValue("(" + attackLogNumber + ") " + result);
     attackLogNumber++;
@@ -325,13 +332,20 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
       String bssid = micFirstMessageData.bssid();
       String clientMacAddress = micFirstMessageData.clientMacAddress();
       String keyType = "MIC";
-      String anonce = micFirstMessageData.anonce();
+      String aNonce = micFirstMessageData.anonce();
       String hashData = "None";
       String keyData = "None";
       String dateCaptured = createStringDateTime();
 
+      // Set default value for the location, fragment will populate this data before saving it in
+      // the local database
+      String latitude = "0.0";
+      String longitude = "0.0";
+      String address = "None";
+
       launcherExecutionResultData = new HashInfoEntity(
-              ssid, bssid, clientMacAddress, keyType, anonce, hashData, keyData, dateCaptured);
+              ssid, bssid, clientMacAddress, keyType, aNonce, hashData, keyData, dateCaptured,
+              latitude, longitude, address);
 
       currentAttackLog.postValue("(" + attackLogNumber + ") " +
               "Got anonce from first EAPOL message. " + result);

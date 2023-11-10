@@ -89,6 +89,7 @@ dependencies {
     implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     // Fix for duplicate class, https://gist.github.com/danielcshn/7aa57155d766d46c043fde015f054d40
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")

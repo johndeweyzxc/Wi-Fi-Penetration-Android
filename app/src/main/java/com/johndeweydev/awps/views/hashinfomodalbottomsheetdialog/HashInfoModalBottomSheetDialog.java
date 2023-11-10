@@ -53,6 +53,11 @@ public class HashInfoModalBottomSheetDialog extends BottomSheetDialogFragment {
     binding.textViewHashDataSheetBottomModalHash.setText(hashInfoModalBottomArgs.getHashData());
     binding.textViewAnonceSheetBottomModalHash.setText(hashInfoModalBottomArgs.getaNonce());
     binding.textViewKeyDataSheetBottomModalHash.setText(hashInfoModalBottomArgs.getKeyData());
+
+    binding.textViewLatitudeSheetBottomModalHash.setText(hashInfoModalBottomArgs.getLatitude());
+    binding.textViewLongitudeSheetBottomModalHash.setText(hashInfoModalBottomArgs.getLongitude());
+    binding.textViewAddressSheetBottomModalHash.setText(hashInfoModalBottomArgs.getAddress());
+
     binding.textViewDateCapturedSheetBottomModalHash.setText(
             hashInfoModalBottomArgs.getDateCaptured());
   }

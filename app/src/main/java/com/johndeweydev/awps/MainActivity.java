@@ -1,18 +1,27 @@
 package com.johndeweydev.awps;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.room.Room;
 
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.johndeweydev.awps.models.api.bridge.Bridge;
 import com.johndeweydev.awps.models.api.bridge.BridgeSingleton;
@@ -26,6 +35,7 @@ import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModelFacto
 public class MainActivity extends AppCompatActivity {
 
   private String currentFragmentLabel;
+  public final static int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +49,21 @@ public class MainActivity extends AppCompatActivity {
             terminalRepoSerial);
     new ViewModelProvider(this, terminalViewModelFactory).get(TerminalViewModel.class);
 
+    setupBackPressedCallback();
+
+    setContentView(R.layout.activity_main);
+    fragmentChangeListener();
+
+    HashInfoSingleton hashInfoSingleton = HashInfoSingleton.getInstance();
+    HashInfoDatabase hashInfoDatabase = Room.databaseBuilder(getApplicationContext(),
+            HashInfoDatabase.class, "awps_database").build();
+    hashInfoSingleton.setHashInfoDatabase(hashInfoDatabase);
+
+    BridgeSingleton bridgeSingleton = BridgeSingleton.getInstance();
+    bridgeSingleton.setBridge(new Bridge());
+  }
+
+  private void setupBackPressedCallback() {
     // When the user presses the back button on their device, it will ask user if it really wants
     // to exit on its current screen
     OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
@@ -54,17 +79,60 @@ public class MainActivity extends AppCompatActivity {
       }
     };
     this.getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
+  }
 
-    setContentView(R.layout.activity_main);
-    fragmentChangeListener();
+  @Override
+  public void onRequestPermissionsResult(
+          int requestCode,
+          @NonNull String[] permissions,
+          @NonNull int[] grantResults
+  ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+      if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+        Toast.makeText(this, "Access to location is required", Toast.LENGTH_LONG)
+                .show();
 
-    HashInfoSingleton hashInfoSingleton = HashInfoSingleton.getInstance();
-    HashInfoDatabase hashInfoDatabase = Room.databaseBuilder(getApplicationContext(),
-            HashInfoDatabase.class, "awps_database").build();
-    hashInfoSingleton.setHashInfoDatabase(hashInfoDatabase);
+        // This either pops the manual arma fragment or the auto arma fragment, because those
+        // fragment are the ones that ask for the GPS feature
+        Navigation.findNavController(this, R.id.fragmentActivityMain)
+                .popBackStack();
+      } else {
+        Log.d("dev-log", "MainActivity.onRequestPermissionsResult: Access to location " +
+                "permission granted");
+      }
+    }
+  }
 
-    BridgeSingleton bridgeSingleton = BridgeSingleton.getInstance();
-    bridgeSingleton.setBridge(new Bridge());
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+      if (resultCode == RESULT_OK) {
+        Log.d("dev-log", "MainActivity.onActivityResult: Location turned on, request " +
+                "for permission to access location");
+        requestForLocationPermission();
+      } else {
+        Toast.makeText(this, "Location is required", Toast.LENGTH_LONG).show();
+
+        // This either pops the manual arma fragment or the auto arma fragment, because those
+        // fragment are the ones that ask for the GPS feature
+        Navigation.findNavController(this, R.id.fragmentActivityMain)
+                .popBackStack();
+      }
+    }
+  }
+
+  private void requestForLocationPermission() {
+    int locationPermission = ContextCompat.checkSelfPermission(
+            this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+    if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(MainActivity.this,
+              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+              LOCATION_PERMISSION_REQUEST_CODE);
+    }
   }
 
   private void fragmentChangeListener() {

@@ -58,7 +58,8 @@ public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.Hashes
       HashInfoModalBottomArgs hashInfoModalBottomArgs = new HashInfoModalBottomArgs(
               currentHashInfo.ssid, currentHashInfo.bssid, currentHashInfo.clientMacAddress,
               currentHashInfo.keyType, currentHashInfo.keyData, currentHashInfo.aNonce,
-              currentHashInfo.hashData, currentHashInfo.dateCaptured);
+              currentHashInfo.hashData, currentHashInfo.latitude, currentHashInfo.longitude,
+              currentHashInfo.address, currentHashInfo.dateCaptured);
       hashesRvAdapterEvent.onHashInfoClick(hashInfoModalBottomArgs);
     });
   }

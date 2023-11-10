@@ -12,6 +12,11 @@ public class HashInfoModalBottomArgs implements Parcelable {
   private final String keyData;
   private final String aNonce;
   private final String hashData;
+
+  private final String latitude;
+  private final String longitude;
+  private final String address;
+
   private final String dateCaptured;
 
   public HashInfoModalBottomArgs(
@@ -22,6 +27,9 @@ public class HashInfoModalBottomArgs implements Parcelable {
           String keyData,
           String aNonce,
           String hashData,
+          String latitude,
+          String longitude,
+          String address,
           String dateCaptured
   ) {
     this.ssid = ssid;
@@ -31,6 +39,9 @@ public class HashInfoModalBottomArgs implements Parcelable {
     this.keyData = keyData;
     this.aNonce = aNonce;
     this.hashData = hashData;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.address = address;
     this.dateCaptured = dateCaptured;
   }
 
@@ -62,6 +73,18 @@ public class HashInfoModalBottomArgs implements Parcelable {
     return hashData;
   }
 
+  public String getLatitude() {
+    return latitude;
+  }
+
+  public String getLongitude() {
+    return longitude;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
   public String getDateCaptured() {
     return dateCaptured;
   }
@@ -74,6 +97,9 @@ public class HashInfoModalBottomArgs implements Parcelable {
     keyData = in.readString();
     aNonce = in.readString();
     hashData = in.readString();
+    latitude = in.readString();
+    longitude = in.readString();
+    address = in.readString();
     dateCaptured = in.readString();
   }
 
@@ -103,6 +129,9 @@ public class HashInfoModalBottomArgs implements Parcelable {
     dest.writeString(keyData);
     dest.writeString(aNonce);
     dest.writeString(hashData);
+    dest.writeString(latitude);
+    dest.writeString(longitude);
+    dest.writeString(address);
     dest.writeString(dateCaptured);
   }
 }

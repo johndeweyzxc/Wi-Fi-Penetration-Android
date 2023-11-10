@@ -38,6 +38,13 @@ public class HashInfoEntity {
   @ColumnInfo(name = "date_captured")
   public String dateCaptured;
 
+  @ColumnInfo(name = "latitude")
+  public String latitude;
+  @ColumnInfo(name = "longitude")
+  public String longitude;
+  @ColumnInfo(name = "address")
+  public String address;
+
   public HashInfoEntity(
           @Nullable String ssid,
           @Nullable String bssid,
@@ -46,7 +53,10 @@ public class HashInfoEntity {
           @Nullable String aNonce,
           @Nullable String hashData,
           @Nullable String keyData,
-          @Nullable String dateCaptured
+          @Nullable String dateCaptured,
+          @Nullable String latitude,
+          @Nullable String longitude,
+          @Nullable String address
   ) {
     this.ssid = ssid;
     this.bssid = bssid;
@@ -56,5 +66,8 @@ public class HashInfoEntity {
     this.hashData = hashData;
     this.keyData = keyData;
     this.dateCaptured = dateCaptured;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.address = address;
   }
 }
