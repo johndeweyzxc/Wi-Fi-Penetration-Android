@@ -20,7 +20,7 @@ public interface ViewModelIOEvent {
    * Received launcher serial data that is formatted
    * @param launcherOutputData contains the time in string and the launcher serial data in string
    * */
-  void onLauncherOutputFormatted(LauncherOutputData launcherOutputData);
+  default void onLauncherOutputFormatted(LauncherOutputData launcherOutputData) {}
 
   /**
    * An error occurred on the launcher

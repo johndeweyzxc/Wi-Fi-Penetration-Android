@@ -9,11 +9,10 @@ import androidx.lifecycle.ViewModel;
 import com.johndeweydev.awps.models.data.AccessPointData;
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.HashInfoEntity;
-import com.johndeweydev.awps.models.data.LauncherOutputData;
-import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 import com.johndeweydev.awps.models.data.MicFirstMessageData;
 import com.johndeweydev.awps.models.data.MicSecondMessageData;
 import com.johndeweydev.awps.models.data.PmkidFirstMessageData;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 import com.johndeweydev.awps.viewmodels.ViewModelIOControl;
 
 import java.time.LocalDateTime;
@@ -95,14 +94,14 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     sessionRepoSerial.writeDataToDevice("01");
   }
 
-  public void writeInstructionCodeToLauncher(String data) {
+  public void writeInstructionCodeToLauncher(String target) {
     String instructionCode = "";
     switch (selectedArmament) {
       case "PMKID Based Attack" -> instructionCode += "02";
       case "MIC Based Attack" -> instructionCode += "03";
       case "Deauther" -> instructionCode += "04";
     }
-    instructionCode += data;
+    instructionCode += target;
     sessionRepoSerial.writeDataToDevice(instructionCode);
   }
 
@@ -129,12 +128,6 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   @Override
   public void stopEventDrivenReadFromDevice() {
     sessionRepoSerial.stopEventDrivenReadFromDevice();
-  }
-
-  @Override
-  public void onLauncherOutputFormatted(LauncherOutputData launcherOutputData) {
-    Log.d("dev-log", "SessionViewModel.onLauncherOutputFormatted: Serial -> " +
-            launcherOutputData.getOutput());
   }
 
   @Override
@@ -193,6 +186,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   public void onLauncherNumberOfFoundAccessPoints(String numberOfAps) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Found " + numberOfAps +
             " access points");
+    accessPointDataList.clear();
     attackLogNumber++;
   }
 
@@ -405,5 +399,6 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "In " + selectedArmament +
             " deauthentication task stopped");
     attackLogNumber++;
+    attackOnGoing = false;
   }
 }

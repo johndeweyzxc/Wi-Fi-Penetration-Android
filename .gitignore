@@ -13,4 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
 keystore.properties
+visuals/Command-Launch-Module-Software-Architecture.drawio

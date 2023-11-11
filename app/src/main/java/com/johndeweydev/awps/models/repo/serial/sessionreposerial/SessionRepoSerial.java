@@ -90,9 +90,6 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
       dataArguments.append("-");
     }
 
-    Log.d("dev-log", "SessionRepository.processContentOfFormattedOutput: " +
-            "Data to process -> " + dataArguments);
-
     switch (strDataList.get(0)) {
       case "ESP_STARTED" -> sessionViewModelEvent.onLauncherStarted();
       case "CMD_PARSER" -> cmdParserContext(strDataList);

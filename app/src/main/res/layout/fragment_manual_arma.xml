@@ -94,8 +94,6 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:ellipsize="end"
-        android:maxLines="1"
         android:text="Start"
         app:cornerRadius="15dp"
         app:icon="@drawable/ic_btn_start_24"

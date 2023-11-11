@@ -35,4 +35,12 @@
 
     <string name="start_manual_arma">Start</string>
     <string name="stop_manual_arma">Stop</string>
+
+    <string-array name="dialog_options_auto_arma">
+        <item>@string/change_attack_type_manual_arma</item>
+        <item>@string/clear_attack_logs_manual_arma</item>
+        <item>@string/restart_launcher_manual_arma</item>
+        <item>@string/database_manual_arma</item>
+        <item>@string/more_info_manual_arma</item>
+    </string-array>
 </resources>

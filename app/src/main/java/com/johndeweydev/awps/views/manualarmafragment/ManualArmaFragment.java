@@ -186,7 +186,7 @@ public class ManualArmaFragment extends Fragment {
           resolvable.startResolutionForResult(requireActivity(),
                   LocationSettingsStatusCodes.RESOLUTION_REQUIRED);
         } catch (IntentSender.SendIntentException sendEx) {
-          Log.w("dev-log", "MainActivity.checkLocationSettings: " + sendEx.getMessage());
+          Log.w("dev-log", "ManualArmaFragment.checkLocationSettings: " + sendEx.getMessage());
         }
       }
     });

@@ -22,38 +22,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_btn_arrow_back_24"
-            app:menu="@menu/auto_arma_top_right_menu"
+            app:menu="@menu/auto_arma_top_right_dialog_menu"
             app:title="Automatic Attack" />
     </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutAttackConfigAutoArma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_smooth_corner"
-        android:padding="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewCurrentTargetAutoArma"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutAutoArma">
-
-        <TextView
-            android:id="@+id/textViewAttackConfigValueAutoArma"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/roboto_medium"
-            android:maxLines="1"
-            android:text="Attack Config: PMKID Based Attack"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/textViewCurrentTargetAutoArma"
@@ -65,24 +36,20 @@
         android:fontFamily="@font/roboto_medium"
         android:text="Current Target"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutCurrentTargetAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutAttackConfigAutoArma" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutAutoArma" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutCurrentTargetAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewStatisticsAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCurrentTargetAutoArma">
 
@@ -93,7 +60,7 @@
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Mac Address:"
+            android:text="Mac Address: "
             android:textAlignment="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -105,7 +72,7 @@
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Service Set Identifier:"
+            android:text="SSID: "
             android:textAlignment="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewMacAddressAutoArma" />
@@ -115,7 +82,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="10dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="12:34:56:78:90:AB"
@@ -129,7 +95,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="10dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="WIFI_NAME123456789"
@@ -137,8 +102,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textViewSsidAutoArma"
             app:layout_constraintTop_toTopOf="@+id/textViewSsidAutoArma" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -153,7 +116,6 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayoutStatisticsAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayoutCurrentTargetAutoArma" />
 
@@ -161,14 +123,12 @@
         android:id="@+id/constraintLayoutStatisticsAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/bg_smooth_corner"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutLauncherStatusAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewStatisticsAutoArma">
 
@@ -263,83 +223,36 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutLauncherStatusAutoArma"
+    <TextView
+        android:id="@+id/textViewAttackLogAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_smooth_corner"
-        android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutRawLogsAutoArma"
+        android:text="Attack Logs"
+        android:textSize="18sp"
+        android:fontFamily="@font/roboto_medium"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutStatisticsAutoArma">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutStatisticsAutoArma" />
 
-        <TextView
-            android:id="@+id/textViewLauncherStatusValueAutoArma"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/roboto_medium"
-            android:maxLines="1"
-            android:text="Launcher Status: Scanning for targets..."
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutRawLogsAutoArma"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAttackLogsAutoArma"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_margin="10dp"
         android:background="@drawable/bg_smooth_corner"
-        android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonCloseAutoArma"
+        app:layout_constraintBottom_toTopOf="@+id/buttonStopStartAutoArma"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutLauncherStatusAutoArma">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewRawLogsAutoArma"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/buttonCloseAutoArma"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Close"
-        app:cornerRadius="15dp"
-        app:icon="@drawable/ic_btn_close_session_24"
-        app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonStopStartAutoArma"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewAttackLogAutoArma" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonStopStartAutoArma"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:text="Start"
@@ -348,6 +261,6 @@
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonCloseAutoArma" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

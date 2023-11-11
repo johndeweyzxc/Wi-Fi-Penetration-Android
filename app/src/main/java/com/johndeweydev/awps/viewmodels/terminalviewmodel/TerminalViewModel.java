@@ -74,9 +74,6 @@ public class TerminalViewModel extends ViewModel implements ViewModelIOControl,
 
   @Override
   public void onLauncherOutputRaw(LauncherOutputData launcherSerialOutputData) {
-    Log.d("dev-log", "TerminalViewModel.onLauncherOutputRaw: Serial -> " +
-            launcherSerialOutputData.getOutput());
-
     String time = "[" + launcherSerialOutputData.getTime() + "]";
     launcherSerialOutputData.setTime(time);
     currentSerialOutputRaw.postValue(launcherSerialOutputData);
