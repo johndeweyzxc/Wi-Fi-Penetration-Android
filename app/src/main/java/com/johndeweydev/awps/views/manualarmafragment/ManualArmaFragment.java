@@ -194,7 +194,7 @@ public class ManualArmaFragment extends Fragment {
 
   private ManualArmaRVAdapter setupRecyclerView() {
     ManualArmaRVAdapter manualArmaRVAdapter = new ManualArmaRVAdapter();
-    LinearLayoutManager layout = new LinearLayoutManager(requireContext());
+    LinearLayoutManager layout = new LinearLayoutManager(requireActivity());
     layout.setStackFromEnd(true);
     binding.recyclerViewAttackLogsManualArma.setAdapter(manualArmaRVAdapter);
     binding.recyclerViewAttackLogsManualArma.setLayoutManager(layout);

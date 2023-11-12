@@ -32,7 +32,9 @@ public interface TargetLockingPhase {
 
   /**
    * The launcher did not found the target access point after it scanned nearby access points
-   * and thus the attack will not proceed and it will not go through the launching sequence
+   * and thus the attack will not proceed and it will not go through the launching sequence.
+   * This is the only callback used by PMKID, MIC and DEAUTH based attack. RECONNAISSANCE
+   * does not use this callback.
    * */
   void onRepoTargetAccessPointNotFound();
 }

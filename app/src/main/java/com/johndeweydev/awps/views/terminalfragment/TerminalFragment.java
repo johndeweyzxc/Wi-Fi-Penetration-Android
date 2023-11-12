@@ -264,7 +264,12 @@ public class TerminalFragment extends Fragment {
   }
 
   private void showAttackTypeDialogSelector(boolean automaticAttack) {
-    final String[] choices = getResources().getStringArray(R.array.dialog_options_terminal);
+    String[] choices;
+    if (automaticAttack) {
+      choices = getResources().getStringArray(R.array.dialog_options_terminal_auto);
+    } else {
+      choices = getResources().getStringArray(R.array.dialog_options_terminal_manual);
+    }
 
     final int[] checkedItem = {-1};
 

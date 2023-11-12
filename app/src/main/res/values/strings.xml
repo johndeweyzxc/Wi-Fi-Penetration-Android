@@ -5,10 +5,15 @@
     <string name="mic_based_attack">MIC Based Attack</string>
     <string name="deauther">Deauther</string>
 
-    <string-array name="dialog_options_terminal">
+    <string-array name="dialog_options_terminal_manual">
         <item>@string/pmkid_based_attack</item>
         <item>@string/mic_based_attack</item>
         <item>@string/deauther</item>
+    </string-array>
+
+    <string-array name="dialog_options_terminal_auto">
+        <item>@string/pmkid_based_attack</item>
+        <item>@string/mic_based_attack</item>
     </string-array>
 
     <string name="find_targets_manual_arma">Find Targets</string>
@@ -39,8 +44,12 @@
     <string-array name="dialog_options_auto_arma">
         <item>@string/change_attack_type_manual_arma</item>
         <item>@string/clear_attack_logs_manual_arma</item>
-        <item>@string/restart_launcher_manual_arma</item>
         <item>@string/database_manual_arma</item>
-        <item>@string/more_info_manual_arma</item>
+        <item>@string/restart_launcher_manual_arma</item>
+    </string-array>
+
+    <string-array name="dialog_options_attack_type_auto_arma">
+        <item>@string/pmkid_based_attack</item>
+        <item>@string/mic_based_attack</item>
     </string-array>
 </resources>

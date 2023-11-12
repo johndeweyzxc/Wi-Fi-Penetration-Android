@@ -152,12 +152,6 @@ public class SessionRepoSerial extends RepositoryIOControl implements Launcher.U
 
   private void pmkidContext(ArrayList<String> strDataList) {
     switch (strDataList.get(1)) {
-      case "FOUND_APS" -> {
-        String numberOfAps = strDataList.get(2);
-        repositoryEvent.onRepoNumberOfFoundAccessPoints(numberOfAps);
-      }
-      case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
-      case "FINISH_SCAN" -> repositoryEvent.onRepoFinishScan();
       case "AP_NOT_FOUND" -> repositoryEvent.onRepoTargetAccessPointNotFound();
       case "LAUNCHING_SEQUENCE" -> repositoryEvent.onRepoLaunchingSequence();
       case "SNIFF_STARTED" -> repositoryEvent.onRepoMainTaskCreated();
@@ -190,12 +184,6 @@ public class SessionRepoSerial extends RepositoryIOControl implements Launcher.U
 
   private void micContext(ArrayList<String> strDataList) {
     switch (strDataList.get(1)) {
-      case "FOUND_APS" -> {
-        String numberOfAps = strDataList.get(2);
-        repositoryEvent.onRepoNumberOfFoundAccessPoints(numberOfAps);
-      }
-      case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
-      case "FINISH_SCAN" -> repositoryEvent.onRepoFinishScan();
       case "AP_NOT_FOUND" -> repositoryEvent.onRepoTargetAccessPointNotFound();
       case "LAUNCHING_SEQUENCE" -> repositoryEvent.onRepoLaunchingSequence();
       case "DEAUTH_STARTED" -> repositoryEvent.onRepoMainTaskCreated();
@@ -261,11 +249,6 @@ public class SessionRepoSerial extends RepositoryIOControl implements Launcher.U
 
   private void deauthContext(ArrayList<String> strDataList) {
     switch (strDataList.get(1)) {
-      case "FOUND_APS" -> {
-        String numberOfAps = strDataList.get(2);
-        repositoryEvent.onRepoNumberOfFoundAccessPoints(numberOfAps);
-      }
-      case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
       case "AP_NOT_FOUND" -> repositoryEvent.onRepoTargetAccessPointNotFound();
       case "FINISH_SCAN" -> repositoryEvent.onRepoFinishScan();
       case "LAUNCHING_SEQUENCE" -> repositoryEvent.onRepoLaunchingSequence();

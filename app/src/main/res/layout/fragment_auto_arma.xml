@@ -27,6 +27,35 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
+        android:id="@+id/textViewAttackConfigAutoArma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Attack Config"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutAutoArma" />
+
+    <TextView
+        android:id="@+id/textViewAttackConfigValueAutoArma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:padding="10dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Config: PMKID Based Attack"
+        android:background="@drawable/bg_smooth_corner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAttackConfigAutoArma" />
+
+    <TextView
         android:id="@+id/textViewCurrentTargetAutoArma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +67,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutAutoArma" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewAttackConfigValueAutoArma" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutCurrentTargetAutoArma"
@@ -84,7 +113,7 @@
             android:layout_gravity="center"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="12:34:56:78:90:AB"
+            android:text="None"
             app:layout_constraintBottom_toBottomOf="@+id/textViewMacAddressAutoArma"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textViewMacAddressAutoArma"
@@ -97,7 +126,7 @@
             android:layout_gravity="center"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="WIFI_NAME123456789"
+            android:text="None"
             app:layout_constraintBottom_toBottomOf="@+id/textViewSsidAutoArma"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textViewSsidAutoArma"
@@ -133,7 +162,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewStatisticsAutoArma">
 
         <ImageView
-            android:id="@+id/imageViewApScannedAutoArma"
+            android:id="@+id/imageViewNearbyApAutoArma"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
@@ -144,36 +173,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewApScannedAutoArma"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:text="Scanned access points: 32"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewApScannedAutoArma"
-            app:layout_constraintStart_toEndOf="@+id/imageViewApScannedAutoArma"
-            app:layout_constraintTop_toTopOf="@+id/imageViewApScannedAutoArma" />
-
-        <ImageView
-            android:id="@+id/imageViewNearbyApAutoArma"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:src="@drawable/ic_icn_nearby_ap_24"
-            android:theme="@style/ImageIconTheme"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewApScannedAutoArma"
-            app:layout_constraintStart_toStartOf="@+id/imageViewApScannedAutoArma"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewApScannedAutoArma" />
-
-        <TextView
             android:id="@+id/textViewNearbyApAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
-            android:text="Nearby access points: 12"
+            android:text="Nearby Access Points"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewNearbyApAutoArma"
             app:layout_constraintStart_toEndOf="@+id/imageViewNearbyApAutoArma"
@@ -196,7 +201,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
-            android:text="Failed attacks: 20"
+            android:text="Failed Attacks"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewFailedAttacksAutoArma"
             app:layout_constraintStart_toEndOf="@+id/imageViewFailedAttacksAutoArma"
             app:layout_constraintTop_toTopOf="@+id/imageViewFailedAttacksAutoArma" />
@@ -206,17 +211,17 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_icn_pmkid_mic_24"
+            android:src="@drawable/ic_icn_pwned_24"
             android:theme="@style/ImageIconTheme"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewFailedAttacksAutoArma" />
 
         <TextView
-            android:id="@+id/textViewTotalKeysFoundAutoArma"
+            android:id="@+id/textViewPwnedAutoArma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Keys found: 120"
+            android:text="Pwned"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewKeysFoundAutoArma"
             app:layout_constraintStart_toEndOf="@+id/imageViewKeysFoundAutoArma"
             app:layout_constraintTop_toTopOf="@+id/imageViewKeysFoundAutoArma" />

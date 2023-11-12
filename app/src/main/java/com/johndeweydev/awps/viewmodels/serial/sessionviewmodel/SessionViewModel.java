@@ -94,14 +94,14 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     sessionRepoSerial.writeDataToDevice("01");
   }
 
-  public void writeInstructionCodeToLauncher(String target) {
+  public void writeInstructionCodeToLauncher(String targetMacAddress) {
     String instructionCode = "";
     switch (selectedArmament) {
       case "PMKID Based Attack" -> instructionCode += "02";
       case "MIC Based Attack" -> instructionCode += "03";
       case "Deauther" -> instructionCode += "04";
     }
-    instructionCode += target;
+    instructionCode += targetMacAddress;
     sessionRepoSerial.writeDataToDevice(instructionCode);
   }
 
