@@ -21,4 +21,7 @@ public interface HashInfoDao {
   void deleteAllHashInfo();
   @Delete
   void deleteHashInfo(HashInfoEntity hashInfoEntity);
+  @Query("SELECT * FROM hash_information " +
+          "WHERE ssid = :ssid AND bssid = :bssid AND hash_data = :hashData LIMIT 1")
+  HashInfoEntity getHashInfoBySsidAndBssidAndHashData(String ssid, String bssid, String hashData);
 }

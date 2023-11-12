@@ -401,9 +401,7 @@ public class ManualArmaFragment extends Fragment {
               sessionViewModel.writeControlCodeActivationToLauncher();
               binding.buttonStartManualArma.setEnabled(false);
             }))
-            .setNegativeButton("CANCEL", (dialog, which) -> Objects.requireNonNull(
-                    binding.textInputEditTextMacAddressManualArma.getText()
-            ).clear()).show();
+            .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
   }
 
   private void showDialogToUserAboutConfiguredAttack(String attackType, String targetMacAddress) {

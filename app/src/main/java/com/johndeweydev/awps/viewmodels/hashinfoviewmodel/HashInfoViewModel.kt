@@ -27,8 +27,23 @@ class HashInfoViewModel : ViewModel() {
   }
 
   fun addNewHashInfo(hashInfoEntity: HashInfoEntity) {
+    val ssid = hashInfoEntity.ssid
+    val bssid = hashInfoEntity.bssid
+    val hashData = hashInfoEntity.hashData
+
     viewModelScope.launch(Dispatchers.IO) {
-      hashInfoRepoDatabase.addNewHashInfo(hashInfoEntity)
+      val result: HashInfoEntity? = async {
+        hashInfoRepoDatabase.getHashInfoBySsidAndBssidAndHashData(ssid, bssid, hashData)
+      }.await()
+
+      if (result == null) {
+        // The hash info entity that will be added is unique and is not found in the database
+        hashInfoRepoDatabase.addNewHashInfo(hashInfoEntity)
+      } else {
+        Log.w("dev-log", "HashInfoViewModel.addNewHashInfo: Hash info entity " +
+                "where ssid is $ssid, bssid is $bssid and a hash data $hashData is already " +
+                "recorded in the database")
+      }
     }
   }
 

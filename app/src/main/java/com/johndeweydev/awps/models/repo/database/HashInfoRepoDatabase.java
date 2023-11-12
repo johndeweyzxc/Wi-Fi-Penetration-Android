@@ -28,4 +28,9 @@ public class HashInfoRepoDatabase {
   public void deleteHashInfo(HashInfoEntity hashInfoEntity) {
     hashInfoDao.deleteHashInfo(hashInfoEntity);
   }
+
+  public HashInfoEntity getHashInfoBySsidAndBssidAndHashData(
+          String ssid, String bssid, String hashData) {
+    return hashInfoDao.getHashInfoBySsidAndBssidAndHashData(ssid, bssid, hashData);
+  }
 }
