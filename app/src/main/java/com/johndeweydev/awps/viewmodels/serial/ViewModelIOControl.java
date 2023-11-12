@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels;
+package com.johndeweydev.awps.viewmodels.serial;
 
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 

@@ -4,7 +4,7 @@ import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages;
 
-public class RepoIOControl {
+public class RepositoryIOControl {
 
   public String connectToDevice(DeviceConnectionParamData deviceConnectionParamData) {
     LauncherConnectionStages status = LauncherSingleton.getInstance().getLauncher()

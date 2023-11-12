@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels.sessionviewmodel;
+package com.johndeweydev.awps.viewmodels.serial.sessionviewmodel;
 
 import android.util.Log;
 
@@ -13,14 +13,14 @@ import com.johndeweydev.awps.models.data.MicFirstMessageData;
 import com.johndeweydev.awps.models.data.MicSecondMessageData;
 import com.johndeweydev.awps.models.data.PmkidFirstMessageData;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
-import com.johndeweydev.awps.viewmodels.ViewModelIOControl;
+import com.johndeweydev.awps.viewmodels.serial.ViewModelIOControl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class SessionViewModel extends ViewModel implements ViewModelIOControl,
-        SessionViewModelEvent {
+        SessionRepoSerial.RepositoryEvent {
 
   public boolean automaticAttack = false;
   public String selectedArmament;
@@ -131,33 +131,33 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherOutputError(String error) {
+  public void onRepoOutputError(String error) {
     Log.d("dev-log", "SessionViewModel.onLauncherOutputError: Serial -> " + error);
     currentSerialOutputError.postValue(error);
   }
 
   @Override
-  public void onLauncherInputError(String input) {
+  public void onRepoInputError(String input) {
     Log.d("dev-log", "SessionViewModel.onLauncherInputError: Serial -> " + input);
     currentSerialInputError.postValue(input);
   }
 
   @Override
-  public void onLauncherStarted() {
+  public void onRepoStarted() {
     launcherStarted.postValue("Launcher module started");
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Module started");
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherArmamentStatus(String armament, String targetBssid) {
+  public void onRepoArmamentStatus(String armament, String targetBssid) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament + "" +
             ", targeting " + targetBssid);
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherInstructionIssued(String armament, String targetBssid) {
+  public void onRepoInstructionIssued(String armament, String targetBssid) {
     if (userWantsToScanForAccessPoint) {
       currentAttackLog.postValue("(" + attackLogNumber + ") " + "Using " + armament);
       launcherActivateConfirmation.postValue("Proceed to scan for nearby access points?");
@@ -171,19 +171,19 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherArmamentActivation() {
+  public void onRepoArmamentActivation() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Armament activate!");
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherArmamentDeactivation() {
+  public void onRepoArmamentDeactivation() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Armament deactivate!");
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherNumberOfFoundAccessPoints(String numberOfAps) {
+  public void onRepoNumberOfFoundAccessPoints(String numberOfAps) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Found " + numberOfAps +
             " access points");
     accessPointDataList.clear();
@@ -191,7 +191,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherFoundAccessPoint(AccessPointData accessPointData) {
+  public void onRepoFoundAccessPoint(AccessPointData accessPointData) {
     if (userWantsToScanForAccessPoint) {
       accessPointDataList.add(accessPointData);
     }
@@ -202,7 +202,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherFinishScan() {
+  public void onRepoFinishScan() {
     if (userWantsToScanForAccessPoint) {
       launcherFinishScanning.postValue(accessPointDataList);
     }
@@ -211,7 +211,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherTargetAccessPointNotFound() {
+  public void onRepoTargetAccessPointNotFound() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "The target " +
             targetAccessPointSsid + " is not found");
     attackLogNumber++;
@@ -219,14 +219,14 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherLaunchingSequence() {
+  public void onRepoLaunchingSequence() {
     currentAttackLog.postValue("(" + attackLogNumber + ") "  + selectedArmament +
             " launching sequence");
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherMainTaskCreated() {
+  public void onRepoMainTaskCreated() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Main task created");
     attackLogNumber++;
     launcherMainTaskCreated.postValue(selectedArmament + " main task created");
@@ -234,35 +234,35 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherPmkidWrongKeyType(String keyType) {
+  public void onRepoPmkidWrongKeyType(String keyType) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID key type, "
             + keyType);
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherPmkidWrongOui(String oui) {
+  public void onRepoPmkidWrongOui(String oui) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID key data OUI, "
             + oui);
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherPmkidWrongKde(String kde) {
+  public void onRepoPmkidWrongKde(String kde) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "Got wrong PMKID KDE, " +
             kde);
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherMainTaskCurrentStatus(String attackType, int attackStatus) {
+  public void onRepoMainTaskCurrentStatus(String attackType, int attackStatus) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + attackType + ", status is " +
             attackStatus);
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherReceivedEapolMessage(
+  public void onRepoReceivedEapolMessage(
           String attackType,
           int messageNumber,
           @Nullable PmkidFirstMessageData pmkidFirstMessageData,
@@ -369,14 +369,14 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherFinishingSequence() {
+  public void onRepoFinishingSequence() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " +  selectedArmament +
             " finishing sequence");
     attackLogNumber++;
   }
 
   @Override
-  public void onLauncherSuccess() {
+  public void onRepoSuccess() {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + selectedArmament +
             " successfully executed");
     attackLogNumber++;
@@ -386,7 +386,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherFailure(String targetBssid) {
+  public void onRepoFailure(String targetBssid) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " +  selectedArmament + " failed");
     attackLogNumber++;
     launcherExecutionResult.postValue("Failed");
@@ -395,7 +395,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherMainTaskInDeautherStopped(String targetBssid) {
+  public void onRepoMainTaskInDeautherStopped(String targetBssid) {
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "In " + selectedArmament +
             " deauthentication task stopped");
     attackLogNumber++;

@@ -23,13 +23,39 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.UsbDeviceData;
-import com.johndeweydev.awps.models.repo.serial.RepoIOEvent;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class Launcher implements SerialInputOutputManager.Listener {
+
+  /**
+   * Callbacks for input and output from the usb serial device as well as callbacks when an error
+   * occurred
+   *
+   * @author John Dewey (johndewey02003@gmail.com)
+   *
+   * */
+  public interface UsbSerialIOEvent {
+    /**
+     * A serial output is received
+     * @param data the data in string outputted by the serial
+     * */
+    void onUsbSerialOutput(String data);
+
+    /**
+     * An error occurred in the serial
+     * @param error the error message
+     * */
+    void onUsbSerialOutputError(String error);
+
+    /**
+     * A user input causes serial error
+     * @param input the string input that causes the error
+     * */
+    void onUsbSerialInputError(String input);
+  }
 
   private static final int WRITE_WAIT_MILLIS = 2000;
   private static boolean isConnectedToTheDevice = false;
@@ -38,16 +64,16 @@ public class Launcher implements SerialInputOutputManager.Listener {
   private UsbSerialDriver usbSerialDriver;
   private UsbSerialPort usbSerialPort;
   private SerialInputOutputManager serialInputOutputManager;
-  private RepoIOEvent repoIOEvent;
+  private Launcher.UsbSerialIOEvent usbSerialIOEvent;
 
   public Launcher() {
     Log.w("dev-log", "Launcher: Created new instance of Launcher");
   }
 
   public void setLauncherEventHandler(
-          RepoIOEvent repoIOEvent
+          Launcher.UsbSerialIOEvent usbSerialIOEvent
   ) {
-    this.repoIOEvent = repoIOEvent;
+    this.usbSerialIOEvent = usbSerialIOEvent;
   }
 
   public UsbSerialDriver getUsbSerialDriver() {
@@ -193,7 +219,7 @@ public class Launcher implements SerialInputOutputManager.Listener {
   public void onNewData(byte[] data) {
     if (data.length > 0) {
       String strData = new String(data, StandardCharsets.US_ASCII);
-      repoIOEvent.onUsbSerialOutput(strData);
+      usbSerialIOEvent.onUsbSerialOutput(strData);
     }
   }
 
@@ -201,7 +227,7 @@ public class Launcher implements SerialInputOutputManager.Listener {
   public void onRunError(Exception e) {
     Log.e("dev-log", "Launcher.onRunError: An error has occurred "
             + e.getMessage());
-    repoIOEvent.onUsbSerialOutputError(e.getMessage());
+    usbSerialIOEvent.onUsbSerialOutputError(e.getMessage());
   }
 
   public void startEventDrivenReadFromDevice() {
@@ -259,8 +285,7 @@ public class Launcher implements SerialInputOutputManager.Listener {
     } catch (Exception e) {
       Log.e("dev-log", "Launcher.writeData: An error has occurred "
               + e.getMessage());
-      repoIOEvent.onUsbSerialInputError(str);
+      usbSerialIOEvent.onUsbSerialInputError(str);
     }
-
   }
 }

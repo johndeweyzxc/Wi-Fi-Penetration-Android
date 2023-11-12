@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels.terminalviewmodel;
+package com.johndeweydev.awps.viewmodels.serial.terminalviewmodel;
 
 import android.util.Log;
 
@@ -9,12 +9,12 @@ import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.LauncherOutputData;
 import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 import com.johndeweydev.awps.models.data.UsbDeviceData;
-import com.johndeweydev.awps.viewmodels.ViewModelIOControl;
+import com.johndeweydev.awps.viewmodels.serial.ViewModelIOControl;
 
 import java.util.ArrayList;
 
 public class TerminalViewModel extends ViewModel implements ViewModelIOControl,
-        TerminalViewModelEvent {
+        TerminalRepoSerial.RepositoryEvent {
 
   /**
    * Device id, port number and baud rate is set by terminal fragment as a backup source
@@ -73,13 +73,13 @@ public class TerminalViewModel extends ViewModel implements ViewModelIOControl,
   }
 
   @Override
-  public void onLauncherOutputRaw(LauncherOutputData launcherSerialOutputData) {
+  public void onRepoOutputRaw(LauncherOutputData launcherSerialOutputData) {
     String time = "[" + launcherSerialOutputData.getTime() + "]";
     launcherSerialOutputData.setTime(time);
     currentSerialOutputRaw.postValue(launcherSerialOutputData);
   }
   @Override
-  public void onLauncherOutputFormatted(LauncherOutputData launcherSerialOutputData) {
+  public void onRepoOutputFormatted(LauncherOutputData launcherSerialOutputData) {
     Log.d("dev-log", "TerminalViewModel.onLauncherOutputFormatted: Serial -> " +
             launcherSerialOutputData.getOutput());
 
@@ -88,12 +88,12 @@ public class TerminalViewModel extends ViewModel implements ViewModelIOControl,
     currentSerialOutput.postValue(launcherSerialOutputData);
   }
   @Override
-  public void onLauncherOutputError(String error) {
+  public void onRepoOutputError(String error) {
     Log.d("dev-log", "TerminalViewModel.onLauncherOutputError: Serial -> " + error);
     currentSerialOutputError.postValue(error);
   }
   @Override
-  public void onLauncherInputError(String input) {
+  public void onRepoInputError(String input) {
     Log.d("dev-log", "TerminalViewModel.onLauncherInputError: Serial -> " + input);
     currentSerialInputError.postValue(input);
   }

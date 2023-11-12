@@ -2,15 +2,19 @@ package com.johndeweydev.awps.models.repo.serial.sessionreposerial;
 
 import android.util.Log;
 
+import com.johndeweydev.awps.models.api.launcher.Launcher;
+import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.models.data.AccessPointData;
 import com.johndeweydev.awps.models.data.LauncherOutputData;
 import com.johndeweydev.awps.models.data.MicFirstMessageData;
 import com.johndeweydev.awps.models.data.MicSecondMessageData;
 import com.johndeweydev.awps.models.data.PmkidFirstMessageData;
-import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
-import com.johndeweydev.awps.models.repo.serial.RepoIOEvent;
-import com.johndeweydev.awps.models.repo.serial.RepoIOControl;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelEvent;
+import com.johndeweydev.awps.models.repo.serial.RepositoryIOEvent;
+import com.johndeweydev.awps.models.repo.serial.RepositoryIOControl;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase.ExecutionPhase;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase.InitializationPhase;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase.PostExecutionPhase;
+import com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase.TargetLockingPhase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,9 +23,19 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
+public class SessionRepoSerial extends RepositoryIOControl implements Launcher.UsbSerialIOEvent {
 
-  private SessionViewModelEvent sessionViewModelEvent;
+  /**
+   * Callbacks when a formatted serial data is received and processed by the session repository. This
+   * formatted serial data contains information about the current state of the launcher
+   *
+   * @author John Dewey (johndewey02003@gmail.com)
+   *
+   * */
+  public interface RepositoryEvent extends RepositoryIOEvent, InitializationPhase,
+          TargetLockingPhase, ExecutionPhase, PostExecutionPhase {}
+
+  private SessionRepoSerial.RepositoryEvent repositoryEvent;
   private final StringBuilder queueData = new StringBuilder();
   @Override
   public void onUsbSerialOutput(String data) {
@@ -38,16 +52,16 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
 
   @Override
   public void onUsbSerialOutputError(String error) {
-    sessionViewModelEvent.onLauncherOutputError(error);
+    repositoryEvent.onRepoOutputError(error);
   }
 
   @Override
   public void onUsbSerialInputError(String input) {
-    sessionViewModelEvent.onLauncherInputError(input);
+    repositoryEvent.onRepoInputError(input);
   }
 
-  public void setEventHandler(SessionViewModelEvent sessionViewModelEvent) {
-    this.sessionViewModelEvent = sessionViewModelEvent;
+  public void setEventHandler(SessionRepoSerial.RepositoryEvent repositoryEvent) {
+    this.repositoryEvent = repositoryEvent;
     Log.d("dev-log", "SessionRepository.setEventHandler: Session repository event " +
             "callback set");
   }
@@ -68,7 +82,7 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     char firstChar = data.charAt(0);
     char lastChar = data.charAt(data.length() - 2);
     if (firstChar == '{' && lastChar == '}') {
-      sessionViewModelEvent.onLauncherOutputFormatted(launcherOutputData);
+      repositoryEvent.onRepoOutputFormatted(launcherOutputData);
       data = data.replace("{", "").replace("}", "");
       String[] splitStrData = data.split(",");
 
@@ -91,7 +105,7 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     }
 
     switch (strDataList.get(0)) {
-      case "ESP_STARTED" -> sessionViewModelEvent.onLauncherStarted();
+      case "ESP_STARTED" -> repositoryEvent.onRepoStarted();
       case "CMD_PARSER" -> cmdParserContext(strDataList);
       case "ARMAMENT" -> armamentContext(strDataList);
       case "PMKID" -> pmkidContext(strDataList);
@@ -121,18 +135,18 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
             currentBssidTarget.substring(10, 12);
 
     switch (strDataList.get(1)) {
-      case "CURRENT_ARMA" -> sessionViewModelEvent.onLauncherArmamentStatus(
+      case "CURRENT_ARMA" -> repositoryEvent.onRepoArmamentStatus(
               namedArmament, formattedBssid);
-      case "TARGET_ARMA_SET" -> sessionViewModelEvent.onLauncherInstructionIssued(
+      case "TARGET_ARMA_SET" -> repositoryEvent.onRepoInstructionIssued(
               namedArmament, formattedBssid);
     }
   }
 
   private void armamentContext(ArrayList<String> strDataList) {
     if (Objects.equals(strDataList.get(1), "ACTIVATE")) {
-      sessionViewModelEvent.onLauncherArmamentActivation();
+      repositoryEvent.onRepoArmamentActivation();
     } else if (Objects.equals(strDataList.get(1), "DEACTIVATE")) {
-      sessionViewModelEvent.onLauncherArmamentDeactivation();
+      repositoryEvent.onRepoArmamentDeactivation();
     }
   }
 
@@ -140,27 +154,27 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     switch (strDataList.get(1)) {
       case "FOUND_APS" -> {
         String numberOfAps = strDataList.get(2);
-        sessionViewModelEvent.onLauncherNumberOfFoundAccessPoints(numberOfAps);
+        repositoryEvent.onRepoNumberOfFoundAccessPoints(numberOfAps);
       }
       case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
-      case "FINISH_SCAN" -> sessionViewModelEvent.onLauncherFinishScan();
-      case "AP_NOT_FOUND" -> sessionViewModelEvent.onLauncherTargetAccessPointNotFound();
-      case "LAUNCHING_SEQUENCE" -> sessionViewModelEvent.onLauncherLaunchingSequence();
-      case "SNIFF_STARTED" -> sessionViewModelEvent.onLauncherMainTaskCreated();
+      case "FINISH_SCAN" -> repositoryEvent.onRepoFinishScan();
+      case "AP_NOT_FOUND" -> repositoryEvent.onRepoTargetAccessPointNotFound();
+      case "LAUNCHING_SEQUENCE" -> repositoryEvent.onRepoLaunchingSequence();
+      case "SNIFF_STARTED" -> repositoryEvent.onRepoMainTaskCreated();
       case "WRONG_KEY_TYPE" -> {
         String keyType = strDataList.get(3);
-        sessionViewModelEvent.onLauncherPmkidWrongKeyType(keyType);
+        repositoryEvent.onRepoPmkidWrongKeyType(keyType);
       }
-      case "WRONG_OUI" -> sessionViewModelEvent.onLauncherPmkidWrongOui(strDataList.get(2));
-      case "WRONG_KDE" -> sessionViewModelEvent.onLauncherPmkidWrongKde(strDataList.get(2));
+      case "WRONG_OUI" -> repositoryEvent.onRepoPmkidWrongOui(strDataList.get(2));
+      case "WRONG_KDE" -> repositoryEvent.onRepoPmkidWrongKde(strDataList.get(2));
       case "SNIFF_STATUS" -> {
         int status = Integer.parseInt(strDataList.get(2));
-        sessionViewModelEvent.onLauncherMainTaskCurrentStatus("PMKID", status);
+        repositoryEvent.onRepoMainTaskCurrentStatus("PMKID", status);
       }
       case "MSG_1" -> handlePmkidMessage1(strDataList);
-      case "FINISHING_SEQUENCE" -> sessionViewModelEvent.onLauncherFinishingSequence();
-      case "SUCCESS" -> sessionViewModelEvent.onLauncherSuccess();
-      case "FAILURE" -> sessionViewModelEvent.onLauncherFailure(strDataList.get(2));
+      case "FINISHING_SEQUENCE" -> repositoryEvent.onRepoFinishingSequence();
+      case "SUCCESS" -> repositoryEvent.onRepoSuccess();
+      case "FAILURE" -> repositoryEvent.onRepoFailure(strDataList.get(2));
     }
   }
 
@@ -169,7 +183,7 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     String client = dataList.get(3);
     String pmkid = dataList.get(4);
     PmkidFirstMessageData pmkidFirstMessageData = new PmkidFirstMessageData(bssid, client, pmkid);
-    sessionViewModelEvent.onLauncherReceivedEapolMessage(
+    repositoryEvent.onRepoReceivedEapolMessage(
             "PMKID", 1, pmkidFirstMessageData,
             null, null);
   }
@@ -178,22 +192,22 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     switch (strDataList.get(1)) {
       case "FOUND_APS" -> {
         String numberOfAps = strDataList.get(2);
-        sessionViewModelEvent.onLauncherNumberOfFoundAccessPoints(numberOfAps);
+        repositoryEvent.onRepoNumberOfFoundAccessPoints(numberOfAps);
       }
       case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
-      case "FINISH_SCAN" -> sessionViewModelEvent.onLauncherFinishScan();
-      case "AP_NOT_FOUND" -> sessionViewModelEvent.onLauncherTargetAccessPointNotFound();
-      case "LAUNCHING_SEQUENCE" -> sessionViewModelEvent.onLauncherLaunchingSequence();
-      case "DEAUTH_STARTED" -> sessionViewModelEvent.onLauncherMainTaskCreated();
+      case "FINISH_SCAN" -> repositoryEvent.onRepoFinishScan();
+      case "AP_NOT_FOUND" -> repositoryEvent.onRepoTargetAccessPointNotFound();
+      case "LAUNCHING_SEQUENCE" -> repositoryEvent.onRepoLaunchingSequence();
+      case "DEAUTH_STARTED" -> repositoryEvent.onRepoMainTaskCreated();
       case "INJECTED_DEAUTH" -> {
         int status = Integer.parseInt(strDataList.get(2));
-        sessionViewModelEvent.onLauncherMainTaskCurrentStatus("MIC", status);
+        repositoryEvent.onRepoMainTaskCurrentStatus("MIC", status);
       }
       case "MSG_1" -> handleMicMessage1(strDataList);
       case "MSG_2" -> handleMicMessage2(strDataList);
-      case "FINISHING SEQUENCE" -> sessionViewModelEvent.onLauncherFinishingSequence();
-      case "SUCCESS" -> sessionViewModelEvent.onLauncherSuccess();
-      case "FAILURE" -> sessionViewModelEvent.onLauncherFailure(strDataList.get(2));
+      case "FINISHING SEQUENCE" -> repositoryEvent.onRepoFinishingSequence();
+      case "SUCCESS" -> repositoryEvent.onRepoSuccess();
+      case "FAILURE" -> repositoryEvent.onRepoFailure(strDataList.get(2));
     }
   }
 
@@ -202,7 +216,7 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     String client = dataList.get(3);
     String anonce = dataList.get(4);
     MicFirstMessageData micFirstMessageData = new MicFirstMessageData(bssid, client, anonce);
-    sessionViewModelEvent.onLauncherReceivedEapolMessage(
+    repositoryEvent.onRepoReceivedEapolMessage(
             "MIC", 1, null,
             micFirstMessageData, null);
   }
@@ -229,7 +243,7 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
             version, type, length, keyDescriptionType, keyInformation, keyLength,
             replayCounter, snonce, keyIv, keyRsc, keyId, mic, keyDataLength, keyData);
 
-    sessionViewModelEvent.onLauncherReceivedEapolMessage("MIC", 2,
+    repositoryEvent.onRepoReceivedEapolMessage("MIC", 2,
             null, null, micSecondMessageData);
   }
 
@@ -238,10 +252,10 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     switch (strDataList.get(1)) {
       case "FOUND_APS" -> {
         String numberOfAps = strDataList.get(2);
-        sessionViewModelEvent.onLauncherNumberOfFoundAccessPoints(numberOfAps);
+        repositoryEvent.onRepoNumberOfFoundAccessPoints(numberOfAps);
       }
       case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
-      case "FINISH_SCAN" -> sessionViewModelEvent.onLauncherFinishScan();
+      case "FINISH_SCAN" -> repositoryEvent.onRepoFinishScan();
     }
   }
 
@@ -249,20 +263,20 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     switch (strDataList.get(1)) {
       case "FOUND_APS" -> {
         String numberOfAps = strDataList.get(2);
-        sessionViewModelEvent.onLauncherNumberOfFoundAccessPoints(numberOfAps);
+        repositoryEvent.onRepoNumberOfFoundAccessPoints(numberOfAps);
       }
       case "SCAN" -> processScannedAccessPointsAndNotifyViewModel(strDataList);
-      case "AP_NOT_FOUND" -> sessionViewModelEvent.onLauncherTargetAccessPointNotFound();
-      case "FINISH_SCAN" -> sessionViewModelEvent.onLauncherFinishScan();
-      case "LAUNCHING_SEQUENCE" -> sessionViewModelEvent.onLauncherLaunchingSequence();
-      case "DEAUTH_STARTED" -> sessionViewModelEvent.onLauncherMainTaskCreated();
+      case "AP_NOT_FOUND" -> repositoryEvent.onRepoTargetAccessPointNotFound();
+      case "FINISH_SCAN" -> repositoryEvent.onRepoFinishScan();
+      case "LAUNCHING_SEQUENCE" -> repositoryEvent.onRepoLaunchingSequence();
+      case "DEAUTH_STARTED" -> repositoryEvent.onRepoMainTaskCreated();
       case "INJECTED_DEAUTH" -> {
         int numberOfInjectedDeauthentications = Integer.parseInt(strDataList.get(2));
-        sessionViewModelEvent.onLauncherMainTaskCurrentStatus("DEAUTH",
+        repositoryEvent.onRepoMainTaskCurrentStatus("DEAUTH",
                 numberOfInjectedDeauthentications);
       }
       case "STOPPED" ->
-              sessionViewModelEvent.onLauncherMainTaskInDeautherStopped(strDataList.get(2));
+              repositoryEvent.onRepoMainTaskInDeautherStopped(strDataList.get(2));
     }
   }
 
@@ -285,7 +299,7 @@ public class SessionRepoSerial extends RepoIOControl implements RepoIOEvent {
     AccessPointData accessPointData = new AccessPointData(
             macAddress, asciiSsid.toString(), Integer.parseInt(rssi), Integer.parseInt(channel)
     );
-    sessionViewModelEvent.onLauncherFoundAccessPoint(accessPointData);
+    repositoryEvent.onRepoFoundAccessPoint(accessPointData);
   }
 
 }

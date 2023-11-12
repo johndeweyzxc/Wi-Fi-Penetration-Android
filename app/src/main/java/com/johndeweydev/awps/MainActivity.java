@@ -29,8 +29,8 @@ import com.johndeweydev.awps.models.api.hashinfo.HashInfoDatabase;
 import com.johndeweydev.awps.models.api.hashinfo.HashInfoSingleton;
 import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
-import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
-import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModelFactory;
+import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModel;
+import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 

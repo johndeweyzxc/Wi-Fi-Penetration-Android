@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels.sessionviewmodel.attackphase;
+package com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase;
 
 import androidx.annotation.Nullable;
 
@@ -19,32 +19,32 @@ public interface ExecutionPhase {
    * The launcher proceeds to the launching sequence which invokes function in the launcher
    * needed to successfully execute the attack. For example promiscuous mode is turned on
    * */
-  void onLauncherLaunchingSequence();
+  void onRepoLaunchingSequence();
 
   /**
    * The main task is created in the launcher after the launching sequence, for example in MIC
    * based attack a deauther task is created
    * */
-  void onLauncherMainTaskCreated();
+  void onRepoMainTaskCreated();
 
   /**
    * While a PMKID based attack is ongoing, a wrong PMKID key type is encountered. This sometimes
    * happens in the case of attacking a Wi-Fi hotspot
    * @param keyType the wrong key type received
    * */
-  void onLauncherPmkidWrongKeyType(String keyType);
+  void onRepoPmkidWrongKeyType(String keyType);
 
   /**
    * Got wrong PMKID key data OUI, the launcher is programmed that the correct OUI is 0x000fac
    * @param oui the OUI that is found to be wrong
    * */
-  void onLauncherPmkidWrongOui(String oui);
+  void onRepoPmkidWrongOui(String oui);
 
   /**
    * Got wrong PMKID key data type KDE, the launcher is programmed that the correct KDE is 4
    * @param kde the KDE that is found to be wrong
    * */
-  void onLauncherPmkidWrongKde(String kde);
+  void onRepoPmkidWrongKde(String kde);
 
   /**
    * The status of the main task
@@ -52,7 +52,7 @@ public interface ExecutionPhase {
    * @param attackStatus the status of the attack in integer, this can be an elapsed time or the
    *                     number of injected deauthentication frame
    * */
-  void onLauncherMainTaskCurrentStatus(String attackType, int attackStatus);
+  void onRepoMainTaskCurrentStatus(String attackType, int attackStatus);
 
   /**
    * The PMKID or MIC is received and other important information
@@ -62,7 +62,7 @@ public interface ExecutionPhase {
    * @param micFirstMessageData contains the anonce and other information
    * @param micSecondMessageData contains the snonce, MIC and other information
    * */
-  void onLauncherReceivedEapolMessage(
+  void onRepoReceivedEapolMessage(
           String attackType,
           int messageNumber,
           @Nullable PmkidFirstMessageData pmkidFirstMessageData,

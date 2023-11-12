@@ -2,21 +2,28 @@ package com.johndeweydev.awps.models.repo.serial.terminalreposerial;
 
 import android.util.Log;
 
-import com.johndeweydev.awps.models.repo.serial.RepoIOControl;
-import com.johndeweydev.awps.models.repo.serial.RepoIOEvent;
+import com.johndeweydev.awps.models.api.launcher.Launcher;
+import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.models.data.LauncherOutputData;
 import com.johndeweydev.awps.models.data.UsbDeviceData;
-import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
-import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModelEvent;
+import com.johndeweydev.awps.models.repo.serial.RepositoryIOEvent;
+import com.johndeweydev.awps.models.repo.serial.RepositoryIOControl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class TerminalRepoSerial extends RepoIOControl implements RepoIOEvent {
+public class TerminalRepoSerial extends RepositoryIOControl implements Launcher.UsbSerialIOEvent {
 
-  private TerminalViewModelEvent terminalViewModelEvent;
+  /**
+   * Inherits callback from UsbSerialIOEvent
+   *
+   * @author John Dewey (johndewey02003@gmail.com)
+   *
+   * */
+  public interface RepositoryEvent extends RepositoryIOEvent {}
+  private TerminalRepoSerial.RepositoryEvent repositoryEvent;
   private final StringBuilder queueData = new StringBuilder();
   @Override
   public void onUsbSerialOutput(String data) {
@@ -32,9 +39,9 @@ public class TerminalRepoSerial extends RepoIOControl implements RepoIOEvent {
         char firstChar = strData.charAt(0);
         char lastChar = strData.charAt(strData.length() - 2);
         if (firstChar == '{' && lastChar == '}') {
-          terminalViewModelEvent.onLauncherOutputFormatted(launcherOutputData);
+          repositoryEvent.onRepoOutputFormatted(launcherOutputData);
         } else {
-          terminalViewModelEvent.onLauncherOutputRaw(launcherOutputData);
+          repositoryEvent.onRepoOutputRaw(launcherOutputData);
         }
 
         queueData.setLength(0);
@@ -46,16 +53,16 @@ public class TerminalRepoSerial extends RepoIOControl implements RepoIOEvent {
 
   @Override
   public void onUsbSerialOutputError(String error) {
-    terminalViewModelEvent.onLauncherOutputError(error);
+    repositoryEvent.onRepoOutputError(error);
   }
   @Override
   public void onUsbSerialInputError(String input) {
-    terminalViewModelEvent.onLauncherInputError(input);
+    repositoryEvent.onRepoInputError(input);
   }
   public void setEventHandler(
-          TerminalViewModelEvent terminalRepoSerialEvent
+          TerminalRepoSerial.RepositoryEvent repositoryEvent
   ) {
-    this.terminalViewModelEvent = terminalRepoSerialEvent;
+    this.repositoryEvent = repositoryEvent;
     Log.d("dev-log", "TerminalRepository.setEventHandler: Terminal repository event " +
             "callback set");
   }

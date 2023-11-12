@@ -24,7 +24,7 @@ import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentTerminalBinding;
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.LauncherOutputData;
-import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
+import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs;
 import com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs;
 

@@ -17,7 +17,7 @@ import androidx.navigation.Navigation;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.databinding.FragmentAutoArmaBinding;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.serial.sessionviewmodel.SessionViewModel;
 
 public class AutoArmaFragment extends Fragment {
 

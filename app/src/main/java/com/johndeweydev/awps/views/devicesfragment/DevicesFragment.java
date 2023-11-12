@@ -27,7 +27,7 @@ import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.UsbDeviceData;
 import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
 import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
-import com.johndeweydev.awps.viewmodels.terminalviewmodel.TerminalViewModel;
+import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
 import java.util.ArrayList;
@@ -121,13 +121,13 @@ public class DevicesFragment extends Fragment {
   }
 
   private DevicesRVAdapter setupRecyclerView() {
-    DevicesRvAdapterEvent devicesRvAdapterEvent;
-    devicesRvAdapterEvent = terminalArgs -> {
+    DevicesRVAdapter.Event event;
+    event = terminalArgs -> {
       this.terminalArgs = terminalArgs;
       isUsbDevicePermissionGranted();
     };
 
-    DevicesRVAdapter devicesRVAdapter = new DevicesRVAdapter(devicesRvAdapterEvent);
+    DevicesRVAdapter devicesRVAdapter = new DevicesRVAdapter(event);
     binding.recyclerViewDevices.setAdapter(devicesRVAdapter);
     binding.recyclerViewDevices.setLayoutManager(new LinearLayoutManager(requireContext()));
     return devicesRVAdapter;

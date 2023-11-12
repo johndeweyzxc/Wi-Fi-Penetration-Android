@@ -17,8 +17,12 @@ import java.util.ArrayList;
 
 public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.DevicesAdapterViewHolder> {
 
+  public interface Event {
+    void onDeviceClick(TerminalArgs terminalArgs);
+  }
+
   private final ArrayList<UsbDeviceData> deviceModelList = new ArrayList<>();
-  private final DevicesRvAdapterEvent devicesRvAdapterEvent;
+  private final Event event;
 
   public static class DevicesAdapterViewHolder extends RecyclerView.ViewHolder {
     public TextView textViewDeviceNameValueDeviceListItem;
@@ -37,8 +41,8 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     }
   }
 
-   public DevicesRVAdapter(DevicesRvAdapterEvent devicesRvAdapterEvent) {
-    this.devicesRvAdapterEvent = devicesRvAdapterEvent;
+   public DevicesRVAdapter(Event event) {
+    this.event = event;
    }
 
   @NonNull
@@ -61,7 +65,7 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
 
       TerminalArgs terminalArgs = new TerminalArgs(
               currentItem.usbDevice.getDeviceId(), currentItem.devicePort, 19200);
-      devicesRvAdapterEvent.onDeviceClick(terminalArgs);
+      event.onDeviceClick(terminalArgs);
     });
   }
 

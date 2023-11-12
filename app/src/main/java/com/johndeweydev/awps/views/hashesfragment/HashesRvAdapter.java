@@ -17,8 +17,12 @@ import java.util.ArrayList;
 
 public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.HashesAdapterViewHolder> {
 
+  public interface Event {
+    void onHashInfoClick(HashInfoModalBottomArgs hashInfoModalBottomArgs);
+  }
+
   private final ArrayList<HashInfoEntity> hashInfoEntityList = new ArrayList<>();
-  private final HashesRvAdapterEvent hashesRvAdapterEvent;
+  private final Event event;
 
   public static class HashesAdapterViewHolder extends RecyclerView.ViewHolder {
 
@@ -36,8 +40,8 @@ public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.Hashes
     }
   }
 
-  public HashesRvAdapter(HashesRvAdapterEvent hashesRvAdapterEvent) {
-    this.hashesRvAdapterEvent = hashesRvAdapterEvent;
+  public HashesRvAdapter(HashesRvAdapter.Event event) {
+    this.event = event;
   }
   @NonNull
   @Override
@@ -60,7 +64,7 @@ public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.Hashes
               currentHashInfo.keyType, currentHashInfo.keyData, currentHashInfo.aNonce,
               currentHashInfo.hashData, currentHashInfo.latitude, currentHashInfo.longitude,
               currentHashInfo.address, currentHashInfo.dateCaptured);
-      hashesRvAdapterEvent.onHashInfoClick(hashInfoModalBottomArgs);
+      event.onHashInfoClick(hashInfoModalBottomArgs);
     });
   }
 

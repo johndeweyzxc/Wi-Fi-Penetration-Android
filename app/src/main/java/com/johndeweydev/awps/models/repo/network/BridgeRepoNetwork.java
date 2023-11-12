@@ -6,7 +6,6 @@ import com.johndeweydev.awps.models.api.bridge.BridgeApi;
 import com.johndeweydev.awps.models.data.BridgeGetRootResponseHttp;
 import com.johndeweydev.awps.models.data.BridgeUploadRequestHttp;
 import com.johndeweydev.awps.models.data.BridgeUploadResponseHttp;
-import com.johndeweydev.awps.viewmodels.bridgeviewmodel.BridgeViewModelEvent;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,12 +13,45 @@ import retrofit2.Response;
 
 public class BridgeRepoNetwork {
 
-  private final BridgeApi bridgeApi;
-  private final BridgeViewModelEvent bridgeViewModelEvent;
+  /**
+   * Callbacks when an http response is received, the response can be successful or a failure such
+   * as when the response body is null
+   *
+   * @author John Dewey (johndewey02003@gmail.com)
+   * */
+  public interface HttpEvent {
 
-  public BridgeRepoNetwork(BridgeApi bridgeApi, BridgeViewModelEvent bridgeViewModelEvent) {
+    /**
+     * The http get request to the root endpoint is successful
+     * @param message the response message from the root endpoint
+     * */
+    void onHttpGetResponseSuccess(String message);
+
+    /**
+     * The http post request to the root endpoint is successful
+     * @param hashData the uploaded MIC or PMKID
+     * */
+    default void onHttpUploadResponseSuccess(String hashData) {}
+
+    /**
+     * An http request is unsuccessful
+     * @param reason the reason that is was unsuccessful
+     * */
+    void onHttpResponseUnsuccessful(String reason);
+
+    /**
+     * An http request has failed, this could be an IO exception
+     * @param reason the reason it failed
+     * */
+    void onHttpFailure(String reason);
+  }
+
+  private final BridgeApi bridgeApi;
+  private final BridgeRepoNetwork.HttpEvent httpEvent;
+
+  public BridgeRepoNetwork(BridgeApi bridgeApi, BridgeRepoNetwork.HttpEvent httpEvent) {
     this.bridgeApi = bridgeApi;
-    this.bridgeViewModelEvent = bridgeViewModelEvent;
+    this.httpEvent = httpEvent;
   }
 
   public void getRoot() {
@@ -33,26 +65,26 @@ public class BridgeRepoNetwork {
       ) {
 
         if (!response.isSuccessful()) {
-          bridgeViewModelEvent.onHttpResponseUnsuccessful("Get request unsuccessful, " +
+          httpEvent.onHttpResponseUnsuccessful("Get request unsuccessful, " +
                   "status code is " + response.code());
           return;
         }
 
         BridgeGetRootResponseHttp responseData = response.body();
         if (responseData == null) {
-          bridgeViewModelEvent.onHttpResponseUnsuccessful("Get response body is null");
+          httpEvent.onHttpResponseUnsuccessful("Get response body is null");
           return;
         }
 
-        bridgeViewModelEvent.onHttpGetResponseSuccess(responseData.message());
+        httpEvent.onHttpGetResponseSuccess(responseData.message());
       }
 
       @Override
       public void onFailure(@NonNull Call<BridgeGetRootResponseHttp> call, @NonNull Throwable t) {
         if (t.getMessage() != null) {
-          bridgeViewModelEvent.onHttpFailure(t.getMessage());
+          httpEvent.onHttpFailure(t.getMessage());
         } else {
-          bridgeViewModelEvent.onHttpFailure("Http failure, throwable message is null");
+          httpEvent.onHttpFailure("Http failure, throwable message is null");
         }
       }
     });
@@ -70,26 +102,26 @@ public class BridgeRepoNetwork {
       ) {
 
         if (!response.isSuccessful()) {
-          bridgeViewModelEvent.onHttpResponseUnsuccessful("Post request unsuccessful, " +
+          httpEvent.onHttpResponseUnsuccessful("Post request unsuccessful, " +
                   "status code is " + response.code());
           return;
         }
 
         BridgeUploadResponseHttp responseData = response.body();
         if (responseData == null) {
-          bridgeViewModelEvent.onHttpResponseUnsuccessful("Post response body is null");
+          httpEvent.onHttpResponseUnsuccessful("Post response body is null");
           return;
         }
 
-        bridgeViewModelEvent.onHttpUploadResponseSuccess(responseData.hash_data());
+        httpEvent.onHttpUploadResponseSuccess(responseData.hash_data());
       }
 
       @Override
       public void onFailure(@NonNull Call<BridgeUploadResponseHttp> call, @NonNull Throwable t) {
         if (t.getMessage() != null) {
-          bridgeViewModelEvent.onHttpFailure(t.getMessage());
+          httpEvent.onHttpFailure(t.getMessage());
         } else {
-          bridgeViewModelEvent.onHttpFailure("Http failure, throwable message is null");
+          httpEvent.onHttpFailure("Http failure, throwable message is null");
         }
       }
     });

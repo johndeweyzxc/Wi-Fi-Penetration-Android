@@ -51,14 +51,14 @@ public class HashesFragment extends Fragment {
     hashInfoViewModel = new ViewModelProvider(this).get(HashInfoViewModel.class);
     bridgeViewModel = new ViewModelProvider(this).get(BridgeViewModel.class);
 
-    HashesRvAdapterEvent hashesRvAdapterEvent = hashInfoModalBottomArgs -> {
+    HashesRvAdapter.Event event = hashInfoModalBottomArgs -> {
       HashesFragmentDirections.ActionHashesFragmentToHashInfoModalBottomSheetDialog action;
       action = HashesFragmentDirections.actionHashesFragmentToHashInfoModalBottomSheetDialog(
               hashInfoModalBottomArgs);
       Navigation.findNavController(binding.getRoot()).navigate(action);
     };
 
-    HashesRvAdapter hashesRvAdapter = new HashesRvAdapter(hashesRvAdapterEvent);
+    HashesRvAdapter hashesRvAdapter = new HashesRvAdapter(event);
     binding.recyclerViewHashInformationHashes.setAdapter(hashesRvAdapter);
     binding.recyclerViewHashInformationHashes.setLayoutManager(
             new LinearLayoutManager(requireContext()));

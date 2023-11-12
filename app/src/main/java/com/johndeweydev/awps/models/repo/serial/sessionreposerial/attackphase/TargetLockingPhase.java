@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels.sessionviewmodel.attackphase;
+package com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase;
 
 import com.johndeweydev.awps.models.data.AccessPointData;
 
@@ -15,7 +15,7 @@ public interface TargetLockingPhase {
    * The number of found access point, maximum is 20
    * @param numberOfAps the number of access points in string
    * */
-  void onLauncherNumberOfFoundAccessPoints(String numberOfAps);
+  void onRepoNumberOfFoundAccessPoints(String numberOfAps);
 
   /**
    * The information about the found access point
@@ -23,16 +23,16 @@ public interface TargetLockingPhase {
    *                        Set Identifier, Received Signal Strength Indicator and the channel
    *                        used by the access point
    * */
-  void onLauncherFoundAccessPoint(AccessPointData accessPointData);
+  void onRepoFoundAccessPoint(AccessPointData accessPointData);
 
   /**
    * The launcher has finished scanning nearby access points
    * */
-  void onLauncherFinishScan();
+  void onRepoFinishScan();
 
   /**
    * The launcher did not found the target access point after it scanned nearby access points
    * and thus the attack will not proceed and it will not go through the launching sequence
    * */
-  void onLauncherTargetAccessPointNotFound();
+  void onRepoTargetAccessPointNotFound();
 }

@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels.terminalviewmodel;
+package com.johndeweydev.awps.viewmodels.serial.terminalviewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;

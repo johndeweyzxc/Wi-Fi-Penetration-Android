@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels.sessionviewmodel;
+package com.johndeweydev.awps.viewmodels.serial.sessionviewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;

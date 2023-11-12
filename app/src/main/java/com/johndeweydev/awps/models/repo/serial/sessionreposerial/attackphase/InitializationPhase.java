@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.viewmodels.sessionviewmodel.attackphase;
+package com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase;
 
 /**
  * Callbacks when the launcher goes to initialization phase, this happens when the launcher is
@@ -13,29 +13,29 @@ public interface InitializationPhase {
   /**
    * The launcher is started after it resets
    * */
-  void onLauncherStarted();
+  void onRepoStarted();
 
   /**
    * A control code of armament status is issued
    * @param armament the armament currently loaded
    * @param targetBssid the mac address or BSSID of the target access point
    * */
-  void onLauncherArmamentStatus(String armament, String targetBssid);
+  void onRepoArmamentStatus(String armament, String targetBssid);
 
   /**
    * An instruction code is issued by the user
    * @param armament the selected armament
    * @param targetBssid the mac address or BSSID of the target access point
    * */
-  void onLauncherInstructionIssued(String armament, String targetBssid);
+  void onRepoInstructionIssued(String armament, String targetBssid);
 
   /**
    * The instruction code supplied by the user is activated
    * */
-  void onLauncherArmamentActivation();
+  void onRepoArmamentActivation();
 
   /**
    * A currently running or pre-running attack is deactivated
    * */
-  void onLauncherArmamentDeactivation();
+  void onRepoArmamentDeactivation();
 }

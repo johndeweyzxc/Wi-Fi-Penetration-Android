@@ -49,8 +49,8 @@ import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.HashInfoEntity;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModel;
-import com.johndeweydev.awps.viewmodels.sessionviewmodel.SessionViewModelFactory;
+import com.johndeweydev.awps.viewmodels.serial.sessionviewmodel.SessionViewModel;
+import com.johndeweydev.awps.viewmodels.serial.sessionviewmodel.SessionViewModelFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;

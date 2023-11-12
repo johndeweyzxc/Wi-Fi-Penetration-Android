@@ -14,10 +14,9 @@ import kotlinx.coroutines.launch
 /**
  * This view model is written in kotlin because coroutines works well with kotlin
  * */
-class BridgeViewModel : ViewModel(), BridgeViewModelEvent {
+class BridgeViewModel : ViewModel(), BridgeRepoNetwork.HttpEvent {
 
   private var bridgeRepoNetwork: BridgeRepoNetwork
-  val uploadedHash: MutableLiveData<String> = MutableLiveData()
 
   // For testing purposes only, this is the root endpoint of the rest api server
   private val messageFromRootEndpoint: MutableLiveData<String> = MutableLiveData()
@@ -62,10 +61,6 @@ class BridgeViewModel : ViewModel(), BridgeViewModelEvent {
 
   override fun onHttpGetResponseSuccess(message: String) {
     messageFromRootEndpoint.postValue(message)
-  }
-
-  override fun onHttpUploadResponseSuccess(hashData: String) {
-    uploadedHash.postValue(hashData)
   }
 
   override fun onHttpResponseUnsuccessful(reason: String) {
