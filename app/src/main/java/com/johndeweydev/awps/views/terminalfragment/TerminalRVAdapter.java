@@ -51,6 +51,12 @@ public class TerminalRVAdapter extends
 
   public void appendNewTerminalLog(LauncherOutputData launcherOutputData) {
     terminalLog.add(launcherOutputData);
-    this.notifyItemInserted(terminalLog.size() - 1);
+    notifyItemInserted(terminalLog.size() - 1);
+  }
+
+  public void clearLogs() {
+    int size = terminalLog.size();
+    terminalLog.clear();
+    notifyItemRangeRemoved(0, size);
   }
 }

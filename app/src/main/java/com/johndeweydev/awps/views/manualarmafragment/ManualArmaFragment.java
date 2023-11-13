@@ -1,6 +1,10 @@
 package com.johndeweydev.awps.views.manualarmafragment;
 
-import static com.johndeweydev.awps.MainActivity.LOCATION_PERMISSION_REQUEST_CODE;
+import static com.johndeweydev.awps.AppConstants.BAUD_RATE;
+import static com.johndeweydev.awps.AppConstants.DATA_BITS;
+import static com.johndeweydev.awps.AppConstants.LOCATION_PERMISSION_REQUEST_CODE;
+import static com.johndeweydev.awps.AppConstants.PARITY_NONE;
+import static com.johndeweydev.awps.AppConstants.STOP_BITS;
 
 import android.Manifest;
 import android.content.Context;
@@ -316,12 +320,12 @@ public class ManualArmaFragment extends Fragment {
 
     String[] choices = getResources().getStringArray(R.array.dialog_options_manual_arma);
 
-    String findTargets = getResources().getString(R.string.find_targets_manual_arma);
-    String change_attack_type = getResources().getString(R.string.change_attack_type_manual_arma);
-    String clearAttackLogs = getResources().getString(R.string.clear_attack_logs_manual_arma);
-    String restartLauncher = getResources().getString(R.string.restart_launcher_manual_arma);
-    String database = getResources().getString(R.string.database_manual_arma);
-    String moreInfo = getResources().getString(R.string.more_info_manual_arma);
+    String findTargets = getResources().getString(R.string.find_targets);
+    String change_attack_type = getResources().getString(R.string.change_attack_type);
+    String clearAttackLogs = getResources().getString(R.string.clear_attack_logs);
+    String restartLauncher = getResources().getString(R.string.restart_launcher);
+    String database = getResources().getString(R.string.database);
+    String moreInfo = getResources().getString(R.string.more_info);
 
     if (menuItem.getItemId() != R.id.moreOptionsManualArmaTopRightDialogMenu) {
       return false;
@@ -373,7 +377,7 @@ public class ManualArmaFragment extends Fragment {
 
   private void showDialogAskUserToSelectAttackType() {
     final String[] choices = getResources().getStringArray(
-            R.array.dialog_options_attack_type_manual_arma);
+            R.array.dialog_options_select_attack_manual_arma);
 
     final int[] checkedItem = {-1};
 
@@ -407,7 +411,7 @@ public class ManualArmaFragment extends Fragment {
   private void showDialogToUserAboutConfiguredAttack(String attackType, String targetMacAddress) {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
     builder.setTitle("Information");
-    if (targetMacAddress.isEmpty()) {
+    if (targetMacAddress == null || targetMacAddress.isEmpty()) {
       builder.setMessage("Using " + attackType + ", target is not specified");
     } else {
       builder.setMessage("Using " + attackType + ", target is " + targetMacAddress);
@@ -640,8 +644,7 @@ public class ManualArmaFragment extends Fragment {
     int deviceId = manualArmaArgs.getDeviceId();
     int portNum = manualArmaArgs.getPortNum();
     DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
-            19200, 8, 1, "PARITY_NONE", deviceId, portNum
-    );
+            BAUD_RATE, DATA_BITS, STOP_BITS, PARITY_NONE, deviceId, portNum);
     String result = sessionViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("Successfully connected") || result.equals("Already connected")) {
@@ -665,7 +668,6 @@ public class ManualArmaFragment extends Fragment {
   @Override
   public void onPause() {
     sessionViewModel.currentAttackLog.setValue(null);
-
     Log.d("dev-log", "ManualArmaFragment.onPause: Fragment pausing");
     stopEventReadAndDisconnectFromDevice();
     super.onPause();

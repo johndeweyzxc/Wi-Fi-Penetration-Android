@@ -2,6 +2,8 @@ package com.johndeweydev.awps.models.api.bridge;
 
 import android.util.Log;
 
+import com.johndeweydev.awps.AppConstants;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -12,7 +14,7 @@ public class Bridge {
   public Bridge() {
     Log.w("dev-log", "Bridge: Created new instance of Bridge");
     retrofit = new Retrofit.Builder()
-            .baseUrl("http://192.168.1.9:8000")
+            .baseUrl(AppConstants.REST_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
   }

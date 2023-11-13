@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dialog_options_manual_arma">
+        <item>@string/find_targets</item>
+        <item>@string/change_attack_type</item>
+        <item>@string/clear_attack_logs</item>
+        <item>@string/restart_launcher</item>
+        <item>@string/database</item>
+        <item>@string/more_info</item>
+    </string-array>
+
+    <string-array name="dialog_options_select_attack_manual_arma">
+        <item>@string/pmkid_based_attack</item>
+        <item>@string/mic_based_attack</item>
+        <item>@string/deauther</item>
+    </string-array>
+
+    <string name="start_manual_arma">Start</string>
+    <string name="stop_manual_arma">Stop</string>
+</resources>

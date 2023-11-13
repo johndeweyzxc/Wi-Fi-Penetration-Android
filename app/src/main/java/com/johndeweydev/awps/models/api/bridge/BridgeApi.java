@@ -2,6 +2,7 @@ package com.johndeweydev.awps.models.api.bridge;
 
 import androidx.room.Dao;
 
+import com.johndeweydev.awps.AppConstants;
 import com.johndeweydev.awps.models.data.BridgeGetRootResponseHttp;
 import com.johndeweydev.awps.models.data.BridgeUploadRequestHttp;
 import com.johndeweydev.awps.models.data.BridgeUploadResponseHttp;
@@ -14,9 +15,9 @@ import retrofit2.http.POST;
 @Dao
 public interface BridgeApi {
 
-  @GET("/")
+  @GET(AppConstants.REST_API_ROOT_ENDPOINT)
   Call<BridgeGetRootResponseHttp> getRoot();
-  @POST("/api/v1/upload-hash")
+  @POST(AppConstants.REST_API_UPLOAD_ENDPOINT)
   Call<BridgeUploadResponseHttp> uploadHash(@Body BridgeUploadRequestHttp
                                                         bridgeUploadRequestHttp);
 }

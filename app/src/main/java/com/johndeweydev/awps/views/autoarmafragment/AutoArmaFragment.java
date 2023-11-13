@@ -1,6 +1,10 @@
 package com.johndeweydev.awps.views.autoarmafragment;
 
-import static com.johndeweydev.awps.MainActivity.LOCATION_PERMISSION_REQUEST_CODE;
+import static com.johndeweydev.awps.AppConstants.BAUD_RATE;
+import static com.johndeweydev.awps.AppConstants.DATA_BITS;
+import static com.johndeweydev.awps.AppConstants.LOCATION_PERMISSION_REQUEST_CODE;
+import static com.johndeweydev.awps.AppConstants.PARITY_NONE;
+import static com.johndeweydev.awps.AppConstants.STOP_BITS;
 
 import android.Manifest;
 import android.content.IntentSender;
@@ -146,10 +150,10 @@ public class AutoArmaFragment extends Fragment {
 
   private boolean showDialogMenuOptionsToUser(MenuItem menuItem) {
     String[] choices = getResources().getStringArray(R.array.dialog_options_auto_arma);
-    String change_attack_type = getResources().getString(R.string.change_attack_type_manual_arma);
-    String clearAttackLogs = getResources().getString(R.string.clear_attack_logs_manual_arma);
-    String database = getResources().getString(R.string.database_manual_arma);
-    String restart = getResources().getString(R.string.restart_launcher_manual_arma);
+    String change_attack_type = getResources().getString(R.string.change_attack_type);
+    String clearAttackLogs = getResources().getString(R.string.clear_attack_logs);
+    String database = getResources().getString(R.string.database);
+    String restart = getResources().getString(R.string.restart_launcher);
 
     if (menuItem.getItemId() != R.id.moreOptionsAutoArmaTopRightDialogMenu) {
       return false;
@@ -183,7 +187,7 @@ public class AutoArmaFragment extends Fragment {
 
   private void showDialogAskUserToSelectAttackType() {
     final String[] choices = getResources().getStringArray(
-            R.array.dialog_options_attack_type_auto_arma);
+            R.array.dialog_options_select_attack_auto_arma);
 
     final int[] checkedItem = {-1};
 
@@ -434,8 +438,8 @@ public class AutoArmaFragment extends Fragment {
     int deviceId = autoArmaArgs.getDeviceId();
     int portNum = autoArmaArgs.getPortNum();
     DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
-            19200, 8, 1, "PARITY_NONE", deviceId, portNum
-    );
+            BAUD_RATE, DATA_BITS, STOP_BITS, PARITY_NONE,
+            deviceId, portNum);
     String result = sessionAutoViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("Successfully connected") || result.equals("Already connected")) {

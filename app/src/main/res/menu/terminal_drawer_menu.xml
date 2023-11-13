@@ -10,6 +10,6 @@
         android:id="@+id/databaseMenuNavItemTerminal"
         android:title="Database" />
     <item
-        android:id="@+id/settingsMenuNavItemTerminal"
-        android:title="Settings" />
+        android:id="@+id/clearLogsMenuNavItemTerminal"
+        android:title="Clear Logs" />
 </menu>

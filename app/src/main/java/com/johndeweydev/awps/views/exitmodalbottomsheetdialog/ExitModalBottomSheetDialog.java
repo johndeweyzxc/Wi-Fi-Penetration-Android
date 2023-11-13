@@ -34,16 +34,10 @@ public class ExitModalBottomSheetDialog extends BottomSheetDialogFragment {
 
     binding.buttonGoTerminalSheetBottomModalExit.setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(
-                    R.id.action_exitModalBottomSheetDialog_to_terminalFragment
-            )
-    );
-
+                    R.id.action_exitModalBottomSheetDialog_to_terminalFragment));
     binding.buttonGoDevicesSheetBottomModalExit.setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(
-                    R.id.action_exitModalBottomSheetDialog_to_devicesFragment
-            )
-    );
-
+                    R.id.action_exitModalBottomSheetDialog_to_devicesFragment));
     binding.buttonCancelSheetBottomModalExit.setOnClickListener(v -> this.dismiss());
   }
 }

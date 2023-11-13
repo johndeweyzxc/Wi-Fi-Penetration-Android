@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dialog_options_attack_type_terminal_manual">
+        <item>@string/pmkid_based_attack</item>
+        <item>@string/mic_based_attack</item>
+        <item>@string/deauther</item>
+    </string-array>
+
+    <string-array name="dialog_options_attack_type_terminal_auto">
+        <item>@string/pmkid_based_attack</item>
+        <item>@string/mic_based_attack</item>
+    </string-array>
+</resources>

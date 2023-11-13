@@ -1,5 +1,10 @@
 package com.johndeweydev.awps.views.terminalfragment;
 
+import static com.johndeweydev.awps.AppConstants.BAUD_RATE;
+import static com.johndeweydev.awps.AppConstants.DATA_BITS;
+import static com.johndeweydev.awps.AppConstants.PARITY_NONE;
+import static com.johndeweydev.awps.AppConstants.STOP_BITS;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,8 +57,7 @@ public class TerminalFragment extends Fragment {
         terminalArgs = new TerminalArgs(
                 terminalViewModel.deviceIdFromTerminalArgs,
                 terminalViewModel.portNumFromTerminalArgs,
-                terminalViewModel.baudRateFromTerminalArgs
-        );
+                terminalViewModel.baudRateFromTerminalArgs);
       } else {
         Log.d("dev-log", "TerminalFragment.onCreateView: Getting terminal argument " +
                 "from bundle");
@@ -78,14 +82,13 @@ public class TerminalFragment extends Fragment {
     }
 
     binding.materialToolBarTerminal.setNavigationOnClickListener(v ->
-            binding.drawerLayoutTerminal.open()
-    );
-    binding.navigationViewTerminal.setNavigationItemSelectedListener(this::navItemSelected);
-
+            binding.drawerLayoutTerminal.open());
+    TerminalRVAdapter terminalRVAdapter = setupRecyclerView();
+    binding.navigationViewTerminal.setNavigationItemSelectedListener(item ->
+            navItemSelected(item, terminalRVAdapter));
     binding.buttonCreateCommandTerminal.setOnClickListener(v ->
             showDialogAskUserToEnterInstructionCode());
 
-    TerminalRVAdapter terminalRVAdapter = setupRecyclerView();
     setupObservers(terminalRVAdapter);
   }
 
@@ -192,8 +195,7 @@ public class TerminalFragment extends Fragment {
     int deviceId = terminalArgs.getDeviceId();
     int portNum = terminalArgs.getPortNum();
     DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
-            19200, 8, 1, "PARITY_NONE", deviceId, portNum
-    );
+            BAUD_RATE, DATA_BITS, STOP_BITS, PARITY_NONE, deviceId, portNum);
     String result = terminalViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("Successfully connected") || result.equals("Already connected")) {
@@ -217,7 +219,6 @@ public class TerminalFragment extends Fragment {
   public void onPause() {
     Log.d("dev-log", "TerminalFragment.onPause: Fragment pausing");
     stopEventReadAndDisconnectFromDevice();
-
     super.onPause();
     Log.d("dev-log", "TerminalFragment.onPause: Fragment paused");
   }
@@ -237,7 +238,7 @@ public class TerminalFragment extends Fragment {
     terminalViewModel.disconnectFromDevice();
   }
 
-  private boolean navItemSelected(MenuItem item) {
+  private boolean navItemSelected(MenuItem item, TerminalRVAdapter terminalRVAdapter) {
     if (item.getItemId() == R.id.databaseMenuNavItemTerminal) {
 
       binding.drawerLayoutTerminal.close();
@@ -254,10 +255,10 @@ public class TerminalFragment extends Fragment {
       binding.drawerLayoutTerminal.close();
       showAttackTypeDialogSelector(false);
       return true;
-    } else if (item.getItemId() == R.id.settingsMenuNavItemTerminal) {
+    } else if (item.getItemId() == R.id.clearLogsMenuNavItemTerminal) {
 
       binding.drawerLayoutTerminal.close();
-      // Reserved navigation item option for future extensions
+      terminalRVAdapter.clearLogs();
       return true;
     }
     return false;
@@ -266,9 +267,9 @@ public class TerminalFragment extends Fragment {
   private void showAttackTypeDialogSelector(boolean automaticAttack) {
     String[] choices;
     if (automaticAttack) {
-      choices = getResources().getStringArray(R.array.dialog_options_terminal_auto);
+      choices = getResources().getStringArray(R.array.dialog_options_attack_type_terminal_auto);
     } else {
-      choices = getResources().getStringArray(R.array.dialog_options_terminal_manual);
+      choices = getResources().getStringArray(R.array.dialog_options_attack_type_terminal_manual);
     }
 
     final int[] checkedItem = {-1};

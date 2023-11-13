@@ -202,10 +202,11 @@ public class HashesFragment extends Fragment {
 
         new RecyclerViewSwipeDecorator.Builder(
                 c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                .addSwipeRightBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.md_theme_light_primary))
+                .addSwipeRightBackgroundColor(ContextCompat.getColor(requireActivity(),
+                        R.color.md_theme_light_tertiary))
                 .addSwipeRightActionIcon(R.drawable.ic_icn_upload_24)
                 .addSwipeLeftBackgroundColor(ContextCompat.getColor(
-                        requireActivity(), R.color.md_theme_light_secondary
+                        requireActivity(), R.color.md_theme_light_error
                 ))
                 .addSwipeLeftActionIcon(R.drawable.ic_btn_delete_24)
                 .create()

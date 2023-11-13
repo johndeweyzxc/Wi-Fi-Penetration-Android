@@ -21,6 +21,7 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
+import com.johndeweydev.awps.AppConstants;
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.UsbDeviceData;
 
@@ -57,7 +58,6 @@ public class Launcher implements SerialInputOutputManager.Listener {
     void onUsbSerialInputError(String input);
   }
 
-  private static final int WRITE_WAIT_MILLIS = 2000;
   private static boolean isConnectedToTheDevice = false;
   private static boolean eventDrivenReadIsTurnedOn = false;
   private UsbDevice usbDevice;
@@ -281,7 +281,7 @@ public class Launcher implements SerialInputOutputManager.Listener {
   public void writeDataToDevice(String str) {
     byte[] data = str.getBytes();
     try {
-      usbSerialPort.write(data, WRITE_WAIT_MILLIS);
+      usbSerialPort.write(data, AppConstants.LAUNCHER_WRITE_WAIT_MILLIS);
     } catch (Exception e) {
       Log.e("dev-log", "Launcher.writeData: An error has occurred "
               + e.getMessage());

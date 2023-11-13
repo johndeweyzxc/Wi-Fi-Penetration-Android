@@ -36,8 +36,6 @@ import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewMod
 public class MainActivity extends AppCompatActivity {
 
   private String currentFragmentLabel;
-  public final static int LOCATION_PERMISSION_REQUEST_CODE = 100;
-  public static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
           @NonNull int[] grantResults
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+    if (requestCode == AppConstants.LOCATION_PERMISSION_REQUEST_CODE) {
       if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
         Toast.makeText(this, "Access to location is required", Toast.LENGTH_LONG)
                 .show();
@@ -133,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     if (locationPermission != PackageManager.PERMISSION_GRANTED) {
       ActivityCompat.requestPermissions(MainActivity.this,
               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-              LOCATION_PERMISSION_REQUEST_CODE);
+              AppConstants.LOCATION_PERMISSION_REQUEST_CODE);
     }
   }
 
@@ -141,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     int flags = PendingIntent.FLAG_MUTABLE;
     PendingIntent pendingIntent;
     pendingIntent = PendingIntent.getBroadcast(this, 0,
-            new Intent(INTENT_ACTION_GRANT_USB), flags
+            new Intent(AppConstants.INTENT_ACTION_GRANT_USB), flags
     );
     LauncherSingleton.getUsbManager().requestPermission(
             LauncherSingleton.getInstance()

@@ -1,5 +1,11 @@
 package com.johndeweydev.awps.views.devicesfragment;
 
+import static com.johndeweydev.awps.AppConstants.INTENT_ACTION_GRANT_USB;
+import static com.johndeweydev.awps.AppConstants.BAUD_RATE;
+import static com.johndeweydev.awps.AppConstants.DATA_BITS;
+import static com.johndeweydev.awps.AppConstants.STOP_BITS;
+import static com.johndeweydev.awps.AppConstants.PARITY_NONE;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,7 +49,7 @@ public class DevicesFragment extends Fragment {
   private class UsbBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      if(MainActivity.INTENT_ACTION_GRANT_USB.equals(intent.getAction())) {
+      if(INTENT_ACTION_GRANT_USB.equals(intent.getAction())) {
         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
           Log.d("dev-log", "DevicesFragment.onReceive: " +
                   "Usb device permission granted");
@@ -131,7 +137,7 @@ public class DevicesFragment extends Fragment {
     Log.d("dev-log",
             "DevicesFragment.isUsbDevicePermissionGranted: Connecting to the device");
     DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
-            19200, 8, 1, "PARITY_NONE", deviceId, portNum);
+            BAUD_RATE, DATA_BITS, STOP_BITS, PARITY_NONE, deviceId, portNum);
     String result = terminalViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("No usb permission")) {
@@ -177,7 +183,7 @@ public class DevicesFragment extends Fragment {
   private void registerUsbBroadcastReceiver() {
     if (terminalArgs != null) {
       if (!usbDevicePermissionGranted) {
-        IntentFilter intentFilter = new IntentFilter(MainActivity.INTENT_ACTION_GRANT_USB);
+        IntentFilter intentFilter = new IntentFilter(INTENT_ACTION_GRANT_USB);
         requireActivity().registerReceiver(usbBroadcastReceiver, intentFilter);
         usbBroadcastReceiverRegistered = true;
         Log.d("dev-log", "DevicesFragment.registerUsbBroadcastReceiver: " +
