@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/findDeviceMenuNavItemDevices"
+        android:title="Find Devices"/>
+    <item
         android:id="@+id/databaseMenuNavItemDevices"
         android:title="Database" />
     <item
-        android:id="@+id/settingsMenuNavItemDevices"
-        android:title="Settings" />
-    <item
-        android:id="@+id/infoMenuNavItemsDevices"
-        android:title="Info"/>
+        android:id="@+id/learnMoreMenuNavItemsDevices"
+        android:title="Learn More"/>
 </menu>

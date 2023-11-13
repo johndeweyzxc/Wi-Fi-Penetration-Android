@@ -1,7 +1,6 @@
 package com.johndeweydev.awps.views.devicesfragment;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +9,7 @@ import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,12 +21,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.johndeweydev.awps.BuildConfig;
+import com.johndeweydev.awps.MainActivity;
 import com.johndeweydev.awps.R;
+import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.UsbDeviceData;
-import com.johndeweydev.awps.databinding.FragmentDevicesBinding;
-import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.views.terminalfragment.TerminalArgs;
 
@@ -34,7 +33,6 @@ import java.util.ArrayList;
 
 public class DevicesFragment extends Fragment {
 
-  public static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
   private FragmentDevicesBinding binding;
   private TerminalViewModel terminalViewModel;
   private TerminalArgs terminalArgs = null;
@@ -45,7 +43,7 @@ public class DevicesFragment extends Fragment {
   private class UsbBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      if(INTENT_ACTION_GRANT_USB.equals(intent.getAction())) {
+      if(MainActivity.INTENT_ACTION_GRANT_USB.equals(intent.getAction())) {
         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
           Log.d("dev-log", "DevicesFragment.onReceive: " +
                   "Usb device permission granted");
@@ -82,42 +80,26 @@ public class DevicesFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     binding.materialToolBarDevices.setNavigationOnClickListener(v ->
-            binding.drawerLayoutDevices.open()
-    );
-    binding.materialToolBarDevices.setOnMenuItemClickListener(menuItem -> {
-      if (menuItem.getItemId() == R.id.refreshMenuTopAppBarDevice) {
-        findUsbDevices();
-        return true;
-      }
-      return false;
-    });
-    binding.navigationViewTerminalMain.setNavigationItemSelectedListener(menuItem -> {
-      if (menuItem.getItemId() == R.id.databaseMenuNavItemDevices) {
+            binding.drawerLayoutDevices.open());
 
-        binding.drawerLayoutDevices.close();
-        Navigation.findNavController(binding.getRoot()).navigate(
-                R.id.action_devicesFragment_to_hashesFragment);
-        return true;
-      } else if (menuItem.getItemId() == R.id.settingsMenuNavItemDevices) {
-        binding.drawerLayoutDevices.close();
-
-        // TODO: Navigate to settings fragment
-
-        return true;
-      } else if (menuItem.getItemId() == R.id.infoMenuNavItemsDevices) {
-        binding.drawerLayoutDevices.close();
-
-        // TODO: Navigate to information fragment
-
-        return true;
-      }
-      return false;
-    });
-
+    binding.navigationViewTerminalMain.setNavigationItemSelectedListener(this::navItemSelected);
     DevicesRVAdapter devicesRVAdapter = setupRecyclerView();
     setupObservers(devicesRVAdapter);
-
     findUsbDevices();
+  }
+
+  private boolean navItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.findDeviceMenuNavItemDevices) {
+      binding.drawerLayoutDevices.close();
+      findUsbDevices();
+      return true;
+    } else if (item.getItemId() == R.id.databaseMenuNavItemDevices) {
+      binding.drawerLayoutDevices.close();
+      Navigation.findNavController(binding.getRoot()).navigate(
+              R.id.action_devicesFragment_to_hashesFragment);
+      return true;
+    }
+    return false;
   }
 
   private DevicesRVAdapter setupRecyclerView() {
@@ -126,7 +108,6 @@ public class DevicesFragment extends Fragment {
       this.terminalArgs = terminalArgs;
       isUsbDevicePermissionGranted();
     };
-
     DevicesRVAdapter devicesRVAdapter = new DevicesRVAdapter(event);
     binding.recyclerViewDevices.setAdapter(devicesRVAdapter);
     binding.recyclerViewDevices.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -138,10 +119,7 @@ public class DevicesFragment extends Fragment {
       if (deviceList == null) {
         return;
       }
-      for (int i = 0; i < deviceList.size(); i++) {
-        devicesRVAdapter.appendData(deviceList.get(i));
-        devicesRVAdapter.notifyItemInserted(i);
-      }
+      devicesRVAdapter.appendData(deviceList);
     };
     terminalViewModel.devicesList.observe(getViewLifecycleOwner(), deviceListObserver);
   }
@@ -153,19 +131,19 @@ public class DevicesFragment extends Fragment {
     Log.d("dev-log",
             "DevicesFragment.isUsbDevicePermissionGranted: Connecting to the device");
     DeviceConnectionParamData deviceConnectionParamData = new DeviceConnectionParamData(
-            19200, 8, 1, "PARITY_NONE", deviceId, portNum
-    );
+            19200, 8, 1, "PARITY_NONE", deviceId, portNum);
     String result = terminalViewModel.connectToDevice(deviceConnectionParamData);
 
     if (result.equals("No usb permission")) {
-
       Log.d("dev-log",
-              "DevicesFragment.isUsbDevicePermissionGranted: Requesting usb device permission");
-      requestUsbDevicePermission();
+              "DevicesFragment.isUsbDevicePermissionGranted: Requesting usb device " +
+                      "permission");
+      MainActivity mainActivity = (MainActivity) requireActivity();
+      mainActivity.requestUsbDevicePermission();
     } else if (result.equals("Successfully connected") || result.equals("Already connected")) {
-
       Log.d("dev-log",
-              "DevicesFragment.isUsbDevicePermissionGranted: Navigating to terminal fragment");
+              "DevicesFragment.isUsbDevicePermissionGranted: Navigating to terminal " +
+                      "fragment");
       navigateToTerminalFragment();
     }
   }
@@ -174,21 +152,6 @@ public class DevicesFragment extends Fragment {
     DevicesFragmentDirections.ActionDevicesFragmentToTerminalFragment action;
     action = DevicesFragmentDirections.actionDevicesFragmentToTerminalFragment(terminalArgs);
     Navigation.findNavController(binding.getRoot()).navigate(action);
-  }
-
-  private void requestUsbDevicePermission() {
-    int flags = PendingIntent.FLAG_MUTABLE;
-    PendingIntent pendingIntent;
-    pendingIntent = PendingIntent.getBroadcast(requireActivity(), 0,
-            new Intent(INTENT_ACTION_GRANT_USB), flags
-    );
-    LauncherSingleton.getUsbManager().requestPermission(
-            LauncherSingleton.getInstance()
-                    .getLauncher()
-                    .getUsbSerialDriver()
-                    .getDevice(),
-            pendingIntent
-    );
   }
 
   @Override
@@ -214,7 +177,7 @@ public class DevicesFragment extends Fragment {
   private void registerUsbBroadcastReceiver() {
     if (terminalArgs != null) {
       if (!usbDevicePermissionGranted) {
-        IntentFilter intentFilter = new IntentFilter(INTENT_ACTION_GRANT_USB);
+        IntentFilter intentFilter = new IntentFilter(MainActivity.INTENT_ACTION_GRANT_USB);
         requireActivity().registerReceiver(usbBroadcastReceiver, intentFilter);
         usbBroadcastReceiverRegistered = true;
         Log.d("dev-log", "DevicesFragment.registerUsbBroadcastReceiver: " +

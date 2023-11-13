@@ -25,7 +25,6 @@
                 android:layout_height="wrap_content"
                 android:theme="@style/ToolBarTheme"
                 app:navigationIcon="@drawable/ic_btn_menu_24"
-                app:menu="@menu/devices_top_right_menu"
                 app:title="Select Device" />
 
         </com.google.android.material.appbar.AppBarLayout>

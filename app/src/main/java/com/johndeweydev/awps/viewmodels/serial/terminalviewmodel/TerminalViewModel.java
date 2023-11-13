@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 import com.johndeweydev.awps.models.data.LauncherOutputData;
-import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 import com.johndeweydev.awps.models.data.UsbDeviceData;
+import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 import com.johndeweydev.awps.viewmodels.serial.ViewModelIOControl;
 
 import java.util.ArrayList;

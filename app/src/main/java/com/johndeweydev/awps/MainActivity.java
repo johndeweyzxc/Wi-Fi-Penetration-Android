@@ -1,6 +1,7 @@
 package com.johndeweydev.awps;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
   private String currentFragmentLabel;
   public final static int LOCATION_PERMISSION_REQUEST_CODE = 100;
+  public static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +135,21 @@ public class MainActivity extends AppCompatActivity {
               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
               LOCATION_PERMISSION_REQUEST_CODE);
     }
+  }
+
+  public void requestUsbDevicePermission() {
+    int flags = PendingIntent.FLAG_MUTABLE;
+    PendingIntent pendingIntent;
+    pendingIntent = PendingIntent.getBroadcast(this, 0,
+            new Intent(INTENT_ACTION_GRANT_USB), flags
+    );
+    LauncherSingleton.getUsbManager().requestPermission(
+            LauncherSingleton.getInstance()
+                    .getLauncher()
+                    .getUsbSerialDriver()
+                    .getDevice(),
+            pendingIntent
+    );
   }
 
   private void fragmentChangeListener() {
