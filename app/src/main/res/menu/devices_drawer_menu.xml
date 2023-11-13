@@ -2,11 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/findDeviceMenuNavItemDevices"
-        android:title="Find Devices"/>
+        android:title="Find Devices"
+        android:icon="@drawable/ic_drawer_find_devices_24"/>
     <item
         android:id="@+id/databaseMenuNavItemDevices"
-        android:title="Database" />
+        android:title="Database"
+        android:icon="@drawable/ic_drawer_database_24"/>
     <item
         android:id="@+id/learnMoreMenuNavItemsDevices"
-        android:title="Learn More"/>
+        android:title="Learn More"
+        android:icon="@drawable/ic_drawer_learn_more_24"/>
 </menu>

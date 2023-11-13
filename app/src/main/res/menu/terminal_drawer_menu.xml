@@ -2,14 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/automaticMenuNavItemTerminal"
-        android:title="Automatic Attack"/>
+        android:title="Automatic Attack"
+        android:icon="@drawable/ic_drawer_automatic_attack_24"/>
     <item
         android:id="@+id/manualAttackMenuNavItemTerminal"
-        android:title="Manual Attack"/>
+        android:title="Manual Attack"
+        android:icon="@drawable/ic_drawer_manual_attack_24"/>
     <item
         android:id="@+id/databaseMenuNavItemTerminal"
-        android:title="Database" />
+        android:title="Database"
+        android:icon="@drawable/ic_drawer_database_24"/>
     <item
         android:id="@+id/clearLogsMenuNavItemTerminal"
-        android:title="Clear Logs" />
+        android:title="Clear Logs"
+        android:icon="@drawable/ic_drawer_clear_logs_24"/>
 </menu>
