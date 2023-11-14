@@ -23,6 +23,7 @@ public class LocationAware implements LocationListener {
   public interface GpsSettingsListener {
     void onGpsEnabled();
     void onGpsDisabled();
+    void onGpsLocationChanged(double latitude, double longitude);
   }
 
   private double latitude;
@@ -63,6 +64,7 @@ public class LocationAware implements LocationListener {
   public void onLocationChanged(Location location) {
     latitude = location.getLatitude();
     longitude = location.getLongitude();
+    gpsSettingsListener.onGpsLocationChanged(latitude, longitude);
   }
 
   @Override

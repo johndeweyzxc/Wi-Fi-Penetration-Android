@@ -3,8 +3,10 @@ package com.johndeweydev.awps;
 public class AppConstants {
 
   public final static int LOCATION_PERMISSION_REQUEST_CODE = 100;
-  public static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
+  public final static String NOTIFICATION_CHANNEL_ID = "AWPS_CHANNEL_LOCATION_UPDATE";
+  public final static int NOTIFICATION_ID = 1;
 
+  public static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
   public static final int LAUNCHER_WRITE_WAIT_MILLIS = 2000;
   public static final int BAUD_RATE = 19200;
   public static final int DATA_BITS = 8;

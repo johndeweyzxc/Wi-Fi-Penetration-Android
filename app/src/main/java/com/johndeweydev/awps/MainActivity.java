@@ -1,15 +1,22 @@
 package com.johndeweydev.awps;
 
+import static com.johndeweydev.awps.AppConstants.NOTIFICATION_CHANNEL_ID;
+import static com.johndeweydev.awps.AppConstants.NOTIFICATION_ID;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbManager;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -43,6 +51,8 @@ import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoS
 import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModelFactory;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements LocationAware.GpsSettingsListener {
@@ -54,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements LocationAware.Gps
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    createNotificationChannel();
 
     // Set up USB serial
     UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -98,6 +110,70 @@ public class MainActivity extends AppCompatActivity implements LocationAware.Gps
     }
   }
 
+  private void createNotificationChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      CharSequence name = "Location Updates";
+      String description = "Display the current location using GPS";
+      int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+      NotificationChannel channel = new NotificationChannel(
+              NOTIFICATION_CHANNEL_ID, name, importance);
+      channel.setDescription(description);
+
+      // Register the channel with the system
+      NotificationManager notificationManager = getSystemService(NotificationManager.class);
+      if (notificationManager != null) {
+        notificationManager.createNotificationChannel(channel);
+      }
+    }
+  }
+
+  @Override
+  public void onGpsLocationChanged(double latitude, double longitude) {
+    String strLat = Double.toString(latitude);
+    String strLon = Double.toString(longitude);
+    String address = getAddressFromCoordinates(latitude, longitude);
+    showLocationUpdateViaNotification(strLat, strLon, address);
+  }
+
+  private void showLocationUpdateViaNotification(
+          String latitude, String longitude, String address) {
+
+    NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(
+            "Lat: " + latitude + "\nLon: " + longitude + "\nAddress: " + address);
+
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+            NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notif_location_24)
+            .setContentTitle("Location Update")
+            .setStyle(style)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+    // Build the notification and display it
+    NotificationManager notificationManager = (NotificationManager) getSystemService(
+            Context.NOTIFICATION_SERVICE);
+    notificationManager.notify(NOTIFICATION_ID, builder.build());
+  }
+
+  private String getAddressFromCoordinates(double latitude, double longitude) {
+    Geocoder geocoder = LocationAwareSingleton.getGeocoder();
+    List<Address> addresses = null;
+    try {
+      assert geocoder != null;
+      addresses = geocoder.getFromLocation(latitude, longitude, 1);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    if (addresses == null) {
+      Log.d("dev-log", "MainActivity.getAddressFromCoordinates: Addresses is " +
+              "null");
+      return "None";
+    } else {
+      return addresses.get(0).getAddressLine(0);
+    }
+  }
+
   @Override
   public void onGpsEnabled() {
     Log.d("dev-log", "MainActivity.onGpsEnabled: GPS is enabled");
@@ -119,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements LocationAware.Gps
       setUpSettingsClientTaskListener(task);
     });
     builder.setNegativeButton("CANCEL", (dialog, which) -> {
-      Toast.makeText(this, "GPS is required!", Toast.LENGTH_LONG).show();
+      Toast.makeText(this, "GPS is required", Toast.LENGTH_LONG).show();
       finish();
     });
     builder.show();
