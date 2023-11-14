@@ -2,16 +2,10 @@ package com.johndeweydev.awps.views.autoarmafragment;
 
 import static com.johndeweydev.awps.AppConstants.BAUD_RATE;
 import static com.johndeweydev.awps.AppConstants.DATA_BITS;
-import static com.johndeweydev.awps.AppConstants.LOCATION_PERMISSION_REQUEST_CODE;
 import static com.johndeweydev.awps.AppConstants.PARITY_NONE;
 import static com.johndeweydev.awps.AppConstants.STOP_BITS;
 
-import android.Manifest;
-import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -30,16 +23,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.location.Priority;
-import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.johndeweydev.awps.R;
 import com.johndeweydev.awps.databinding.FragmentAutoArmaBinding;
@@ -51,9 +34,6 @@ import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
 import com.johndeweydev.awps.viewmodels.serial.sessionviewmodel.SessionAutoViewModel;
 import com.johndeweydev.awps.viewmodels.serial.sessionviewmodel.SessionAutoViewModelFactory;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class AutoArmaFragment extends Fragment {
@@ -96,8 +76,6 @@ public class AutoArmaFragment extends Fragment {
               R.id.action_autoArmaFragment_to_devicesFragment);
       return;
     }
-
-    checkLocationSettings();
 
     sessionAutoViewModel.automaticAttack = false;
     sessionAutoViewModel.selectedArmament = autoArmaArgs.getSelectedArmament();
@@ -285,105 +263,14 @@ public class AutoArmaFragment extends Fragment {
       }
       sessionAutoViewModel.launcherExecutionResult.setValue(null);
       if (result.equals("Success")) {
-        getLocationAndSaveResultInDatabase();
+        // Save result in the database
+        HashInfoEntity copyOfLauncherExecutionResultData;
+        copyOfLauncherExecutionResultData = sessionAutoViewModel.launcherExecutionResultData;
+        hashInfoViewModel.addNewHashInfo(copyOfLauncherExecutionResultData);
       }
     };
     sessionAutoViewModel.launcherExecutionResult.observe(getViewLifecycleOwner(),
             launcherExecutionResultObserver);
-  }
-
-  private void requestForLocationPermission() {
-    int locationPermission = ContextCompat.checkSelfPermission(
-            requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-    if (locationPermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(requireActivity(),
-              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-              LOCATION_PERMISSION_REQUEST_CODE);
-    }
-  }
-
-  private void getLocationAndSaveResultInDatabase() {
-    HashInfoEntity copyOfLauncherExecutionResultData;
-    copyOfLauncherExecutionResultData = sessionAutoViewModel.launcherExecutionResultData;
-
-    // This permission checking is required otherwise fusedLocationProviderClient.getLastLocation
-    // will throw an error
-    int locationPermission = ContextCompat.checkSelfPermission(requireActivity(),
-            Manifest.permission.ACCESS_FINE_LOCATION);
-
-    FusedLocationProviderClient fusedLocationProviderClient = LocationServices
-            .getFusedLocationProviderClient(requireActivity());
-
-    if (locationPermission != PackageManager.PERMISSION_GRANTED) {
-      requestForLocationPermission();
-    }
-
-    // Get the last location
-    fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
-      if (location == null) {
-        Log.d("dev-log", "AutoArmaFragment.getLocationAndSaveResultInDatabase: " +
-                "Location is null");
-        Toast.makeText(requireActivity(), "Database save failed, location is null",
-                Toast.LENGTH_LONG).show();
-        return;
-      }
-      Geocoder geocoder = new Geocoder(requireActivity(), Locale.getDefault());
-      List<Address> addresses = null;
-      try {
-        addresses = geocoder.getFromLocation(location.getLatitude(),
-                location.getLongitude(), 1);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      if (addresses == null) {
-        Log.d("dev-log", "AutoArmaFragment.getLocationAndSaveResultInDatabase: " +
-                "Addresses is null");
-        Toast.makeText(requireActivity(), "Database save failed, Addresses is null",
-                Toast.LENGTH_LONG).show();
-        return;
-      }
-
-      String latitude = String.valueOf(addresses.get(0).getLatitude());
-      String longitude = String.valueOf(addresses.get(0).getLongitude());
-      String address = addresses.get(0).getAddressLine(0);
-
-      // Replace the location value set by the view model
-      copyOfLauncherExecutionResultData.latitude = latitude;
-      copyOfLauncherExecutionResultData.longitude = longitude;
-      copyOfLauncherExecutionResultData.address = address;
-
-      // Save result in the database
-      hashInfoViewModel.addNewHashInfo(copyOfLauncherExecutionResultData);
-    });
-  }
-
-  private void checkLocationSettings() {
-    LocationRequest locationRequest = new LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY, 2000)
-            .setMinUpdateIntervalMillis(5000)
-            .setMaxUpdateDelayMillis(2000)
-            .build();
-    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest);
-    SettingsClient client = LocationServices.getSettingsClient(requireActivity());
-    Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-    task.addOnFailureListener(requireActivity(), e -> {
-      if (e instanceof ResolvableApiException) {
-        // Location settings are not satisfied, but this can be fixed
-        // by showing the user a dialog.
-
-        try {
-          // Show the dialog by calling startResolutionForResult(),
-          // and check the result in onActivityResult().
-          ResolvableApiException resolvable = (ResolvableApiException) e;
-          resolvable.startResolutionForResult(requireActivity(),
-                  LocationSettingsStatusCodes.RESOLUTION_REQUIRED);
-        } catch (IntentSender.SendIntentException sendEx) {
-          Log.w("dev-log", "AutoArmaFragment.checkLocationSettings: " + sendEx.getMessage());
-        }
-      }
-    });
   }
 
   private void setupSerialInputErrorListener() {

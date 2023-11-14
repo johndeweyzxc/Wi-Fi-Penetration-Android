@@ -31,13 +31,19 @@ class HashInfoViewModel : ViewModel() {
     val bssid = hashInfoEntity.bssid
     val hashData = hashInfoEntity.hashData
 
+    val latitude = hashInfoRepoDatabase.currentLocationLatitude
+    val longitude = hashInfoRepoDatabase.currentLocationLongitude
+    hashInfoEntity.latitude = latitude.toString()
+    hashInfoEntity.longitude = longitude.toString()
+    hashInfoEntity.address = hashInfoRepoDatabase.getCurrentLocationAddress(latitude, longitude)
+
     viewModelScope.launch(Dispatchers.IO) {
       val result: HashInfoEntity? = async {
         hashInfoRepoDatabase.getHashInfoBySsidAndBssidAndHashData(ssid, bssid, hashData)
       }.await()
 
       if (result == null) {
-        // The hash info entity that will be added is unique and is not found in the database
+        // Ensure hash info entity that will be added is unique and is not found in the database
         hashInfoRepoDatabase.addNewHashInfo(hashInfoEntity)
       } else {
         Log.w("dev-log", "HashInfoViewModel.addNewHashInfo: Hash info entity " +

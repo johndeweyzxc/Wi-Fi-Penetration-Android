@@ -1,11 +1,15 @@
 package com.johndeweydev.awps;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbManager;
+import android.location.Geocoder;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -22,25 +26,36 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.room.Room;
 
-import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.johndeweydev.awps.models.api.bridge.Bridge;
 import com.johndeweydev.awps.models.api.bridge.BridgeSingleton;
 import com.johndeweydev.awps.models.api.hashinfo.HashInfoDatabase;
 import com.johndeweydev.awps.models.api.hashinfo.HashInfoSingleton;
 import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
+import com.johndeweydev.awps.models.api.locationaware.LocationAware;
+import com.johndeweydev.awps.models.api.locationaware.LocationAwareSingleton;
 import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
 import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModel;
 import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModelFactory;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity implements LocationAware.GpsSettingsListener {
 
   private String currentFragmentLabel;
+  private LocationAwareSingleton locationAwareSingleton;
+  private boolean isSecondStageFinish = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    // Set up USB serial
     UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
     LauncherSingleton.setUsbManager(usbManager);
 
@@ -49,18 +64,168 @@ public class MainActivity extends AppCompatActivity {
             terminalRepoSerial);
     new ViewModelProvider(this, terminalViewModelFactory).get(TerminalViewModel.class);
 
-    setupBackPressedCallback();
-
-    setContentView(R.layout.activity_main);
-    fragmentChangeListener();
-
+    // Set up Database
     HashInfoSingleton hashInfoSingleton = HashInfoSingleton.getInstance();
     HashInfoDatabase hashInfoDatabase = Room.databaseBuilder(getApplicationContext(),
             HashInfoDatabase.class, "awps_database").build();
     hashInfoSingleton.setHashInfoDatabase(hashInfoDatabase);
 
+    // Set up Network
     BridgeSingleton bridgeSingleton = BridgeSingleton.getInstance();
     bridgeSingleton.setBridge(new Bridge());
+
+    // Set up GPS
+    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    SettingsClient client = LocationServices.getSettingsClient(this);
+    int locationPermission = ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION);
+    Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+    locationAwareSingleton = LocationAwareSingleton.getInstance();
+    locationAwareSingleton.getLocationAware().setGpsSettingsListener(this);
+    LocationAwareSingleton.setLocationManager(locationManager);
+    LocationAwareSingleton.setSettingsClient(client);
+    LocationAwareSingleton.setLocationPermission(locationPermission);
+    LocationAwareSingleton.setGeocoder(geocoder);
+
+    // First stage
+    if (!LocationAwareSingleton.isGpsTurnedOn()) {
+      // GPS is turned off
+      showDialogAskUserToTurnOnGps();
+    } else {
+      // GPS is turned on
+      locationIsTurnedOnByUser();
+    }
+  }
+
+  @Override
+  public void onGpsEnabled() {
+    Log.d("dev-log", "MainActivity.onGpsEnabled: GPS is enabled");
+  }
+
+  @Override
+  public void onGpsDisabled() {
+    Log.d("dev-log", "MainActivity.onGpsDisabled: GPS is disabled");
+    showDialogAskUserToTurnOnGps();
+  }
+
+  private void showDialogAskUserToTurnOnGps() {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+    builder.setTitle("Turn on GPS");
+    builder.setMessage("You need to turn on GPS in order for this to work");
+    builder.setPositiveButton("TURN ON", (dialog, which) -> {
+      Task<LocationSettingsResponse> task = locationAwareSingleton
+              .getLocationAware().askUserToTurnOnGps();
+      setUpSettingsClientTaskListener(task);
+    });
+    builder.setNegativeButton("CANCEL", (dialog, which) -> {
+      Toast.makeText(this, "GPS is required!", Toast.LENGTH_LONG).show();
+      finish();
+    });
+    builder.show();
+  }
+
+  private void setUpSettingsClientTaskListener(Task<LocationSettingsResponse> task) {
+    task.addOnFailureListener(this, e -> {
+      if (e instanceof ResolvableApiException) {
+        // Location settings are not satisfied, but this can be fixed by showing the user a dialog.
+        try {
+          // Show the dialog by calling startResolutionForResult(), and check the result in
+          // onActivityResult().
+          ResolvableApiException resolvable = (ResolvableApiException) e;
+          resolvable.startResolutionForResult(this,
+                  AppConstants.LOCATION_PERMISSION_REQUEST_CODE);
+        } catch (IntentSender.SendIntentException sendEx) {
+          Log.w("dev-log", "MainActivity.checkLocationSettings: " + sendEx.getMessage());
+        }
+      }
+    });
+  }
+
+  @Override
+  @SuppressLint("MissingPermission")
+  public void onRequestPermissionsResult(
+          int requestCode,
+          @NonNull String[] permissions,
+          @NonNull int[] grantResults
+  ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    if (requestCode == AppConstants.LOCATION_PERMISSION_REQUEST_CODE) {
+      if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+        // User denied permission
+        Toast.makeText(this,
+                "Access to location is required", Toast.LENGTH_LONG).show();
+        finish();
+      } else {
+        // User granted permission
+        Log.d("dev-log", "MainActivity.onRequestPermissionsResult: " +
+                "Location turned on and permission granted");
+        launchSecondStage();
+      }
+    }
+  }
+
+  @Override
+  @SuppressLint("MissingPermission")
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == AppConstants.LOCATION_PERMISSION_REQUEST_CODE) {
+      if (resultCode == RESULT_OK) {
+        // User accepted request to turn on GPS
+        locationIsTurnedOnByUser();
+      } else {
+        // User declined request to turn on GPS
+        Toast.makeText(this, "GPS is required!", Toast.LENGTH_LONG).show();
+        finish();
+      }
+    }
+  }
+
+  private void locationIsTurnedOnByUser() {
+    if (LocationAwareSingleton.isLocationPermissionGranted()) {
+      // GPS is turned on and permission is granted
+      Log.d("dev-log", "MainActivity.locationIsTurnedOnByUser: GPS is turned on and " +
+              "permission is granted");
+      launchSecondStage();
+    } else {
+      // GPS is turned on however permission is not granted
+      Log.d("dev-log", "MainActivity.locationIsTurnedOnByUser: GPS is turned on " +
+              "however permission is not granted");
+      ActivityCompat.requestPermissions(MainActivity.this,
+              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+              AppConstants.LOCATION_PERMISSION_REQUEST_CODE);
+    }
+  }
+
+  private void launchSecondStage() {
+    // Second stage
+    if (!isSecondStageFinish) {
+      LocationAwareSingleton
+              .getInstance()
+              .getLocationAware()
+              .gpsIsOnSetUpLocationUpdateListener();
+
+      setupBackPressedCallback();
+      setContentView(R.layout.activity_main);
+      isSecondStageFinish = true;
+      fragmentChangeListener();
+    }
+  }
+
+  public void requestUsbDevicePermission() {
+    int flags = PendingIntent.FLAG_MUTABLE;
+    PendingIntent pendingIntent;
+    pendingIntent = PendingIntent.getBroadcast(this, 0,
+            new Intent(AppConstants.INTENT_ACTION_GRANT_USB), flags
+    );
+    LauncherSingleton.getUsbManager().requestPermission(
+            LauncherSingleton.getInstance()
+                    .getLauncher()
+                    .getUsbSerialDriver()
+                    .getDevice(),
+            pendingIntent
+    );
   }
 
   private void setupBackPressedCallback() {
@@ -79,75 +244,6 @@ public class MainActivity extends AppCompatActivity {
       }
     };
     this.getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
-  }
-
-  @Override
-  public void onRequestPermissionsResult(
-          int requestCode,
-          @NonNull String[] permissions,
-          @NonNull int[] grantResults
-  ) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    if (requestCode == AppConstants.LOCATION_PERMISSION_REQUEST_CODE) {
-      if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-        Toast.makeText(this, "Access to location is required", Toast.LENGTH_LONG)
-                .show();
-
-        // This either pops the manual arma fragment or the auto arma fragment, because those
-        // fragment are the ones that ask for the GPS feature
-        Navigation.findNavController(this, R.id.fragmentActivityMain)
-                .popBackStack();
-      } else {
-        Log.d("dev-log", "MainActivity.onRequestPermissionsResult: Access to location " +
-                "permission granted");
-      }
-    }
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if (requestCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-      if (resultCode == RESULT_OK) {
-        Log.d("dev-log", "MainActivity.onActivityResult: Location turned on, request " +
-                "for permission to access location");
-        requestForLocationPermission();
-      } else {
-        Toast.makeText(this, "Location is required", Toast.LENGTH_LONG).show();
-
-        // This either pops the manual arma fragment or the auto arma fragment, because those
-        // fragment are the ones that ask for the GPS feature
-        Navigation.findNavController(this, R.id.fragmentActivityMain)
-                .popBackStack();
-      }
-    }
-  }
-
-  private void requestForLocationPermission() {
-    int locationPermission = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.ACCESS_FINE_LOCATION);
-
-    if (locationPermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(MainActivity.this,
-              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-              AppConstants.LOCATION_PERMISSION_REQUEST_CODE);
-    }
-  }
-
-  public void requestUsbDevicePermission() {
-    int flags = PendingIntent.FLAG_MUTABLE;
-    PendingIntent pendingIntent;
-    pendingIntent = PendingIntent.getBroadcast(this, 0,
-            new Intent(AppConstants.INTENT_ACTION_GRANT_USB), flags
-    );
-    LauncherSingleton.getUsbManager().requestPermission(
-            LauncherSingleton.getInstance()
-                    .getLauncher()
-                    .getUsbSerialDriver()
-                    .getDevice(),
-            pendingIntent
-    );
   }
 
   private void fragmentChangeListener() {
@@ -192,8 +288,8 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showExitDialogInManualArmaFragment() {
-    NavController navController = Navigation.findNavController(
-            this, R.id.fragmentActivityMain);
+    NavController navController = Navigation.findNavController(this,
+            R.id.fragmentActivityMain);
     navController.navigate(R.id.action_manualArmaFragment_to_exitModalBottomSheetDialog);
   }
 
@@ -210,6 +306,14 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showExitDialogInAutoArmaFragment() {
-    // TODO: Provide implementation
+    NavController navController = Navigation.findNavController(this,
+            R.id.fragmentActivityMain);
+    navController.navigate(R.id.action_autoArmaFragment_to_exitModalBottomSheetDialog);
+  }
+
+  @Override
+  protected void onDestroy() {
+    isSecondStageFinish = false;
+    super.onDestroy();
   }
 }

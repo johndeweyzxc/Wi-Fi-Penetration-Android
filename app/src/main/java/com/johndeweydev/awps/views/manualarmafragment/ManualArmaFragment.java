@@ -2,17 +2,12 @@ package com.johndeweydev.awps.views.manualarmafragment;
 
 import static com.johndeweydev.awps.AppConstants.BAUD_RATE;
 import static com.johndeweydev.awps.AppConstants.DATA_BITS;
-import static com.johndeweydev.awps.AppConstants.LOCATION_PERMISSION_REQUEST_CODE;
 import static com.johndeweydev.awps.AppConstants.PARITY_NONE;
 import static com.johndeweydev.awps.AppConstants.STOP_BITS;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -35,7 +29,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -56,10 +49,7 @@ import com.johndeweydev.awps.viewmodels.hashinfoviewmodel.HashInfoViewModel;
 import com.johndeweydev.awps.viewmodels.serial.sessionviewmodel.SessionViewModel;
 import com.johndeweydev.awps.viewmodels.serial.sessionviewmodel.SessionViewModelFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class ManualArmaFragment extends Fragment {
@@ -468,7 +458,10 @@ public class ManualArmaFragment extends Fragment {
     } else if (result.equals("Success")) {
       MaterialAlertDialogBuilder builderSuccess = new MaterialAlertDialogBuilder(requireActivity());
 
-      getLocationAndSaveResultInDatabase();
+      // Save result in the database
+      HashInfoEntity copyOfLauncherExecutionResultData;
+      copyOfLauncherExecutionResultData = sessionViewModel.launcherExecutionResultData;
+      hashInfoViewModel.addNewHashInfo(copyOfLauncherExecutionResultData);
 
       sessionViewModel.launcherExecutionResultData = null;
       sessionViewModel.launcherExecutionResult.setValue(null);
@@ -487,75 +480,6 @@ public class ManualArmaFragment extends Fragment {
       });
       builderSuccess.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).show();
     }
-  }
-
-  private void requestForLocationPermission() {
-    int locationPermission = ContextCompat.checkSelfPermission(
-            requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-
-    if (locationPermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(requireActivity(),
-              new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-              LOCATION_PERMISSION_REQUEST_CODE);
-    }
-  }
-
-  private void getLocationAndSaveResultInDatabase() {
-    HashInfoEntity copyOfLauncherExecutionResultData;
-    copyOfLauncherExecutionResultData = sessionViewModel.launcherExecutionResultData;
-
-    // This permission checking is required otherwise fusedLocationProviderClient.getLastLocation
-    // will throw an error
-    int locationPermission = ContextCompat.checkSelfPermission(requireActivity(),
-            Manifest.permission.ACCESS_FINE_LOCATION);
-
-    FusedLocationProviderClient fusedLocationProviderClient = LocationServices
-            .getFusedLocationProviderClient(requireActivity());
-
-    if (locationPermission != PackageManager.PERMISSION_GRANTED) {
-      requestForLocationPermission();
-    }
-
-    // Get the last location
-    fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
-      if (location == null) {
-        Log.d("dev-log", "ManualArmaFragment.getLocationAndSaveResultInDatabase: " +
-                "Location is null");
-        Toast.makeText(requireActivity(), "Database save failed, location is null",
-                Toast.LENGTH_LONG).show();
-        return;
-      }
-
-      Geocoder geocoder = new Geocoder(requireActivity(), Locale.getDefault());
-      List<Address> addresses = null;
-
-      try {
-        addresses = geocoder.getFromLocation(location.getLatitude(),
-                location.getLongitude(), 1);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-      if (addresses == null) {
-        Log.d("dev-log", "ManualArmaFragment.getLocationAndSaveResultInDatabase: " +
-                "Addresses is null");
-        Toast.makeText(requireActivity(), "Database save failed, Addresses is null",
-                Toast.LENGTH_LONG).show();
-        return;
-      }
-
-      String latitude = String.valueOf(addresses.get(0).getLatitude());
-      String longitude = String.valueOf(addresses.get(0).getLongitude());
-      String address = addresses.get(0).getAddressLine(0);
-
-      // Replace the location value set by the view model
-      copyOfLauncherExecutionResultData.latitude = latitude;
-      copyOfLauncherExecutionResultData.longitude = longitude;
-      copyOfLauncherExecutionResultData.address = address;
-
-      // Save result in the database
-      hashInfoViewModel.addNewHashInfo(copyOfLauncherExecutionResultData);
-    });
   }
 
   private void showDialogToShowUserOfAvailableTargets(ArrayList<AccessPointData> targetList) {
