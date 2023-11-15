@@ -1,7 +1,5 @@
 package com.johndeweydev.awps.viewmodels.serial.sessionviewmodel;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 
 import com.johndeweydev.awps.models.data.AccessPointData;
@@ -19,38 +17,52 @@ public class SessionAutoViewModel extends SessionViewModel {
   public MutableLiveData<Integer> pwned = new MutableLiveData<>(0);
 
   public MutableLiveData<String> userCommandState = new MutableLiveData<>("STOPPED");
-  ArrayList<AccessPointData> previouslyAttackedTargets = new ArrayList<>();
+
+  public ArrayList<AccessPointData> previouslyAttackedTargets = new ArrayList<>();
+
+  // TODO: Create UI for setting max previously attacked targets and time to allocate for attack
+  private static final int maxPrevAttackedTargets = 2;
+  private static final int allocatedTimeForAttack = 5;
 
   public SessionAutoViewModel(SessionRepoSerial sessionRepoSerial) {
     super(sessionRepoSerial);
   }
 
   public void startAttack() {
-    userCommandState.setValue("RUNNING");
+    userCommandState.setValue("RUN");
     writeInstructionCodeForScanningDevicesToLauncher();
   }
 
   public void stopAttack() {
-    userCommandState.setValue("STOPPED");
+    userCommandState.setValue("PENDING STOP");
   }
 
   @Override
   public void onRepoStarted() {
     super.onRepoStarted();
-    if (Objects.equals(userCommandState.getValue(), "RUNNING")) {
+    if (Objects.equals(userCommandState.getValue(), "RUN")) {
       writeInstructionCodeForScanningDevicesToLauncher();
+    } else if (Objects.equals(userCommandState.getValue(), "PENDING STOP")) {
+      // Stop is issued by user, notify view that the stop was acknowledge
+      currentAttackLog.postValue("(" + attackLogNumber + ") On started state, stop command " +
+              "was found");
+      attackLogNumber++;
+      userCommandState.postValue("STOPPED");
     }
   }
-
-  @Override
-  public void onRepoArmamentActivation() {}
 
   @Override
   public void onRepoInstructionIssued(String armament, String targetBssid) {
     currentAttackLog.postValue("(" + attackLogNumber + ")" + " Using " + armament);
     attackLogNumber++;
-    if (Objects.equals(userCommandState.getValue(), "RUNNING")) {
+    if (Objects.equals(userCommandState.getValue(), "RUN")) {
       writeControlCodeActivationToLauncher();
+    } else if (Objects.equals(userCommandState.getValue(), "PENDING STOP")) {
+      // Stop issued by user, notify view that the stop was acknowledge
+      currentAttackLog.postValue("(" + attackLogNumber + ") On instruction state, stop command " +
+              "was found");
+      attackLogNumber++;
+      userCommandState.postValue("STOPPED");
     }
   }
 
@@ -68,8 +80,9 @@ public class SessionAutoViewModel extends SessionViewModel {
     attackLogNumber++;
 
     if (!accessPointWasAttackBefore(accessPointData)) {
-      Log.d("dev-log", "SessionAutoViewModel.onRepoFoundAccessPoint: Adding " + ssid +
+      currentAttackLog.postValue("(" + attackLogNumber + ") " + "Adding " + ssid +
               " as potential target");
+      attackLogNumber++;
       accessPointDataList.add(accessPointData);
     }
   }
@@ -94,8 +107,14 @@ public class SessionAutoViewModel extends SessionViewModel {
     currentAttackLog.postValue("(" + attackLogNumber + ") Selecting target");
     attackLogNumber++;
 
-    if (Objects.equals(userCommandState.getValue(), "RUNNING")) {
+    if (Objects.equals(userCommandState.getValue(), "RUN")) {
       selectTarget();
+    } else if (Objects.equals(userCommandState.getValue(), "PENDING STOP")) {
+      // Stop is issued by user, notify view that the stop was acknowledge
+      currentAttackLog.postValue("(" + attackLogNumber + ") On finish scan state, stop command " +
+              "was found");
+      attackLogNumber++;
+      userCommandState.postValue("STOPPED");
     }
   }
 
@@ -135,8 +154,14 @@ public class SessionAutoViewModel extends SessionViewModel {
   public void onRepoTargetAccessPointNotFound() {
     super.onRepoTargetAccessPointNotFound();
 
-    if (Objects.equals(userCommandState.getValue(), "RUNNING")) {
+    if (Objects.equals(userCommandState.getValue(), "RUN")) {
       writeInstructionCodeForScanningDevicesToLauncher();
+    } else if (Objects.equals(userCommandState.getValue(), "PENDING STOP")) {
+      // Stop is issued by user, notify view that the stop was acknowledge
+      currentAttackLog.postValue("(" + attackLogNumber + ") On target not found state, stop " +
+              "command was found");
+      attackLogNumber++;
+      userCommandState.postValue("STOPPED");
     }
   }
 
@@ -144,10 +169,10 @@ public class SessionAutoViewModel extends SessionViewModel {
   public void onRepoMainTaskCurrentStatus(String attackType, int attackStatus) {
     super.onRepoMainTaskCurrentStatus(attackType, attackStatus);
 
-    if (Objects.equals(userCommandState.getValue(), "STOPPED")) {
+    if (Objects.equals(userCommandState.getValue(), "PENDING STOP")) {
       writeControlCodeDeactivationToLauncher();
     } else {
-      if (attackStatus == 10) {
+      if (attackStatus == allocatedTimeForAttack) {
         writeControlCodeDeactivationToLauncher();
       }
     }
@@ -165,9 +190,7 @@ public class SessionAutoViewModel extends SessionViewModel {
     }
 
     pwned.postValue(currentNumberOfKeys + 1);
-    if (previouslyAttackedTargets.size() == 20) {
-      previouslyAttackedTargets.remove(0);
-    }
+    checkSizeOfPreviouslyAttackedTargets();
     previouslyAttackedTargets.add(currentTarget.getValue());
     writeInstructionCodeForScanningDevicesToLauncher();
   }
@@ -184,9 +207,17 @@ public class SessionAutoViewModel extends SessionViewModel {
     }
 
     failedAttacks.postValue(currentNumberOfFailedAttacks + 1);
-    if (previouslyAttackedTargets.size() == 20) {
-      previouslyAttackedTargets.remove(0);
-    }
+    checkSizeOfPreviouslyAttackedTargets();
     previouslyAttackedTargets.add(currentTarget.getValue());
+  }
+
+  private void checkSizeOfPreviouslyAttackedTargets() {
+    if (previouslyAttackedTargets.size() == maxPrevAttackedTargets) {
+      AccessPointData accessPointData = previouslyAttackedTargets.remove(0);
+      String ssid = accessPointData.ssid();
+      currentAttackLog.postValue("(" + attackLogNumber + ")" + " Removed " + ssid + " from " +
+              "previously attacked targets");
+      attackLogNumber++;
+    }
   }
 }

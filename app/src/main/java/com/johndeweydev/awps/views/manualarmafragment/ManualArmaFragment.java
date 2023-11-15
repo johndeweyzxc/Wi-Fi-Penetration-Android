@@ -196,11 +196,11 @@ public class ManualArmaFragment extends Fragment {
   }
 
   private void setupObservers(ManualArmaRVAdapter manualArmaRVAdapter) {
-    final Observer<String> attackLogsObserver = s -> {
-      if (s == null) {
+    final Observer<String> attackLogsObserver = log -> {
+      if (log == null) {
         return;
       }
-      manualArmaRVAdapter.appendData(s);
+      manualArmaRVAdapter.appendData(log);
       binding.recyclerViewAttackLogsManualArma.scrollToPosition(
               manualArmaRVAdapter.getItemCount() - 1);
     };
@@ -209,8 +209,8 @@ public class ManualArmaFragment extends Fragment {
     setupSerialOutputErrorListener();
 
     // INITIALIZATION PHASE
-    final Observer<String> launcherStartedObserver = s -> {
-      if (s == null) {
+    final Observer<String> launcherStartedObserver = started -> {
+      if (started == null) {
         return;
       }
       TextInputEditText macAddressInput = binding.textInputEditTextMacAddressManualArma;
@@ -219,12 +219,12 @@ public class ManualArmaFragment extends Fragment {
     };
     sessionViewModel.launcherStarted.observe(getViewLifecycleOwner(), launcherStartedObserver);
 
-    final Observer<String> armamentActivateConfirmationObserver = s -> {
-      if (s == null) {
+    final Observer<String> armamentActivateConfirmationObserver = confirmationMessage -> {
+      if (confirmationMessage == null) {
         return;
       }
       sessionViewModel.launcherActivateConfirmation.setValue(null);
-      showDialogAskUserToActivateTheAttack(s);
+      showDialogAskUserToActivateTheAttack(confirmationMessage);
     };
     sessionViewModel.launcherActivateConfirmation.observe(getViewLifecycleOwner(),
             armamentActivateConfirmationObserver);
@@ -234,7 +234,6 @@ public class ManualArmaFragment extends Fragment {
       if (targetList == null || targetList.isEmpty()) {
         return;
       }
-
       sessionViewModel.launcherFinishScanning.setValue(null);
       showDialogToShowUserOfAvailableTargets(targetList);
       sessionViewModel.userWantsToScanForAccessPoint = false;
@@ -246,7 +245,6 @@ public class ManualArmaFragment extends Fragment {
       if (target == null) {
         return;
       }
-
       sessionViewModel.launcherAccessPointNotFound.setValue(null);
       showDialogTellUserTargetNotFound(target);
     };
@@ -254,11 +252,10 @@ public class ManualArmaFragment extends Fragment {
             accessPointNotFoundObserver);
 
     // EXECUTION PHASE
-    final Observer<String> launcherMainTaskCreatedObserver = s -> {
-      if (s == null) {
+    final Observer<String> launcherMainTaskCreatedObserver = taskCreationEvent -> {
+      if (taskCreationEvent == null) {
         return;
       }
-
       sessionViewModel.launcherMainTaskCreated.setValue(null);
       Drawable stop = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_btn_stop_24);
       binding.buttonStartManualArma.setEnabled(true);
@@ -269,19 +266,30 @@ public class ManualArmaFragment extends Fragment {
             launcherMainTaskCreatedObserver);
 
     // POST EXECUTION PHASE
-    final Observer<String> launcherExecutionResultObserver = s -> {
-      if (s == null) {
+    final Observer<String> launcherExecutionResultObserver = executionResult -> {
+      if (executionResult == null) {
         return;
       }
-
       sessionViewModel.launcherExecutionResult.setValue(null);
-      showDialogTellUserAboutTheResultOfAttack(s);
+      showDialogTellUserAboutTheResultOfAttack(executionResult);
       Drawable start = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_btn_start_24);
       binding.buttonStartManualArma.setText(R.string.start_manual_arma);
       binding.buttonStartManualArma.setIcon(start);
     };
     sessionViewModel.launcherExecutionResult.observe(getViewLifecycleOwner(),
             launcherExecutionResultObserver);
+
+    final Observer<String> launcherDeauthStoppedObserver = deautherStopped -> {
+      if (deautherStopped == null) {
+        return;
+      }
+      sessionViewModel.launcherDeauthStopped.setValue(null);
+      Drawable start = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_btn_start_24);
+      binding.buttonStartManualArma.setText(R.string.start_manual_arma);
+      binding.buttonStartManualArma.setIcon(start);
+    };
+    sessionViewModel.launcherDeauthStopped.observe(getViewLifecycleOwner(),
+            launcherDeauthStoppedObserver);
   }
 
   private void showDialogAskUserToExitOfThisFragment() {
@@ -514,13 +522,13 @@ public class ManualArmaFragment extends Fragment {
   }
 
   private void setupSerialInputErrorListener() {
-    final Observer<String> serialInputErrorObserver = s -> {
-      if (s == null) {
+    final Observer<String> serialInputErrorObserver = inputError -> {
+      if (inputError == null) {
         return;
       }
       sessionViewModel.currentSerialInputError.setValue(null);
       Log.d("dev-log", "ManualArmaFragment.setupSerialInputErrorListener: " +
-              "Error on serial input: " + s);
+              "Error on serial input: " + inputError);
       stopEventReadAndDisconnectFromDevice();
       Toast.makeText(requireActivity(), "Error on serial input", Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "ManualArmaFragment.setupSerialInputErrorListener: " +
@@ -533,13 +541,13 @@ public class ManualArmaFragment extends Fragment {
   }
 
   private void setupSerialOutputErrorListener() {
-    final Observer<String> serialOutputErrorObserver = s -> {
-      if (s == null) {
+    final Observer<String> serialOutputErrorObserver = outputError -> {
+      if (outputError == null) {
         return;
       }
       sessionViewModel.currentSerialOutputError.setValue(null);
       Log.d("dev-log", "ManualArmaFragment.setupSerialOutputErrorListener: " +
-              "Error on serial output: " + s);
+              "Error on serial output: " + outputError);
       stopEventReadAndDisconnectFromDevice();
       Toast.makeText(requireActivity(), "Error on serial output ", Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "ManualArmaFragment.setupSerialOutputErrorListener: " +

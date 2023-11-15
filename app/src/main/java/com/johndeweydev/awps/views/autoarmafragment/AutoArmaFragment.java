@@ -92,14 +92,14 @@ public class AutoArmaFragment extends Fragment {
   }
 
   private void showDialogAskUserToExitOfThisFragment() {
-    if (Objects.equals(sessionAutoViewModel.userCommandState.getValue(), "RUNNING")) {
+    if (Objects.equals(sessionAutoViewModel.userCommandState.getValue(), "RUN")) {
       sessionAutoViewModel.stopAttack();
     }
 
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
     builder.setTitle("Exit Manual Attack");
 
-    if (sessionAutoViewModel.userCommandState.getValue().equals("RUNNING")) {
+    if (sessionAutoViewModel.userCommandState.getValue().equals("RUN")) {
       builder.setMessage("You have an ongoing attack, Do you really want to exit auto attack?");
     } else {
       builder.setMessage("Do you really want to exit manual attack? You will be navigated back" +
@@ -119,8 +119,7 @@ public class AutoArmaFragment extends Fragment {
     if (Objects.equals(sessionAutoViewModel.userCommandState.getValue(), "STOPPED")) {
       sessionAutoViewModel.startAttack();
       Log.d("dev-log", "AutoArmaFragment.buttonPressed: Attack started by user");
-    } else if (Objects.equals(
-            sessionAutoViewModel.userCommandState.getValue(), "RUNNING")) {
+    } else if (Objects.equals(sessionAutoViewModel.userCommandState.getValue(), "RUN")) {
       sessionAutoViewModel.stopAttack();
       Log.d("dev-log", "AutoArmaFragment.buttonPressed: Attack stopped by user");
     }
@@ -195,11 +194,11 @@ public class AutoArmaFragment extends Fragment {
   }
 
   private void setupObservers(AutoArmaRvAdapter autoArmaRvAdapter) {
-    final Observer<String> attackLogsObserver = attackLog -> {
-      if (attackLog == null) {
+    final Observer<String> attackLogsObserver = log -> {
+      if (log == null) {
         return;
       }
-      autoArmaRvAdapter.appendData(attackLog);
+      autoArmaRvAdapter.appendData(log);
       binding.recyclerViewAttackLogsAutoArma.scrollToPosition(
               autoArmaRvAdapter.getItemCount() - 1
       );
@@ -240,18 +239,10 @@ public class AutoArmaFragment extends Fragment {
     sessionAutoViewModel.pwned.observe(getViewLifecycleOwner(), keysFoundObserver);
 
     final Observer<String> userCommandStateObserver = state -> {
-
-      if (state.equals("STOPPED")) {
-
-        Drawable start = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_btn_start_24);
-        binding.buttonStopStartAutoArma.setText(R.string.start_manual_arma);
-        binding.buttonStopStartAutoArma.setIcon(start);
-
-      } else if (state.equals("RUNNING")) {
-
-        Drawable stop = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_btn_stop_24);
-        binding.buttonStopStartAutoArma.setText(R.string.stop_manual_arma);
-        binding.buttonStopStartAutoArma.setIcon(stop);
+      switch (state) {
+        case "PENDING STOP" -> buttonUiPendingStopState();
+        case "RUN" -> buttonUiStopState();
+        case "STOPPED" -> buttonUiStartState();
       }
     };
     sessionAutoViewModel.userCommandState.observe(getViewLifecycleOwner(),
@@ -273,16 +264,35 @@ public class AutoArmaFragment extends Fragment {
             launcherExecutionResultObserver);
   }
 
+  private void buttonUiStopState() {
+    Drawable stop = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_btn_stop_24);
+    binding.buttonStopStartAutoArma.setText(R.string.stop_manual_arma);
+    binding.buttonStopStartAutoArma.setIcon(stop);
+  }
+
+  private void buttonUiStartState() {
+    Drawable start = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_btn_start_24);
+    binding.buttonStopStartAutoArma.setText(R.string.start_manual_arma);
+    binding.buttonStopStartAutoArma.setIcon(start);
+    binding.buttonStopStartAutoArma.setEnabled(true);
+  }
+
+  private void buttonUiPendingStopState() {
+    binding.buttonStopStartAutoArma.setEnabled(false);
+    String text = "Pending Stop";
+    binding.buttonStopStartAutoArma.setText(text);
+  }
+
   private void setupSerialInputErrorListener() {
-    final Observer<String> serialInputErrorObserver = s -> {
-      if (s == null) {
+    final Observer<String> serialInputErrorObserver = inputError -> {
+      if (inputError == null) {
         return;
       }
       sessionAutoViewModel.currentSerialInputError.setValue(null);
       Log.d("dev-log", "AutoArmaFragment.setupSerialInputErrorListener: " +
               "Error on user input");
       stopEventReadAndDisconnectFromDevice();
-      Toast.makeText(requireActivity(), "Error writing " + s, Toast.LENGTH_SHORT).show();
+      Toast.makeText(requireActivity(), "Error writing " + inputError, Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "AutoArmaFragment.setupSerialInputErrorListener: " +
               "Popping fragments up to but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(
@@ -293,15 +303,15 @@ public class AutoArmaFragment extends Fragment {
   }
 
   private void setupSerialOutputErrorListener() {
-    final Observer<String> serialOutputErrorObserver = s -> {
-      if (s == null) {
+    final Observer<String> serialOutputErrorObserver = outputError -> {
+      if (outputError == null) {
         return;
       }
       sessionAutoViewModel.currentSerialOutputError.setValue(null);
       Log.d("dev-log", "AutoArmaFragment.setupSerialOutputErrorListener: " +
               "Error on serial output");
       stopEventReadAndDisconnectFromDevice();
-      Toast.makeText(requireActivity(), "Error: " + s, Toast.LENGTH_SHORT).show();
+      Toast.makeText(requireActivity(), "Error: " + outputError, Toast.LENGTH_SHORT).show();
       Log.d("dev-log", "AutoArmaFragment.setupSerialOutputErrorListener: " +
               "Popping fragments up to but not including devices fragment");
       Navigation.findNavController(binding.getRoot()).navigate(

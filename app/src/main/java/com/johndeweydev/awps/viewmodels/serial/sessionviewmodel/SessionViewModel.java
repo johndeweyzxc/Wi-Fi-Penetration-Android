@@ -70,6 +70,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
    * */
   public HashInfoEntity launcherExecutionResultData;
   public MutableLiveData<String> launcherExecutionResult = new MutableLiveData<>();
+  public MutableLiveData<String> launcherDeauthStopped = new MutableLiveData<>();
 
   public SessionViewModel(SessionRepoSerial sessionRepoSerial) {
     Log.d("dev-log", "SessionViewModel: Created new instance of SessionViewModel");
@@ -399,6 +400,7 @@ public class SessionViewModel extends ViewModel implements ViewModelIOControl,
     currentAttackLog.postValue("(" + attackLogNumber + ") " + "In " + selectedArmament +
             " deauthentication task stopped");
     attackLogNumber++;
+    launcherDeauthStopped.postValue("Stopped");
     attackOnGoing = false;
   }
 }

@@ -66,7 +66,11 @@ public class HashInfoRepoDatabase {
               "null");
       return "None";
     } else {
-      return addresses.get(0).getAddressLine(0);
+      if (addresses.size() == 0) {
+        return "None";
+      } else {
+        return addresses.get(0).getAddressLine(0);
+      }
     }
   }
 }
