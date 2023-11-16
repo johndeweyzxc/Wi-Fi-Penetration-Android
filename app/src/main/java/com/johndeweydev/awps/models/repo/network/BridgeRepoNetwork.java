@@ -13,12 +13,6 @@ import retrofit2.Response;
 
 public class BridgeRepoNetwork {
 
-  /**
-   * Callbacks when an http response is received, the response can be successful or a failure such
-   * as when the response body is null
-   *
-   * @author John Dewey (johndewey02003@gmail.com)
-   * */
   public interface HttpEvent {
 
     /**

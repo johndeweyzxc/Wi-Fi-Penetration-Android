@@ -16,12 +16,6 @@ import java.util.Locale;
 
 public class TerminalRepoSerial extends RepositoryIOControl implements Launcher.UsbSerialIOEvent {
 
-  /**
-   * Inherits callback from UsbSerialIOEvent
-   *
-   * @author John Dewey (johndewey02003@gmail.com)
-   *
-   * */
   public interface RepositoryEvent extends RepositoryIOEvent {}
   private TerminalRepoSerial.RepositoryEvent repositoryEvent;
   private final StringBuilder queueData = new StringBuilder();

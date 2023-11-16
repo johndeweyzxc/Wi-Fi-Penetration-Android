@@ -2,14 +2,6 @@ package com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase;
 
 import com.johndeweydev.awps.models.data.AccessPointData;
 
-/**
- * Callbacks when the launcher goes into the target locking phase, this happens when the user
- * activates the armament. The launcher then tries to find the target access point by initiating a
- * scan, if it finds the target among those scanned access point, it goes into execution phase
- *
- * @author John Dewey (johndewey02003@gmail.com)
- *
- * */
 public interface TargetLockingPhase {
   /**
    * The number of found access point, maximum is 20

@@ -2,12 +2,6 @@ package com.johndeweydev.awps.viewmodels.serial;
 
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
 
-/**
- * Interface to control the launcher or usb serial device
- *
- * @author John Dewey (johndewey02003@gmail.com)
- *
- * */
 public interface ViewModelIOControl {
 
   /**

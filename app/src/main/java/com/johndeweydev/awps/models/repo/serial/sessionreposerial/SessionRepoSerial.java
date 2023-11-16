@@ -25,13 +25,6 @@ import java.util.Objects;
 
 public class SessionRepoSerial extends RepositoryIOControl implements Launcher.UsbSerialIOEvent {
 
-  /**
-   * Callbacks when a formatted serial data is received and processed by the session repository. This
-   * formatted serial data contains information about the current state of the launcher
-   *
-   * @author John Dewey (johndewey02003@gmail.com)
-   *
-   * */
   public interface RepositoryEvent extends RepositoryIOEvent, InitializationPhase,
           TargetLockingPhase, ExecutionPhase, PostExecutionPhase {}
 

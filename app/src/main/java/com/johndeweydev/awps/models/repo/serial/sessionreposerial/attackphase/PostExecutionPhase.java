@@ -1,14 +1,5 @@
 package com.johndeweydev.awps.models.repo.serial.sessionreposerial.attackphase;
 
-/**
- * This callback is also known as the cleanup phase. In this phase the attack on the target has
- * finished or the running attack is stopped by the user. The result of the attack may or may not
- * be successful. This stage is also the right time to clean the view model of the data because
- * after this phase, it will go back to initialization phase
- *
- * @author John Dewey (johndewey02003@gmail.com)
- *
- * */
 public interface PostExecutionPhase {
   /**
    * The launcher goes to the finishing state where functions invoke in the launching sequence

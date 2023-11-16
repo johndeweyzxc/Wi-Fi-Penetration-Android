@@ -31,13 +31,6 @@ import java.util.ArrayList;
 
 public class Launcher implements SerialInputOutputManager.Listener {
 
-  /**
-   * Callbacks for input and output from the usb serial device as well as callbacks when an error
-   * occurred
-   *
-   * @author John Dewey (johndewey02003@gmail.com)
-   *
-   * */
   public interface UsbSerialIOEvent {
     /**
      * A serial output is received

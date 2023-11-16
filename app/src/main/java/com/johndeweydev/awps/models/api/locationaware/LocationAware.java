@@ -21,8 +21,22 @@ import java.util.Objects;
 public class LocationAware implements LocationListener {
 
   public interface GpsSettingsListener {
+
+    /**
+     * Callback when user enables the GPS
+     * */
     void onGpsEnabled();
+
+    /**
+     * Callback when user disables the GPS
+     * */
     void onGpsDisabled();
+
+    /**
+     * Callback when the system detected that the location of the user changes using GPS
+     * @param latitude latitude coordinate
+     * @param longitude longitude coordinate
+     */
     void onGpsLocationChanged(double latitude, double longitude);
   }
 

@@ -6,14 +6,6 @@ import com.johndeweydev.awps.models.data.MicFirstMessageData;
 import com.johndeweydev.awps.models.data.MicSecondMessageData;
 import com.johndeweydev.awps.models.data.PmkidFirstMessageData;
 
-/**
- * Callbacks when the launcher goes into execution phase, this happens when the launcher initiates
- * the attack on the target access point and the launcher may or may not intercept the eapol message
- * data from the target which contains crackable hash data
- *
- * @author John Dewey (johndewey02003@gmail.com)
- *
- * */
 public interface ExecutionPhase {
   /**
    * The launcher proceeds to the launching sequence which invokes function in the launcher

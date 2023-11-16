@@ -2,12 +2,6 @@ package com.johndeweydev.awps.models.repo.serial;
 
 import com.johndeweydev.awps.models.data.LauncherOutputData;
 
-/**
- * Callbacks when a serial data is received from the launcher, the launcher is a usb serial device
- *
- * @author John Dewey (johndewey02003@gmail.com)
- *
- * */
 public interface RepositoryIOEvent {
 
   /**
