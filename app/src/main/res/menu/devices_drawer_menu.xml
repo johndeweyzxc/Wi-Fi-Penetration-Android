@@ -9,6 +9,10 @@
         android:title="Database"
         android:icon="@drawable/ic_drawer_database_24"/>
     <item
+        android:id="@+id/settingsMenuNavItemDevices"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings_24"/>
+    <item
         android:id="@+id/learnMoreMenuNavItemsDevices"
         android:title="Learn More"
         android:icon="@drawable/ic_drawer_learn_more_24"/>

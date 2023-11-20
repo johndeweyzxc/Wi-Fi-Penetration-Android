@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_devicesFragment_to_hashesFragment"
             app:destination="@id/hashesFragment" />
+        <action
+            android:id="@+id/action_devicesFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/terminalFragment"
@@ -34,6 +37,9 @@
         <action
             android:id="@+id/action_terminalFragment_to_hashesFragment"
             app:destination="@id/hashesFragment" />
+        <action
+            android:id="@+id/action_terminalFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/autoArmaFragment"
@@ -54,6 +60,9 @@
         <action
             android:id="@+id/action_autoArmaFragment_to_hashesFragment"
             app:destination="@id/hashesFragment" />
+        <action
+            android:id="@+id/action_autoArmaFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/manualArmaFragment"
@@ -72,6 +81,9 @@
         <action
             android:id="@+id/action_manualArmaFragment_to_hashesFragment"
             app:destination="@id/hashesFragment" />
+        <action
+            android:id="@+id/action_manualArmaFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <dialog
         android:id="@+id/exitModalBottomSheetDialog"
@@ -107,5 +119,10 @@
             android:name="hashInfoModalBottomArgs"
             app:argType="com.johndeweydev.awps.views.hashinfomodalbottomsheetdialog.HashInfoModalBottomArgs" />
     </dialog>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.johndeweydev.awps.views.settingsfragment.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 
 </navigation>

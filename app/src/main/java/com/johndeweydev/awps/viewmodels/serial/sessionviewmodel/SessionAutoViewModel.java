@@ -2,6 +2,7 @@ package com.johndeweydev.awps.viewmodels.serial.sessionviewmodel;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.johndeweydev.awps.UserDefinedSettings;
 import com.johndeweydev.awps.models.data.AccessPointData;
 import com.johndeweydev.awps.models.repo.serial.sessionreposerial.SessionRepoSerial;
 
@@ -19,10 +20,6 @@ public class SessionAutoViewModel extends SessionViewModel {
   public MutableLiveData<String> userCommandState = new MutableLiveData<>("STOPPED");
 
   public ArrayList<AccessPointData> previouslyAttackedTargets = new ArrayList<>();
-
-  // TODO: Create UI for setting max previously attacked targets and time to allocate for attack
-  private static final int maxPrevAttackedTargets = 2;
-  private static final int allocatedTimeForAttack = 5;
 
   public SessionAutoViewModel(SessionRepoSerial sessionRepoSerial) {
     super(sessionRepoSerial);
@@ -172,7 +169,7 @@ public class SessionAutoViewModel extends SessionViewModel {
     if (Objects.equals(userCommandState.getValue(), "PENDING STOP")) {
       writeControlCodeDeactivationToLauncher();
     } else {
-      if (attackStatus == allocatedTimeForAttack) {
+      if (attackStatus == UserDefinedSettings.ALLOCATED_TIME_FOR_EACH_ATTACK) {
         writeControlCodeDeactivationToLauncher();
       }
     }
@@ -212,7 +209,8 @@ public class SessionAutoViewModel extends SessionViewModel {
   }
 
   private void checkSizeOfPreviouslyAttackedTargets() {
-    if (previouslyAttackedTargets.size() == maxPrevAttackedTargets) {
+    if (previouslyAttackedTargets.size() ==
+            UserDefinedSettings.NUMBER_OF_PREVIOUSLY_ATTACKED_TARGETS) {
       AccessPointData accessPointData = previouslyAttackedTargets.remove(0);
       String ssid = accessPointData.ssid();
       currentAttackLog.postValue("(" + attackLogNumber + ")" + " Removed " + ssid + " from " +

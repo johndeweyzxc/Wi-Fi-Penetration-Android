@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements LocationAware.Gps
       Toast.makeText(this, "GPS is required", Toast.LENGTH_LONG).show();
       finish();
     });
+    builder.setOnCancelListener(dialog -> finish());
     builder.show();
   }
 

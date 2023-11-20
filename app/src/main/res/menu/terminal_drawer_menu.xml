@@ -16,4 +16,8 @@
         android:id="@+id/clearLogsMenuNavItemTerminal"
         android:title="Clear Logs"
         android:icon="@drawable/ic_drawer_clear_logs_24"/>
+    <item
+        android:id="@+id/settingsMenuNavItemTerminal"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings_24"/>
 </menu>

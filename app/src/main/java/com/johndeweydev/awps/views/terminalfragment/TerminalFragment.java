@@ -260,6 +260,11 @@ public class TerminalFragment extends Fragment {
       binding.drawerLayoutTerminal.close();
       terminalRVAdapter.clearLogs();
       return true;
+    } else if (item.getItemId() == R.id.settingsMenuNavItemTerminal) {
+
+      binding.drawerLayoutTerminal.close();
+      Navigation.findNavController(binding.getRoot()).navigate(
+              R.id.action_terminalFragment_to_settingsFragment);
     }
     return false;
   }

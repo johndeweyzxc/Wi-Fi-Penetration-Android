@@ -47,7 +47,7 @@ public class HashInfoRepoDatabase {
 
   public double getCurrentLocationLongitude() {
     return LocationAwareSingleton.getInstance().getLocationAware()
-            .getLatitude();
+            .getLongitude();
   }
 
   public String getCurrentLocationAddress(double latitude, double longitude) {

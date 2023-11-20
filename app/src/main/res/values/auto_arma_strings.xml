@@ -5,6 +5,7 @@
         <item>@string/clear_attack_logs</item>
         <item>@string/database</item>
         <item>@string/restart_launcher</item>
+        <item>@string/settings</item>
     </string-array>
 
     <string-array name="dialog_options_select_attack_auto_arma">

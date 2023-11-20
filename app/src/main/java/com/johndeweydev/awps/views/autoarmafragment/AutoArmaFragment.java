@@ -127,10 +127,12 @@ public class AutoArmaFragment extends Fragment {
 
   private boolean showDialogMenuOptionsToUser(MenuItem menuItem) {
     String[] choices = getResources().getStringArray(R.array.dialog_options_auto_arma);
+
     String change_attack_type = getResources().getString(R.string.change_attack_type);
     String clearAttackLogs = getResources().getString(R.string.clear_attack_logs);
     String database = getResources().getString(R.string.database);
     String restart = getResources().getString(R.string.restart_launcher);
+    String settings = getResources().getString(R.string.settings);
 
     if (menuItem.getItemId() != R.id.moreOptionsAutoArmaTopRightDialogMenu) {
       return false;
@@ -156,6 +158,9 @@ public class AutoArmaFragment extends Fragment {
                 R.id.action_autoArmaFragment_to_hashesFragment);
       } else if (choices[which].equals(restart)) {
         sessionAutoViewModel.writeControlCodeRestartLauncher();
+      } else if (choices[which].equals(settings)) {
+        Navigation.findNavController(binding.getRoot()).navigate(
+                R.id.action_autoArmaFragment_to_settingsFragment);
       }
     }).show();
 

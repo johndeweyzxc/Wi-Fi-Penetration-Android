@@ -104,6 +104,10 @@ public class DevicesFragment extends Fragment {
       Navigation.findNavController(binding.getRoot()).navigate(
               R.id.action_devicesFragment_to_hashesFragment);
       return true;
+    } else if (item.getItemId() == R.id.settingsMenuNavItemDevices) {
+      binding.drawerLayoutDevices.close();
+      Navigation.findNavController(binding.getRoot()).navigate(
+              R.id.action_devicesFragment_to_settingsFragment);
     }
     return false;
   }

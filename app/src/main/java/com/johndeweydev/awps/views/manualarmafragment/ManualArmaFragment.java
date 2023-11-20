@@ -324,6 +324,7 @@ public class ManualArmaFragment extends Fragment {
     String restartLauncher = getResources().getString(R.string.restart_launcher);
     String database = getResources().getString(R.string.database);
     String moreInfo = getResources().getString(R.string.more_info);
+    String settings = getResources().getString(R.string.settings);
 
     if (menuItem.getItemId() != R.id.moreOptionsManualArmaTopRightDialogMenu) {
       return false;
@@ -367,6 +368,9 @@ public class ManualArmaFragment extends Fragment {
           showDialogToUserAboutConfiguredAttack(sessionViewModel.selectedArmament,
                   "");
         }
+      } else if (choices[which].equals(settings)) {
+        Navigation.findNavController(binding.getRoot()).navigate(
+                R.id.action_manualArmaFragment_to_settingsFragment);
       }
     }).show();
 

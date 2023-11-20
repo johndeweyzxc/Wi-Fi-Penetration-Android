@@ -6,7 +6,7 @@
         <item>@string/clear_attack_logs</item>
         <item>@string/restart_launcher</item>
         <item>@string/database</item>
-        <item>@string/more_info</item>
+        <item>@string/settings</item>
     </string-array>
 
     <string-array name="dialog_options_select_attack_manual_arma">
