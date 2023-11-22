@@ -47,9 +47,9 @@ import com.johndeweydev.awps.api.hashinfo.HashInfoSingleton;
 import com.johndeweydev.awps.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.api.locationaware.LocationAware;
 import com.johndeweydev.awps.api.locationaware.LocationAwareSingleton;
-import com.johndeweydev.awps.models.repo.serial.terminalreposerial.TerminalRepoSerial;
-import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModel;
-import com.johndeweydev.awps.viewmodels.serial.terminalviewmodel.TerminalViewModelFactory;
+import com.johndeweydev.awps.model.repo.serial.terminalreposerial.TerminalRepoSerial;
+import com.johndeweydev.awps.viewmodel.serial.terminalviewmodel.TerminalViewModel;
+import com.johndeweydev.awps.viewmodel.serial.terminalviewmodel.TerminalViewModelFactory;
 
 import java.io.IOException;
 import java.util.List;

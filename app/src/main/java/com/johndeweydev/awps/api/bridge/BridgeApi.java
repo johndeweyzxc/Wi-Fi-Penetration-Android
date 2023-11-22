@@ -3,9 +3,9 @@ package com.johndeweydev.awps.api.bridge;
 import androidx.room.Dao;
 
 import com.johndeweydev.awps.AppConstants;
-import com.johndeweydev.awps.models.data.BridgeGetRootResponseHttp;
-import com.johndeweydev.awps.models.data.BridgeUploadRequestHttp;
-import com.johndeweydev.awps.models.data.BridgeUploadResponseHttp;
+import com.johndeweydev.awps.model.data.BridgeGetRootResponseHttp;
+import com.johndeweydev.awps.model.data.BridgeUploadRequestHttp;
+import com.johndeweydev.awps.model.data.BridgeUploadResponseHttp;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

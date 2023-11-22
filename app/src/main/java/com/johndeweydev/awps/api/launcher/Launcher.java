@@ -22,8 +22,8 @@ import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
 import com.johndeweydev.awps.AppConstants;
-import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
-import com.johndeweydev.awps.models.data.UsbDeviceData;
+import com.johndeweydev.awps.model.data.DeviceConnectionParamData;
+import com.johndeweydev.awps.model.data.UsbDeviceData;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

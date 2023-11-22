@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.johndeweydev.awps.models.data.HashInfoEntity;
+import com.johndeweydev.awps.model.data.HashInfoEntity;
 
 import java.util.List;
 

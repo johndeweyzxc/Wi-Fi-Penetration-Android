@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/devicesFragment"
-        android:name="com.johndeweydev.awps.views.devicesfragment.DevicesFragment"
+        android:name="com.johndeweydev.awps.view.devicesfragment.DevicesFragment"
         android:label="devices_fragment"
         tools:layout="@layout/fragment_devices">
         <action
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/terminalFragment"
-        android:name="com.johndeweydev.awps.views.terminalfragment.TerminalFragment"
+        android:name="com.johndeweydev.awps.view.terminalfragment.TerminalFragment"
         android:label="terminal_fragment"
         tools:layout="@layout/fragment_terminal">
         <action
@@ -33,7 +33,7 @@
             app:destination="@id/autoArmaFragment" />
         <argument
             android:name="terminalArgs"
-            app:argType="com.johndeweydev.awps.views.terminalfragment.TerminalArgs" />
+            app:argType="com.johndeweydev.awps.view.terminalfragment.TerminalArgs" />
         <action
             android:id="@+id/action_terminalFragment_to_hashesFragment"
             app:destination="@id/hashesFragment" />
@@ -43,12 +43,12 @@
     </fragment>
     <fragment
         android:id="@+id/autoArmaFragment"
-        android:name="com.johndeweydev.awps.views.autoarmafragment.AutoArmaFragment"
+        android:name="com.johndeweydev.awps.view.autoarmafragment.AutoArmaFragment"
         android:label="auto_arma_fragment"
         tools:layout="@layout/fragment_auto_arma" >
         <argument
             android:name="autoArmaArgs"
-            app:argType="com.johndeweydev.awps.views.autoarmafragment.AutoArmaArgs" />
+            app:argType="com.johndeweydev.awps.view.autoarmafragment.AutoArmaArgs" />
         <action
             android:id="@+id/action_autoArmaFragment_to_devicesFragment"
             app:destination="@id/devicesFragment"
@@ -66,7 +66,7 @@
     </fragment>
     <fragment
         android:id="@+id/manualArmaFragment"
-        android:name="com.johndeweydev.awps.views.manualarmafragment.ManualArmaFragment"
+        android:name="com.johndeweydev.awps.view.manualarmafragment.ManualArmaFragment"
         android:label="manual_arma_fragment"
         tools:layout="@layout/fragment_manual_arma" >
         <action
@@ -74,7 +74,7 @@
             app:destination="@id/devicesFragment" />
         <argument
             android:name="manualArmaArgs"
-            app:argType="com.johndeweydev.awps.views.manualarmafragment.ManualArmaArgs" />
+            app:argType="com.johndeweydev.awps.view.manualarmafragment.ManualArmaArgs" />
         <action
             android:id="@+id/action_manualArmaFragment_to_exitModalBottomSheetDialog"
             app:destination="@id/exitModalBottomSheetDialog" />
@@ -87,7 +87,7 @@
     </fragment>
     <dialog
         android:id="@+id/exitModalBottomSheetDialog"
-        android:name="com.johndeweydev.awps.views.exitmodalbottomsheetdialog.ExitModalBottomSheetDialog"
+        android:name="com.johndeweydev.awps.view.exitmodalbottomsheetdialog.ExitModalBottomSheetDialog"
         android:label="exit_model_bottom_sheet_dialog"
         tools:layout="@layout/dialog_sheet_bottom_modal_exit">
         <action
@@ -103,7 +103,7 @@
     </dialog>
     <fragment
         android:id="@+id/hashesFragment"
-        android:name="com.johndeweydev.awps.views.hashesfragment.HashesFragment"
+        android:name="com.johndeweydev.awps.view.hashesfragment.HashesFragment"
         android:label="hashes_fragment"
         tools:layout="@layout/fragment_hashes" >
         <action
@@ -112,16 +112,16 @@
     </fragment>
     <dialog
         android:id="@+id/hashInfoModalBottomSheetDialog"
-        android:name="com.johndeweydev.awps.views.hashinfomodalbottomsheetdialog.HashInfoModalBottomSheetDialog"
+        android:name="com.johndeweydev.awps.view.hashinfomodalbottomsheetdialog.HashInfoModalBottomSheetDialog"
         android:label="hash_info_modal_bottom_sheet_dialog"
         tools:layout="@layout/dialog_sheet_bottom_modal_hash_info">
         <argument
             android:name="hashInfoModalBottomArgs"
-            app:argType="com.johndeweydev.awps.views.hashinfomodalbottomsheetdialog.HashInfoModalBottomArgs" />
+            app:argType="com.johndeweydev.awps.view.hashinfomodalbottomsheetdialog.HashInfoModalBottomArgs" />
     </dialog>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.johndeweydev.awps.views.settingsfragment.SettingsFragment"
+        android:name="com.johndeweydev.awps.view.settingsfragment.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
 
