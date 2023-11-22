@@ -1,14 +1,14 @@
-package com.johndeweydev.awps.models.api.launcher;
+package com.johndeweydev.awps.api.launcher;
 
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.ALREADY_CONNECTED;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.DEVICE_NOT_FOUND;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.DRIVER_NOT_FOUND;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.DRIVER_SET;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.FAILED_OPENING_DEVICE;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.NO_USB_PERMISSION;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.PORT_NOT_FOUND;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.SUCCESSFULLY_CONNECTED;
-import static com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages.UNSUPPORTED_PORT_PARAMETERS;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.ALREADY_CONNECTED;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.DEVICE_NOT_FOUND;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.DRIVER_NOT_FOUND;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.DRIVER_SET;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.FAILED_OPENING_DEVICE;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.NO_USB_PERMISSION;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.PORT_NOT_FOUND;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.SUCCESSFULLY_CONNECTED;
+import static com.johndeweydev.awps.api.launcher.LauncherConnectionStages.UNSUPPORTED_PORT_PARAMETERS;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;

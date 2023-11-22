@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.models.api.bridge;
+package com.johndeweydev.awps.api.bridge;
 
 import android.util.Log;
 

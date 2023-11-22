@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.models.api.locationaware;
+package com.johndeweydev.awps.api.locationaware;
 
 import android.content.pm.PackageManager;
 import android.location.Geocoder;

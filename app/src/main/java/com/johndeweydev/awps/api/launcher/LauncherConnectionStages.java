@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.models.api.launcher;
+package com.johndeweydev.awps.api.launcher;
 
 public enum LauncherConnectionStages {
   /**

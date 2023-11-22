@@ -4,9 +4,9 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 
-import com.johndeweydev.awps.models.api.locationaware.LocationAwareSingleton;
+import com.johndeweydev.awps.api.locationaware.LocationAwareSingleton;
 import com.johndeweydev.awps.models.data.HashInfoEntity;
-import com.johndeweydev.awps.models.api.hashinfo.HashInfoDao;
+import com.johndeweydev.awps.api.hashinfo.HashInfoDao;
 
 import java.io.IOException;
 import java.util.List;

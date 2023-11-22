@@ -2,8 +2,8 @@ package com.johndeweydev.awps.models.repo.serial.sessionreposerial;
 
 import android.util.Log;
 
-import com.johndeweydev.awps.models.api.launcher.Launcher;
-import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
+import com.johndeweydev.awps.api.launcher.Launcher;
+import com.johndeweydev.awps.api.launcher.LauncherSingleton;
 import com.johndeweydev.awps.models.data.AccessPointData;
 import com.johndeweydev.awps.models.data.LauncherOutputData;
 import com.johndeweydev.awps.models.data.MicFirstMessageData;

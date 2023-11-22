@@ -2,7 +2,7 @@ package com.johndeweydev.awps.models.repo.network;
 
 import androidx.annotation.NonNull;
 
-import com.johndeweydev.awps.models.api.bridge.BridgeApi;
+import com.johndeweydev.awps.api.bridge.BridgeApi;
 import com.johndeweydev.awps.models.data.BridgeGetRootResponseHttp;
 import com.johndeweydev.awps.models.data.BridgeUploadRequestHttp;
 import com.johndeweydev.awps.models.data.BridgeUploadResponseHttp;

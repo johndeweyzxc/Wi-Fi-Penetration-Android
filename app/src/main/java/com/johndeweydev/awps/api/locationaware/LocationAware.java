@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.models.api.locationaware;
+package com.johndeweydev.awps.api.locationaware;
 
 import android.annotation.SuppressLint;
 import android.location.Location;

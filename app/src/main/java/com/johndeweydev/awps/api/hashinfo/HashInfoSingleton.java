@@ -1,4 +1,4 @@
-package com.johndeweydev.awps.models.api.hashinfo;
+package com.johndeweydev.awps.api.hashinfo;
 
 import android.util.Log;
 

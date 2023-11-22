@@ -1,8 +1,8 @@
 package com.johndeweydev.awps.models.repo.serial;
 
 import com.johndeweydev.awps.models.data.DeviceConnectionParamData;
-import com.johndeweydev.awps.models.api.launcher.LauncherSingleton;
-import com.johndeweydev.awps.models.api.launcher.LauncherConnectionStages;
+import com.johndeweydev.awps.api.launcher.LauncherSingleton;
+import com.johndeweydev.awps.api.launcher.LauncherConnectionStages;
 
 public class RepositoryIOControl {
 
