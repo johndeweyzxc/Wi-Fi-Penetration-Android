@@ -88,7 +88,7 @@ public class DevicesFragment extends Fragment {
     binding.materialToolBarDevices.setNavigationOnClickListener(v ->
             binding.drawerLayoutDevices.open());
 
-    binding.navigationViewTerminalMain.setNavigationItemSelectedListener(this::navItemSelected);
+    binding.navigationViewDevices.setNavigationItemSelectedListener(this::navItemSelected);
     DevicesRVAdapter devicesRVAdapter = setupRecyclerView();
     setupObservers(devicesRVAdapter);
     findUsbDevices();

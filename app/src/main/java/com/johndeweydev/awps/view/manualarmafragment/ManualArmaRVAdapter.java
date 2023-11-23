@@ -23,7 +23,7 @@ public class ManualArmaRVAdapter extends
     public ManualArmaAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
       textViewManualArmaAttackLogListItem = itemView.findViewById(
-              R.id.textViewManualArmaAttackLogListItem);
+              R.id.textViewManualArmaAttackLogItem);
     }
   }
 

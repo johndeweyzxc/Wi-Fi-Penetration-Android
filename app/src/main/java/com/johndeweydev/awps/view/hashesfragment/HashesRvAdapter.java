@@ -36,7 +36,7 @@ public class HashesRvAdapter extends RecyclerView.Adapter<HashesRvAdapter.Hashes
       textViewApNameHashesItem = itemView.findViewById(R.id.textViewApNameHashesItem);
       textViewMacAddressHashesItem = itemView.findViewById(R.id.textViewMacAddressHashesItem);
       textViewHashDataHashesItem = itemView.findViewById(R.id.textViewHashDataHashesItem);
-      materialCardViewHashesListItem = itemView.findViewById(R.id.materialCardViewHashesListItem);
+      materialCardViewHashesListItem = itemView.findViewById(R.id.materialCardViewHashesItem);
     }
   }
 

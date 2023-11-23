@@ -24,8 +24,8 @@ public class TerminalRVAdapter extends
 
     public TerminalAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
-      textViewRvTerminalLogTime = itemView.findViewById(R.id.textViewRvTerminalLogTime);
-      textViewRvTerminalLogOutput = itemView.findViewById(R.id.textViewRvTerminalLogOutput);
+      textViewRvTerminalLogTime = itemView.findViewById(R.id.textViewTimeTerminalLogItem);
+      textViewRvTerminalLogOutput = itemView.findViewById(R.id.textViewOutputTerminalLogItem);
     }
   }
 

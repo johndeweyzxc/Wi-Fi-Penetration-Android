@@ -33,11 +33,11 @@ public class DevicesRVAdapter extends RecyclerView.Adapter<DevicesRVAdapter.Devi
     public MaterialCardView materialCardViewDeviceListItem;
     public DevicesAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
-      textViewDeviceName = itemView.findViewById(R.id.textViewDeviceNameValueDeviceListItem);
-      textViewManufacturerName = itemView.findViewById(R.id.textViewManufacturerDeviceListItem);
-      textViewVendorId = itemView.findViewById(R.id.textViewDeviceVendorIdDeviceListItem);
-      textViewProductId = itemView.findViewById(R.id.textViewDeviceProductIdValueDeviceListItem);
-      materialCardViewDeviceListItem = itemView.findViewById(R.id.materialCardViewDeviceListItem);
+      textViewDeviceName = itemView.findViewById(R.id.textViewDeviceNameValueDeviceItem);
+      textViewManufacturerName = itemView.findViewById(R.id.textViewManufacturerDeviceItem);
+      textViewVendorId = itemView.findViewById(R.id.textViewDeviceVendorIdDeviceItem);
+      textViewProductId = itemView.findViewById(R.id.textViewDeviceProductIdValueDeviceItem);
+      materialCardViewDeviceListItem = itemView.findViewById(R.id.materialCardViewDeviceItem);
     }
   }
 
