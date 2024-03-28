@@ -8,6 +8,9 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "hash_information")
 public class HashInfoEntity {
 
+  // TODO: Create HashInfoData for exposing the data of any hash info entity in the presentation
+  //  layer
+
   @PrimaryKey(autoGenerate = true)
   public int uid;
   @ColumnInfo(name = "ssid")

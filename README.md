@@ -7,9 +7,10 @@ The Command Launch Module which is an android application act as the brain of th
 For a deeper dive into the Launcher Module's capabilities and further insights, explore the repository [here](https://github.com/johndeweyzxc/AWPS-Launcher-Module).
 
 ## Features
+
 - **Local Database** Temporary local database for PMKID or MIC and EAPOL data intercepted by the Launcher Module.
 - **Location Aware** Uses GPS functionality to precisely record the location of data interception.
-- **Hash Transmission** Enables the seamless transfer of captured PMKID, MIC, and EAPOL data to 
+- **Hash Transmission** Enables the seamless transfer of captured PMKID, MIC, and EAPOL data to
   a local REST API server. Visit this [repository](https://github.com/johndeweyzxc/AWPS-Bridge) for more information
 - **Automatic Attack Mode** Automates the penetration of nearby access points while preventing re-attacks on previously targeted access points. All intercepted and relevant data is stored in a local database for comprehensive record-keeping.
 - **Manual Attack Mode** Manual method for penetrating nearby access points. All intercepted and pertinent data is systematically stored in a local database, fostering comprehensive record-keeping.
@@ -31,6 +32,7 @@ Note: The android device presented in the story is the Command Launch Module, th
 ## Software Components
 
 This module consists of 4 main components, the view, view model, repository and the apis. Here is the brief description of each component:
+
 - **View** Application's user interface encompasses activities, fragments, and other UI-related code. This is where the user interacts with the system.
 - **View Model** Connects the view and the repository, it validates user input and also formats data to be consume by the view.
 - **Repository** This is the business part of the application where it is responsible for processing inputs and outputs to and from the APIs.
@@ -48,51 +50,6 @@ In this project, three hardware components are employed: an Android device, USB 
 - **[2] USB OTG (On The Go)** Enables communication between the Command Launch Module and the Launcher Module. It also delivers power from the Command Launch Module to the Launcher Module.
 - **[3] Micro USB Male to USB Male** Establishes connection between the ESP32 device and a USB male port.
 - **[4] ESP32-WROOM-32D** This is where the Launcher Module Software is installed and it is use to execute attacks by receiving commands from the Command Launch Module.
-
-## Automatic Attack Finite State Diagram
-
-<p align="center">
-    <img src="visuals/Automatic-Attack-Finite-State-Diagram.png">
-</p>
-
-The finite state diagram illustrates the automated process of Wi-Fi penetration through a sequence of states in an automatic attack.
-
-- **State: X(Stopped)**
-    - **Description:** The system enters stopped state and does not perform any penetration operation unless the user presses the start button
-- **State: A (Started)**
-    - **Description:** The system enters started state because the user presses the start button, the Launcher Module is ready to receive commands
-    - **Transition**
-        - **Trigger:** The system receives an instruction
-        - **Outcome:** Transition to state B occurs unless the user presses the stop button
-- **State: B (Instruction Issued)**
-    - **Description:** The system enters state B when it received an instruction code
-    - **Transition:**
-        - **Trigger:** The system has finished scanning nearby access points
-        - **Outcome:** Transition to State C occurs unless the user presses the stop button
-    - **Note:** An instruction code can be a scan code or an attack code. If the system transitions to this state because an attack instruction is issued, it re-scans nearby access point and checks if it found the target access point (State C), it needs to do this to determine the channel and SSID of the target. After each attack, a scan instruction is issued so it goes back to this state to scan nearby access point but it does not look for the target since this is just a scan instruction
-- **State: C (Finish Scan)**
-    - **Description:** The system enters finished scan state, it is now ready to determine if the target access point is found or not
-    - **Transition:**
-        - **Trigger:** The system has finished determining if the target access point is found
-        - **Outcome:** Transition to State D or State E occurs unless the user presses the stop button
-- **State: D (Target Not Found)**
-    - **Description:** The system transitions from C to D because it did not found the target access point
-    - **Transition:**
-        - **Trigger:** The system did not found the target access point
-        - **Outcome:** Transition to State B occurs unless the user presses the stop button, it transistions to State B to issue a scan instruction where it scans nearby access points for potential targets 
-- **State: E (Main Task Created or Attack Target)**
-    - **Description:** The system transitions from C to E because it found the access point and thus it launches the attack
-    - **Transition:** The system has finished or stopped the main task
-        - **Trigger:** Transition is triggered under three conditions: when the allocated time is exhausted, when the user presses the stop button, or when the attack is successful
-        - **Outcome:** Transition to State G occurs unless the user stops the attack or the allocated time has exhausted
-- **State: F (Failed Attack)**
-    - **Description:** The system enters failed state when the attack is terminated either by user pressing the stop button or when the allocated time has exhausted.
-    - **Transition:** The Launcher Module is programmed to restart if an attack fails and thus 
-      will always transition to State A
-- **State: G (Successful Attack)**
-    - **Description:** The system enters success state because it was able to penetrate the target and was able to intercept important data
-    - **Transition:** The system proceeds to State B to issue a scan instruction where it scans nearby access points for potential targets 
-
 
 ## DISCLAIMER
 
