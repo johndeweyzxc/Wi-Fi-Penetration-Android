@@ -169,7 +169,7 @@ public class SessionAutoViewModel extends SessionViewModel {
     if (Objects.equals(userCommandState.getValue(), "PENDING STOP")) {
       writeControlCodeDeactivationToLauncher();
     } else {
-      if (attackStatus == UserDefinedSettings.ALLOCATED_TIME_FOR_EACH_ATTACK) {
+      if (attackStatus == UserDefinedSettings.getInstance().ALLOCATED_TIME_FOR_EACH_ATTACK) {
         writeControlCodeDeactivationToLauncher();
       }
     }
@@ -210,7 +210,7 @@ public class SessionAutoViewModel extends SessionViewModel {
 
   private void checkSizeOfPreviouslyAttackedTargets() {
     if (previouslyAttackedTargets.size() ==
-            UserDefinedSettings.NUMBER_OF_PREVIOUSLY_ATTACKED_TARGETS) {
+            UserDefinedSettings.getInstance().NUMBER_OF_PREVIOUSLY_ATTACKED_TARGETS) {
       AccessPointData accessPointData = previouslyAttackedTargets.remove(0);
       String ssid = accessPointData.ssid();
       currentAttackLog.postValue("(" + attackLogNumber + ")" + " Removed " + ssid + " from " +

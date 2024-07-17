@@ -12,9 +12,11 @@ public class Bridge {
   private final Retrofit retrofit;
 
   public Bridge() {
+    UserDefinedSettings userDefinedSettings = UserDefinedSettings.getInstance();
     Log.w("dev-log", "Bridge: Created new instance of Bridge");
+    Log.d("dev-log", "Bridge: " + userDefinedSettings.REST_API_URL);
     retrofit = new Retrofit.Builder()
-            .baseUrl(UserDefinedSettings.REST_API_URL)
+            .baseUrl(userDefinedSettings.REST_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
   }

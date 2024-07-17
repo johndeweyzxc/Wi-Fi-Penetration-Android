@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.johndeweydev.awps.UserDefinedSettings;
+import com.johndeweydev.awps.api.bridge.Bridge;
+import com.johndeweydev.awps.api.bridge.BridgeSingleton;
 import com.johndeweydev.awps.databinding.FragmentSettingsBinding;
 
 import java.util.Objects;
@@ -35,11 +37,13 @@ public class SettingsFragment extends Fragment {
     binding.materialToolBarSettings.setOnClickListener(v ->
             Navigation.findNavController(binding.getRoot()).popBackStack());
 
+    UserDefinedSettings userDefinedSettings = UserDefinedSettings.getInstance();
+
     binding.numberPickerTargetSizeSettings.setValue(
-            UserDefinedSettings.NUMBER_OF_PREVIOUSLY_ATTACKED_TARGETS);
+            userDefinedSettings.NUMBER_OF_PREVIOUSLY_ATTACKED_TARGETS);
     binding.numberPickerAllocatedAttackTimeSettings.setValue(
-            UserDefinedSettings.ALLOCATED_TIME_FOR_EACH_ATTACK);
-    binding.textInputEditTextServerUrlSettings.setText(UserDefinedSettings.REST_API_URL);
+            userDefinedSettings.ALLOCATED_TIME_FOR_EACH_ATTACK);
+    binding.textInputEditTextServerUrlSettings.setText(userDefinedSettings.REST_API_URL);
 
     binding.numberPickerTargetSizeSettings.setMaxValue(30);
     binding.numberPickerTargetSizeSettings.setMinValue(2);
@@ -47,12 +51,15 @@ public class SettingsFragment extends Fragment {
     binding.numberPickerAllocatedAttackTimeSettings.setMinValue(2);
 
     binding.buttonApplySettings.setOnClickListener(v -> {
-      UserDefinedSettings.ALLOCATED_TIME_FOR_EACH_ATTACK = binding
+      userDefinedSettings.ALLOCATED_TIME_FOR_EACH_ATTACK = binding
               .numberPickerAllocatedAttackTimeSettings.getValue();
-      UserDefinedSettings.NUMBER_OF_PREVIOUSLY_ATTACKED_TARGETS = binding
+      userDefinedSettings.NUMBER_OF_PREVIOUSLY_ATTACKED_TARGETS = binding
               .numberPickerTargetSizeSettings.getValue();
-      UserDefinedSettings.REST_API_URL = Objects.requireNonNull(binding.
+      userDefinedSettings.REST_API_URL = Objects.requireNonNull(binding.
               textInputEditTextServerUrlSettings.getText()).toString();
+      // Create new instance of bridge to update the settings
+      BridgeSingleton.getInstance().setBridge(new Bridge());
+
       Toast.makeText(requireActivity(), "Settings applied", Toast.LENGTH_LONG).show();
       Navigation.findNavController(binding.getRoot()).popBackStack();
     });
